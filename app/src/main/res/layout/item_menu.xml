@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:orientation="vertical">
+
+    <TextView
+            android:textSize="14sp"
+            android:textColor="#333"
+            android:text="黄瓜"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+    <LinearLayout
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_alignParentRight="true"
+            android:layout_centerHorizontal="true"
+            android:layout_height="match_parent">
+        <TextView
+                android:layout_width="wrap_content"
+                android:textSize="18sp"
+                android:text="一"
+                android:padding="10dp"
+                android:layout_height="wrap_content"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:textSize="18sp"
+                android:text="1"
+                android:minWidth="40dp"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:layout_height="wrap_content"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:textSize="18sp"
+                android:text="+"
+                android:padding="10dp"
+                android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <View   android:layout_alignParentBottom="true"
+            android:layout_width="match_parent" android:layout_height="1dp" android:background="#999"/>
+
+
+</RelativeLayout>
