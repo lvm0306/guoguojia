@@ -28,54 +28,60 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
     </RelativeLayout>
-    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#999"/>
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+          android:background="@color/mainbg"/>
     <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
             android:layout_height="match_parent">
         <!--菜单列表-->
         <LinearLayout
-                android:layout_width="100dp"
+                android:layout_width="80dp"
                 android:background="@drawable/shape_menu_bg"
                 android:orientation="vertical"
                 android:layout_height="match_parent">
             <TextView
                     android:id="@+id/tv_menu1"
                     android:textSize="16sp"
-                    android:textColor="#666"
+                    android:background="#fff"
+                    android:textColor="#464447"
+                    android:layout_height="50dp"
                     android:text="点单"
                     android:gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"/>
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#999"/>
+                    android:layout_width="match_parent"/>
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/mainbg"/>
             <TextView
                     android:id="@+id/tv_menu2"
                     android:textSize="16sp"
-                    android:textColor="#666"
+                    android:background="#464447"
+                    android:textColor="#fff"
+                    android:layout_height="50dp"
                     android:text="修改菜品"
                     android:gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"/>
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#999"/>
+                    android:layout_width="match_parent"/>
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/mainbg"/>
             <TextView
                     android:id="@+id/tv_menu3"
                     android:textSize="16sp"
-                    android:textColor="#666"
+                    android:background="#464447"
+                    android:textColor="#fff"
+                    android:layout_height="50dp"
                     android:text="已点菜单"
                     android:gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"/>
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#999"/>
+                    android:layout_width="match_parent"/>
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/mainbg"/>
             <TextView
                     android:id="@+id/tv_menu4"
                     android:textSize="16sp"
-                    android:textColor="#666"
+                    android:background="#464447"
+                    android:textColor="#fff"
+                    android:layout_height="50dp"
                     android:text="其他"
                     android:gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"/>
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#999"/>
+                    android:layout_width="match_parent"/>
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/mainbg"/>
         </LinearLayout>
+        <!--点单-->
         <LinearLayout
                 android:layout_width="match_parent"
                 android:id="@+id/ll_order"
@@ -86,26 +92,43 @@
             <RelativeLayout
                     android:layout_width="0dp"
                     android:layout_weight="1"
+                    android:background="@color/greybg"
                     android:layout_height="match_parent">
                 <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:paddingRight="15dp"
                         android:paddingLeft="15dp">
-
-                    <TextView
-                            android:text="已选列表"
-                            android:layout_alignParentLeft="true"
-                            android:gravity="center_vertical"
+                    <Spinner
+                            android:id="@+id/customer_spinner"
                             android:layout_width="wrap_content"
-                            android:textColor="#333"
-                            android:layout_height="40dp"/>
-                    <TextView android:gravity="center_vertical"
+                            android:layout_height="30dp"
+                            android:gravity="center"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:textColor="#000"
+                            android:background="@drawable/shape_menu_title_bg"
+                            android:spinnerMode="dropdown">
+
+                    </Spinner>
+                    <TextView
+                            android:visibility="gone"
+                            android:text="已选列表√"
+                            android:gravity="center"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:layout_width="wrap_content"
+                            android:textColor="#000"
+                            android:background="@drawable/shape_menu_title_bg"
+                            android:layout_height="30dp"/>
+                    <TextView android:gravity="center"
                               android:text="提交订单"
-                              android:textColor="#000"
+                              android:textColor="#fff"
+                              android:layout_centerVertical="true"
+                              android:background="@drawable/shape_menu_commit_bg"
                               android:layout_alignParentRight="true"
                               android:layout_width="wrap_content"
-                              android:layout_height="40dp"/>
+                              android:layout_height="30dp"/>
                 </RelativeLayout>
                 <android.support.v7.widget.RecyclerView
                         android:layout_marginTop="40dp"
@@ -117,6 +140,7 @@
                         android:layout_marginBottom="40dp"
                         android:layout_height="wrap_content"/>
                 <LinearLayout
+                        android:background="#fff"
                         android:layout_width="match_parent"
                         android:layout_alignParentBottom="true"
                         android:orientation="horizontal"
@@ -141,18 +165,25 @@
                               android:layout_height="match_parent"/>
                 </LinearLayout>
             </RelativeLayout>
-            <View android:layout_width="1dp" android:layout_height="match_parent" android:background="#999"/>
+            <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/mainbg"/>
             <LinearLayout
+
+                    android:background="@color/greybg"
                     android:orientation="vertical"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent">
-
-                <TextView
-                        android:text="菜品种类"
-                        android:gravity="center"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"/>
+                <LinearLayout android:layout_width="match_parent"
+                              android:gravity="center"
+                              android:layout_height="40dp">
+                    <TextView
+                            android:text="菜品种类"
+                            android:gravity="center"
+                            android:textColor="#000"
+                            android:background="@drawable/shape_menu_title_bg"
+                            android:layout_width="80dp"
+                            android:layout_height="30dp"/>
+                </LinearLayout>
                 <android.support.v7.widget.RecyclerView
                         android:id="@+id/rv_item"
                         android:layout_width="match_parent"
@@ -169,6 +200,50 @@
 
             </LinearLayout>
 
+        </LinearLayout>
+
+        <!-- 修改菜品-->
+        <LinearLayout
+                android:id="@+id/ll_change_fruit"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="match_parent">
+            <TextView
+                    android:text="修改菜品"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"/>
+            <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_change_fruit"
+                    android:layout_width="match_parent"
+                    tools:itemCount="12"
+                    tools:listitem="@layout/item_fruit"
+                    tools:spanCount="3"
+                    tools:layoutManager="GridLayoutManager"
+                    android:layout_height="match_parent"/>
+        </LinearLayout>
+
+        <!-- 已点菜单-->
+        <LinearLayout
+                android:id="@+id/ll_commit_order"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <TextView
+                    android:text="已点菜单"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"/>
+            <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_commit_order"
+                    android:layout_width="match_parent"
+                    tools:itemCount="12"
+                    tools:listitem="@layout/item_fruit"
+                    tools:spanCount="3"
+                    tools:layoutManager="GridLayoutManager"
+                    android:layout_height="match_parent"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

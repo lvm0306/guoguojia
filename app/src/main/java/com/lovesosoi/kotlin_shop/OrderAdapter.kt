@@ -10,10 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 
-class OrderAdapter(var context:Context,var data:MutableList<OrderBean>) : RecyclerView.Adapter<OrderAdapter.OrderAdapterHolder>(){
-    lateinit var listener:OnItemClick
+class OrderAdapter(var context: Context, var data: MutableList<OrderBean>) :
+    RecyclerView.Adapter<OrderAdapter.OrderAdapterHolder>() {
+    lateinit var listener: OnItemClick
+    lateinit var countListener: OnCountClick
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): OrderAdapterHolder {
-       var inflate= LayoutInflater.from(context).inflate(R.layout.item_menu,p0,false)
+        var inflate = LayoutInflater.from(context).inflate(R.layout.item_menu, p0, false)
         return OrderAdapterHolder(inflate)
     }
 
@@ -24,18 +26,24 @@ class OrderAdapter(var context:Context,var data:MutableList<OrderBean>) : Recycl
     override fun onBindViewHolder(p0: OrderAdapterHolder, p1: Int) {
 //            p0?.tv_name?.text="黄瓜"
 //        listener?.click()
-        p0.tv_name.text=data.get(p1).name
-        p0.tv_count.text= "" + data.get(p1).count
-        p0.itemView.setOnClickListener { v: View? -> listener?.click(p1,p0.itemView,data.get(p1)) }
-        p0.tv_sub.setOnClickListener { v: View? -> listener?.sub(p1,p0.itemView,data.get(p1)) }
-        p0.tv_add.setOnClickListener { v: View? -> listener?.add(p1,p0.itemView,data.get(p1)) }
+        p0.tv_name.text = data.get(p1).name
+        p0.tv_count.text = "" + data.get(p1).count + data.get(p1).unit
+        p0.itemView.setOnClickListener { v: View? -> listener?.click(p1, p0.itemView, data.get(p1)) }
+        p0.tv_sub.setOnClickListener { v: View? -> listener?.sub(p1, p0.itemView, data.get(p1)) }
+        p0.tv_add.setOnClickListener { v: View? -> listener?.add(p1, p0.itemView, data.get(p1)) }
+        p0.tv_count.setOnClickListener { v: View? -> countListener?.countClick(p1, p0.itemView, data.get(p1)) }
 
     }
 
-    fun setOnItemClickListener(click:OnItemClick){
-        listener=click
+    fun setOnItemClickListener(click: OnItemClick) {
+        listener = click
     }
-    inner class OrderAdapterHolder(view:View):RecyclerView.ViewHolder(view){
+
+    fun setOnCountClickListener(click: OnCountClick) {
+        countListener = click
+    }
+
+    inner class OrderAdapterHolder(view: View) : RecyclerView.ViewHolder(view) {
         var tv_name: TextView = view.findViewById(R.id.tv_name)
         var tv_count: TextView = view.findViewById(R.id.tv_count)
         var tv_sub: TextView = view.findViewById(R.id.tv_sub)

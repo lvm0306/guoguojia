@@ -1,15 +1,18 @@
 package com.lovesosoi.kotlin_shop
 
 import android.content.Context
+import android.content.DialogInterface
+import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.OrientationHelper
 import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -38,6 +41,8 @@ class MainActivity : AppCompatActivity() {
     var fruitList = mutableListOf<FruitBean>()
     lateinit var order_adapter: OrderAdapter
     lateinit var fruit_adapter: FruitAdapter
+    val strs = arrayOf("请选择商户","学府三", "学府四","哈西包子")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -51,7 +56,6 @@ class MainActivity : AppCompatActivity() {
 //        orderList.add(OrderBean("茄子",2,1.50))
 //        orderList.add(OrderBean("豆角",3,2.00))
 //        orderList.add(OrderBean("豆腐",4,2.30))
-
         fruitList.add(FruitBean("黄瓜", 1.00))
         fruitList.add(FruitBean("茄子", 1.30))
         fruitList.add(FruitBean("豆角", 1.80))
@@ -69,6 +73,17 @@ class MainActivity : AppCompatActivity() {
     private fun initView() {
         context = this
         //rv 初始化
+        //spinner 初始化
+        var sp=findViewById<View>(R.id.customer_spinner) as Spinner
+        val startAdapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, strs)
+        startAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
+//        sp.prompt = "选择商户"
+        sp.adapter = startAdapter
+        sp.setSelection(0)
+        var listen = myItemClickListener()
+        sp.onItemSelectedListener = listen
+
+        //列表初始化
         order_adapter = OrderAdapter(context, orderList)
         fruit_adapter = FruitAdapter(context, fruitList)
         rv_menu.adapter = order_adapter
@@ -78,10 +93,10 @@ class MainActivity : AppCompatActivity() {
 
         order_adapter.setOnItemClickListener(object : OnItemClick {
             override fun sub(position: Int, view: View, data: Any) {
-                var count=orderList.get(position).count
-                if (count>1){
-                   orderList.get(position).count-=1
-                }else{
+                var count = orderList.get(position).count
+                if (count > 1) {
+                    orderList.get(position).count = String.format("%.2f", count-1).toDouble()
+                } else {
                     orderList.removeAt(position)
                 }
                 order_adapter.notifyDataSetChanged()
@@ -89,8 +104,9 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun add(position: Int, view: View, data: Any) {
-
-                orderList.get(position).count+=1
+                var count_t=orderList.get(position).count
+                count_t=String.format("%.2f",count_t+1).toDouble()
+                orderList.get(position).count = count_t
                 order_adapter.notifyDataSetChanged()
                 refreshOrder()
             }
@@ -100,6 +116,31 @@ class MainActivity : AppCompatActivity() {
 
                 }
             }
+        })
+
+        order_adapter.setOnCountClickListener(object :OnCountClick{
+            override fun countClick(position: Int, view: View, data: Any) {
+                if (data is OrderBean) {
+                    val msg = "请输入斤数"
+                    var inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                    var et:EditText= inflater.inflate(R.layout.item_et,null) as EditText
+                    et.setText(orderList.get(position).count.toString())
+                    AlertDialog.Builder(context)
+                        .setTitle(msg)
+                        .setView(et)
+                        .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
+                            Toast.makeText(context, et.text.toString(), Toast.LENGTH_SHORT).show()
+                            orderList.get(position).count=et.text.toString().toDouble()
+                            refreshOrder()
+                            order_adapter.notifyDataSetChanged()
+                        })
+                        .setNeutralButton("取消", null)
+                        .create()
+                        .show()
+                }
+
+            }
+
         })
 
         fruit_adapter.setOnItemClickListener(object : OnItemClick {
@@ -122,7 +163,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                     if (!flag) {
-                        orderList.add(OrderBean(data.name, 1, data.price))
+                        orderList.add(OrderBean(data.name, 1.00, data.price,"斤"))
                     }
                     order_adapter.notifyDataSetChanged()
                     refreshOrder()
@@ -132,31 +173,68 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun refreshOrder(){
+    fun refreshOrder() {
         var pay = 0.00
         var count = 0
         for ((index, value) in orderList.withIndex()) {
             pay += value.count * value.price
             count++
         }
-        tv_pay.text="总计:"+String.format("%.2f",pay)+"元"
-        tv_goodnum.text="共计"+count+"件货物"
+        tv_pay.text = "总计:" + String.format("%.2f", pay) + "元"
+        tv_goodnum.text = "共计" + count + "件货物"
     }
+
     @OnClick(R.id.tv_menu1, R.id.tv_menu2, R.id.tv_menu3, R.id.tv_menu4)
     fun onClick(view: View) {
         when (view.id) {
             R.id.tv_menu1 -> {
-                Toast.makeText(this, tv_menu1.text, Toast.LENGTH_SHORT).show()
+                closeTab()
+                ll_order.visibility = View.VISIBLE
+                tv_menu1.setTextColor(Color.parseColor("#464447"))
+                tv_menu1.setBackgroundColor(Color.parseColor("#ffffff"))
             }
             R.id.tv_menu2 -> {
-                Toast.makeText(this, tv_menu2.text, Toast.LENGTH_SHORT).show()
+                closeTab()
+                ll_change_fruit.visibility = View.VISIBLE
+                tv_menu2.setTextColor(Color.parseColor("#464447"))
+                tv_menu2.setBackgroundColor(Color.parseColor("#ffffff"))
+
+
             }
             R.id.tv_menu3 -> {
-                Toast.makeText(this, tv_menu3.text, Toast.LENGTH_SHORT).show()
+                closeTab()
+                ll_commit_order.visibility = View.VISIBLE
+                tv_menu3.setTextColor(Color.parseColor("#464447"))
+                tv_menu3.setBackgroundColor(Color.parseColor("#ffffff"))
+
+
             }
             R.id.tv_menu4 -> {
-                Toast.makeText(this, tv_menu4.text, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "功能暂不开放", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    fun closeTab() {
+        ll_change_fruit.visibility = View.GONE
+        ll_order.visibility = View.GONE
+        ll_commit_order.visibility = View.GONE
+        tv_menu1.setTextColor(Color.parseColor("#ffffff"))
+        tv_menu2.setTextColor(Color.parseColor("#ffffff"))
+        tv_menu3.setTextColor(Color.parseColor("#ffffff"))
+        tv_menu4.setTextColor(Color.parseColor("#ffffff"))
+        tv_menu1.setBackgroundColor(Color.parseColor("#464447"))
+        tv_menu2.setBackgroundColor(Color.parseColor("#464447"))
+        tv_menu3.setBackgroundColor(Color.parseColor("#464447"))
+        tv_menu4.setBackgroundColor(Color.parseColor("#464447"))
+    }
+
+    internal inner class myItemClickListener : AdapterView.OnItemSelectedListener {
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+
+        }
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            Toast.makeText(context,"你的选择是：${strs[position]}",Toast.LENGTH_SHORT).show()
         }
     }
 }
