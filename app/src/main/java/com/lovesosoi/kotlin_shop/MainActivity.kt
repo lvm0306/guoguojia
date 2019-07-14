@@ -39,9 +39,12 @@ class MainActivity : AppCompatActivity() {
     lateinit var context: Context
     var orderList = mutableListOf<OrderBean>()
     var fruitList = mutableListOf<FruitBean>()
+    var customList = mutableListOf<CustomBean>()
     lateinit var order_adapter: OrderAdapter
     lateinit var fruit_adapter: FruitAdapter
-    val strs = arrayOf("请选择商户","学府三", "学府四","哈西包子")
+    lateinit var fruit_control_adapter: FruitAdapter
+    lateinit var custom_control_adapter: CustomControlAdapter
+    val strs = arrayOf("请选择商户", "学府三", "学府四", "哈西包子","学府三", "学府四", "哈西包子","学府三", "学府四", "哈西包子","学府三", "学府四", "哈西包子")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +70,14 @@ class MainActivity : AppCompatActivity() {
         fruitList.add(FruitBean("鲜蘑", 4.50))
         fruitList.add(FruitBean("鸡蛋", 4.20))
         fruitList.add(FruitBean("西瓜", 1.50))
+        customList.add(CustomBean("哈西包子"))
+        customList.add(CustomBean("烧烤"))
+        customList.add(CustomBean("学府四"))
+        customList.add(CustomBean("学府三"))
+        customList.add(CustomBean("哈西包子"))
+        customList.add(CustomBean("烧烤"))
+        customList.add(CustomBean("学府四"))
+        customList.add(CustomBean("学府三"))
 
     }
 
@@ -74,7 +85,7 @@ class MainActivity : AppCompatActivity() {
         context = this
         //rv 初始化
         //spinner 初始化
-        var sp=findViewById<View>(R.id.customer_spinner) as Spinner
+        var sp = findViewById<View>(R.id.customer_spinner) as Spinner
         val startAdapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, strs)
         startAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
 //        sp.prompt = "选择商户"
@@ -95,7 +106,7 @@ class MainActivity : AppCompatActivity() {
             override fun sub(position: Int, view: View, data: Any) {
                 var count = orderList.get(position).count
                 if (count > 1) {
-                    orderList.get(position).count = String.format("%.2f", count-1).toDouble()
+                    orderList.get(position).count = String.format("%.2f", count - 1).toDouble()
                 } else {
                     orderList.removeAt(position)
                 }
@@ -104,8 +115,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun add(position: Int, view: View, data: Any) {
-                var count_t=orderList.get(position).count
-                count_t=String.format("%.2f",count_t+1).toDouble()
+                var count_t = orderList.get(position).count
+                count_t = String.format("%.2f", count_t + 1).toDouble()
                 orderList.get(position).count = count_t
                 order_adapter.notifyDataSetChanged()
                 refreshOrder()
@@ -118,19 +129,20 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        order_adapter.setOnCountClickListener(object :OnCountClick{
+        order_adapter.setOnCountClickListener(object : OnCountClick {
             override fun countClick(position: Int, view: View, data: Any) {
                 if (data is OrderBean) {
                     val msg = "请输入斤数"
-                    var inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                    var et:EditText= inflater.inflate(R.layout.item_et,null) as EditText
+                    var inflater: LayoutInflater =
+                        context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                    var et: EditText = inflater.inflate(R.layout.item_et, null) as EditText
                     et.setText(orderList.get(position).count.toString())
                     AlertDialog.Builder(context)
                         .setTitle(msg)
                         .setView(et)
                         .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
                             Toast.makeText(context, et.text.toString(), Toast.LENGTH_SHORT).show()
-                            orderList.get(position).count=et.text.toString().toDouble()
+                            orderList.get(position).count = et.text.toString().toDouble()
                             refreshOrder()
                             order_adapter.notifyDataSetChanged()
                         })
@@ -163,7 +175,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                     if (!flag) {
-                        orderList.add(OrderBean(data.name, 1.00, data.price,"斤"))
+                        orderList.add(OrderBean(data.name, 1.00, data.price, "斤"))
                     }
                     order_adapter.notifyDataSetChanged()
                     refreshOrder()
@@ -190,27 +202,42 @@ class MainActivity : AppCompatActivity() {
             R.id.tv_menu1 -> {
                 closeTab()
                 ll_order.visibility = View.VISIBLE
-                tv_menu1.setTextColor(Color.parseColor("#464447"))
-                tv_menu1.setBackgroundColor(Color.parseColor("#ffffff"))
+                tv_menu1.setTextColor(Color.parseColor("#aa464447"))
+                tv_menu1.setBackgroundColor(Color.parseColor("#aaffffff"))
             }
             R.id.tv_menu2 -> {
                 closeTab()
                 ll_change_fruit.visibility = View.VISIBLE
-                tv_menu2.setTextColor(Color.parseColor("#464447"))
-                tv_menu2.setBackgroundColor(Color.parseColor("#ffffff"))
+                tv_menu2.setTextColor(Color.parseColor("#aa464447"))
+                tv_menu2.setBackgroundColor(Color.parseColor("#aaffffff"))
+                if (rv_change_fruit.adapter == null) {
+
+                    fruit_control_adapter = FruitAdapter(context, fruitList)
+                    rv_change_fruit.adapter = fruit_control_adapter
+                    rv_change_fruit.layoutManager = GridLayoutManager(this, 6)
+                }
 
 
             }
             R.id.tv_menu3 -> {
                 closeTab()
                 ll_commit_order.visibility = View.VISIBLE
-                tv_menu3.setTextColor(Color.parseColor("#464447"))
-                tv_menu3.setBackgroundColor(Color.parseColor("#ffffff"))
+                tv_menu3.setTextColor(Color.parseColor("#aa464447"))
+                tv_menu3.setBackgroundColor(Color.parseColor("#aaffffff"))
 
 
             }
             R.id.tv_menu4 -> {
-                Toast.makeText(this, "功能暂不开放", Toast.LENGTH_SHORT).show()
+                closeTab()
+                ll_customer_control.visibility = View.VISIBLE
+                tv_menu4.setTextColor(Color.parseColor("#aa464447"))
+                tv_menu4.setBackgroundColor(Color.parseColor("#aaffffff"))
+                if (rv_customer_control.adapter == null) {
+
+                    custom_control_adapter = CustomControlAdapter(context, customList)
+                    rv_customer_control.adapter = custom_control_adapter
+                    rv_customer_control.layoutManager = GridLayoutManager(this, 5)
+                }
             }
         }
     }
@@ -219,22 +246,24 @@ class MainActivity : AppCompatActivity() {
         ll_change_fruit.visibility = View.GONE
         ll_order.visibility = View.GONE
         ll_commit_order.visibility = View.GONE
-        tv_menu1.setTextColor(Color.parseColor("#ffffff"))
-        tv_menu2.setTextColor(Color.parseColor("#ffffff"))
-        tv_menu3.setTextColor(Color.parseColor("#ffffff"))
-        tv_menu4.setTextColor(Color.parseColor("#ffffff"))
-        tv_menu1.setBackgroundColor(Color.parseColor("#464447"))
-        tv_menu2.setBackgroundColor(Color.parseColor("#464447"))
-        tv_menu3.setBackgroundColor(Color.parseColor("#464447"))
-        tv_menu4.setBackgroundColor(Color.parseColor("#464447"))
+        ll_customer_control.visibility = View.GONE
+        tv_menu1.setTextColor(Color.parseColor("#aaffffff"))
+        tv_menu2.setTextColor(Color.parseColor("#aaffffff"))
+        tv_menu3.setTextColor(Color.parseColor("#aaffffff"))
+        tv_menu4.setTextColor(Color.parseColor("#aaffffff"))
+        tv_menu1.setBackgroundColor(Color.parseColor("#aa464447"))
+        tv_menu2.setBackgroundColor(Color.parseColor("#aa464447"))
+        tv_menu3.setBackgroundColor(Color.parseColor("#aa464447"))
+        tv_menu4.setBackgroundColor(Color.parseColor("#aa464447"))
     }
 
     internal inner class myItemClickListener : AdapterView.OnItemSelectedListener {
         override fun onNothingSelected(parent: AdapterView<*>?) {
 
         }
+
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-            Toast.makeText(context,"你的选择是：${strs[position]}",Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "你的选择是：${strs[position]}", Toast.LENGTH_SHORT).show()
         }
     }
 }

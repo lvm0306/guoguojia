@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:src="@drawable/bg1" android:scaleType="centerCrop"/>
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -13,8 +20,8 @@
             android:layout_height="50dp">
         <TextView
                 android:id="@+id/tv_title"
-                android:textSize="16sp"
-                android:textColor="#666"
+                android:textSize="18sp"
+                android:textColor="#ffffffff"
                 android:gravity="center"
                 android:text="欢迎使用老郭菜店系统"
                 android:layout_width="match_parent"
@@ -22,7 +29,7 @@
         <TextView
                 android:id="@+id/tv_weather"
                 android:textSize="12sp"
-                android:textColor="#666"
+                android:textColor="#ffffffff"
                 android:gravity="right|bottom"
                 android:text="2019年7月10日  天气：多云转晴，28°"
                 android:layout_width="match_parent"
@@ -43,7 +50,7 @@
             <TextView
                     android:id="@+id/tv_menu1"
                     android:textSize="16sp"
-                    android:background="#fff"
+                    android:background="#aaffffff"
                     android:textColor="#464447"
                     android:layout_height="50dp"
                     android:text="点单"
@@ -51,32 +58,33 @@
                     android:layout_width="match_parent"/>
             <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/mainbg"/>
             <TextView
-                    android:id="@+id/tv_menu2"
-                    android:textSize="16sp"
-                    android:background="#464447"
-                    android:textColor="#fff"
-                    android:layout_height="50dp"
-                    android:text="修改菜品"
-                    android:gravity="center"
-                    android:layout_width="match_parent"/>
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/mainbg"/>
-            <TextView
                     android:id="@+id/tv_menu3"
                     android:textSize="16sp"
-                    android:background="#464447"
+                    android:background="#aa464447"
                     android:textColor="#fff"
                     android:layout_height="50dp"
                     android:text="已点菜单"
                     android:gravity="center"
                     android:layout_width="match_parent"/>
             <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/mainbg"/>
+
             <TextView
-                    android:id="@+id/tv_menu4"
+                    android:id="@+id/tv_menu2"
                     android:textSize="16sp"
-                    android:background="#464447"
+                    android:background="#aa464447"
                     android:textColor="#fff"
                     android:layout_height="50dp"
-                    android:text="其他"
+                    android:text="菜品管理"
+                    android:gravity="center"
+                    android:layout_width="match_parent"/>
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/mainbg"/>
+                    <TextView
+                    android:id="@+id/tv_menu4"
+                    android:textSize="16sp"
+                    android:background="#aa464447"
+                    android:textColor="#fff"
+                    android:layout_height="50dp"
+                    android:text="商户管理"
                     android:gravity="center"
                     android:layout_width="match_parent"/>
             <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/mainbg"/>
@@ -140,7 +148,7 @@
                         android:layout_marginBottom="40dp"
                         android:layout_height="wrap_content"/>
                 <LinearLayout
-                        android:background="#fff"
+                        android:background="@color/whiteht"
                         android:layout_width="match_parent"
                         android:layout_alignParentBottom="true"
                         android:orientation="horizontal"
@@ -202,40 +210,40 @@
 
         </LinearLayout>
 
-        <!-- 修改菜品-->
-        <LinearLayout
-                android:id="@+id/ll_change_fruit"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:visibility="gone"
-                android:layout_height="match_parent">
-            <TextView
-                    android:text="修改菜品"
-                    android:gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"/>
-            <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_change_fruit"
-                    android:layout_width="match_parent"
-                    tools:itemCount="12"
-                    tools:listitem="@layout/item_fruit"
-                    tools:spanCount="3"
-                    tools:layoutManager="GridLayoutManager"
-                    android:layout_height="match_parent"/>
-        </LinearLayout>
-
         <!-- 已点菜单-->
         <LinearLayout
                 android:id="@+id/ll_commit_order"
-                android:orientation="horizontal"
+                android:orientation="vertical"
+                android:background="@color/mainbg"
                 android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-            <TextView
-                    android:text="已点菜单"
-                    android:gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"/>
+            <RelativeLayout android:layout_width="match_parent"
+                            android:layout_height="40dp">
+
+                <TextView
+                        android:text="已点菜单"
+                        android:background="@drawable/shape_menu_title_bg"
+                        android:gravity="center"
+                        android:layout_centerInParent="true"
+                        android:textColor="#000"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"/>
+
+
+                <TextView
+                        android:text="+"
+                        android:background="@drawable/shape_custom_add_bg"
+                        android:gravity="center"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="20dp"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"/>
+
+
+            </RelativeLayout>
             <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_commit_order"
                     android:layout_width="match_parent"
@@ -245,5 +253,95 @@
                     tools:layoutManager="GridLayoutManager"
                     android:layout_height="match_parent"/>
         </LinearLayout>
+
+        <!-- 修改菜品-->
+        <LinearLayout
+                android:id="@+id/ll_change_fruit"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:background="@color/mainbg"
+                android:visibility="gone"
+                android:layout_height="match_parent">
+
+            <RelativeLayout android:layout_width="match_parent"
+                            android:layout_height="40dp">
+
+                <TextView
+                        android:text="菜品管理"
+                        android:background="@drawable/shape_menu_title_bg"
+                        android:gravity="center"
+                        android:textColor="#000"
+                        android:layout_centerInParent="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"/>
+
+
+                <TextView
+                        android:text="+"
+                        android:background="@drawable/shape_custom_add_bg"
+                        android:gravity="center"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="20dp"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"/>
+
+
+            </RelativeLayout>
+            <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_change_fruit"
+                    android:layout_width="match_parent"
+                    tools:itemCount="12"
+                    tools:listitem="@layout/item_fruit"
+                    tools:spanCount="6"
+                    tools:layoutManager="GridLayoutManager"
+                    android:layout_height="match_parent"/>
+        </LinearLayout>
+        <!-- 商户管理-->
+        <LinearLayout
+                android:background="@color/mainbg"
+                android:id="@+id/ll_customer_control"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <RelativeLayout android:layout_width="match_parent"
+                            android:layout_height="40dp">
+
+                <TextView
+                        android:text="商户管理"
+                        android:background="@drawable/shape_menu_title_bg"
+                        android:gravity="center"
+                        android:textColor="#000"
+                        android:layout_centerInParent="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"/>
+
+
+                <TextView
+                        android:text="+"
+                        android:background="@drawable/shape_custom_add_bg"
+                        android:gravity="center"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="20dp"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"/>
+
+
+            </RelativeLayout>
+            <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_customer_control"
+                    android:layout_width="match_parent"
+                    tools:itemCount="12"
+                    tools:listitem="@layout/item_fruit"
+                    tools:spanCount="3"
+                    tools:layoutManager="GridLayoutManager"
+                    android:layout_height="match_parent"/>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
+
+</RelativeLayout>

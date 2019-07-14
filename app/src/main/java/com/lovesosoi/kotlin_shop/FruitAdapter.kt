@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 
 class FruitAdapter(var context:Context,var data:MutableList<FruitBean>) : RecyclerView.Adapter<FruitAdapter.FruitAdapterHolder>(){
-    lateinit var listener:OnItemClick
+    var listener: OnItemClick? =null
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): FruitAdapterHolder {
         var inflate= LayoutInflater.from(context).inflate(R.layout.item_fruit,p0,false)
@@ -25,7 +25,9 @@ class FruitAdapter(var context:Context,var data:MutableList<FruitBean>) : Recycl
     override fun onBindViewHolder(p0: FruitAdapterHolder, p1: Int) {
         p0.tv_name.text=data.get(p1).name
         p0.tv_price.text= "单价：" + data.get(p1).price+"/斤"
-        p0.itemView.setOnClickListener { v: View? -> listener?.click(p1,p0.itemView,data.get(p1)) }
+        if (listener!=null) {
+            p0.itemView.setOnClickListener { v: View? -> listener?.click(p1, p0.itemView, data.get(p1)) }
+        }
     }
 
     fun setOnItemClickListener(click:OnItemClick){
