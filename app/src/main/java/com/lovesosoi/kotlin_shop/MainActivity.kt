@@ -1,5 +1,6 @@
 package com.lovesosoi.kotlin_shop
 
+import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Color
@@ -37,6 +38,7 @@ class MainActivity : AppCompatActivity() {
 //    @BindView(R.id.rv_item)
 //    lateinit var rv_item: RecyclerView
     lateinit var context: Context
+    lateinit var activity: Activity
     var orderList = mutableListOf<OrderBean>()
     var fruitList = mutableListOf<FruitBean>()
     var customList = mutableListOf<CustomBean>()
@@ -44,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var fruit_adapter: FruitAdapter
     lateinit var fruit_control_adapter: FruitAdapter
     lateinit var custom_control_adapter: CustomControlAdapter
-    val strs = arrayOf("请选择商户", "学府三", "学府四", "哈西包子","学府三", "学府四", "哈西包子","学府三", "学府四", "哈西包子","学府三", "学府四", "哈西包子")
+    val strs = arrayOf("请选择商户", "学府三", "学府四", "哈西包子", "学府三", "学府四", "哈西包子", "学府三", "学府四", "哈西包子", "学府三", "学府四", "哈西包子")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,14 +85,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun initView() {
         context = this
+        activity = this as Activity
         //rv 初始化
         //spinner 初始化
         var sp = findViewById<View>(R.id.customer_spinner) as Spinner
         val startAdapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, strs)
         startAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
+        val stringArray = resources.getStringArray(R.array.unit)
+
 //        sp.prompt = "选择商户"
         sp.adapter = startAdapter
-        sp.setSelection(0)
         var listen = myItemClickListener()
         sp.onItemSelectedListener = listen
 
@@ -196,7 +200,15 @@ class MainActivity : AppCompatActivity() {
         tv_goodnum.text = "共计" + count + "件货物"
     }
 
-    @OnClick(R.id.tv_menu1, R.id.tv_menu2, R.id.tv_menu3, R.id.tv_menu4)
+    @OnClick(
+        R.id.tv_menu1,
+        R.id.tv_menu2,
+        R.id.tv_menu3,
+        R.id.tv_menu4,
+        R.id.tv_commit,
+        R.id.tv_add_fruit,
+        R.id.tv_add_custom
+    )
     fun onClick(view: View) {
         when (view.id) {
             R.id.tv_menu1 -> {
@@ -239,6 +251,29 @@ class MainActivity : AppCompatActivity() {
                     rv_customer_control.layoutManager = GridLayoutManager(this, 5)
                 }
             }
+            R.id.tv_commit -> {
+                //提交订单
+            }
+            R.id.tv_add_fruit -> {
+                // 增加菜品
+                var dialog = AddFruitDialog(activity, R.style.DialogTheme)
+                dialog.setOnAddFruitListener(object : OnAddFruit {
+                    override fun add(name: String, price: Double, unit: String) {
+                        Toast.makeText(context, name + " " + price + " " + unit, Toast.LENGTH_SHORT).show()
+                    }
+                })
+                dialog.show()
+            }
+            R.id.tv_add_custom -> {
+                // 增加客户
+                var dialog = AddCustomerDialog(activity, R.style.DialogTheme)
+                dialog.setOnAddCustomerListener(object : OnAddCustomer {
+                    override fun add(name: String) {
+                        Toast.makeText(context, name + " ", Toast.LENGTH_SHORT).show()
+                    }
+                })
+                dialog.show()
+            }
         }
     }
 
@@ -263,7 +298,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-            Toast.makeText(context, "你的选择是：${strs[position]}", Toast.LENGTH_SHORT).show()
+            if (position != 0) {
+                Toast.makeText(context, "你的选择是：${strs[position]}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }

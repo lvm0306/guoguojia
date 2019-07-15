@@ -132,6 +132,7 @@
                     <TextView android:gravity="center"
                               android:text="提交订单"
                               android:textColor="#fff"
+                              android:id="@+id/tv_commit"
                               android:layout_centerVertical="true"
                               android:background="@drawable/shape_menu_commit_bg"
                               android:layout_alignParentRight="true"
@@ -278,13 +279,14 @@
 
                 <TextView
                         android:text="+"
+                        android:id="@+id/tv_add_fruit"
                         android:background="@drawable/shape_custom_add_bg"
                         android:gravity="center"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:layout_marginRight="20dp"
                         android:textSize="18sp"
-                        android:layout_width="wrap_content"
+                        android:layout_width="45dp"
                         android:layout_height="30dp"/>
 
 
@@ -320,6 +322,9 @@
 
 
                 <TextView
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:id="@+id/tv_add_custom"
                         android:text="+"
                         android:background="@drawable/shape_custom_add_bg"
                         android:gravity="center"

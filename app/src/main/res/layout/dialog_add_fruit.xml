@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:background="@drawable/shape_dialog_bg"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+
+        android:layout_height="wrap_content">
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+        <TextView android:layout_width="0dp"
+                  android:layout_height="match_parent"
+                  android:text="商品名："
+                  android:paddingRight="10dp"
+                  android:gravity="center"
+                  android:textSize="16sp"
+                  android:layout_weight="1"/>
+        <EditText android:layout_width="0dp"
+                  android:background="#ffff"
+                  android:id="@+id/et_name"
+                  android:layout_height="match_parent"
+                  android:paddingLeft="10dp"
+                  android:hint="请输入商品名"
+                  android:gravity="start|center_vertical"
+                  android:textSize="16sp"
+                  android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+        <TextView android:layout_width="0dp"
+                  android:layout_height="match_parent"
+                  android:text="价格："
+                  android:paddingRight="10dp"
+                  android:gravity="center"
+                  android:textSize="16sp"
+                  android:layout_weight="1"/>
+        <EditText android:layout_width="0dp"
+                  android:background="#ffff"
+                  android:id="@+id/et_price"
+                  android:layout_height="match_parent"
+                  android:paddingLeft="10dp"
+                  android:hint="请输入商品价格"
+                  android:inputType="numberDecimal|number"
+                  android:gravity="start|center_vertical"
+                  android:textSize="16sp"
+                  android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+        <TextView android:layout_width="0dp"
+                  android:layout_height="match_parent"
+                  android:text="计量单位："
+                  android:paddingRight="10dp"
+                  android:gravity="center"
+                  android:textSize="16sp"
+                  android:layout_weight="1"/>
+
+        <Spinner
+                android:id="@+id/et_weight"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:background="#fff"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="#000"
+                android:spinnerMode="dropdown">
+
+        </Spinner>
+    </LinearLayout>
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#9999"/>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+        <Button android:layout_width="0dp"
+                android:id="@+id/tv_cancel"
+                android:layout_height="match_parent"
+                android:background="#fff"
+                android:text="取消"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:layout_weight="1"/>
+        <View android:layout_width="1dp" android:layout_height="match_parent" android:background="#9999"/>
+
+        <Button android:layout_width="0dp"
+                android:id="@+id/tv_sure"
+                android:background="#fff"
+                android:layout_height="match_parent"
+                android:textColor="#FFA500"
+                android:text="确定"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:layout_weight="1"/>
+    </LinearLayout>
+
+</LinearLayout>

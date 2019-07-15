@@ -9,19 +9,19 @@ import android.view.Gravity
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.Button
+import android.widget.EditText
 import android.content.ContextWrapper
-import android.widget.*
+import android.widget.Toast
 
 
-class AddFruitDialog(context: Context, themeResId: Int) : Dialog(context, themeResId) {
-    var listener: OnAddFruit? = null
-    var stringArray:List<String>?=null
-    var unit=""
+class AddCustomerDialog(context: Context, themeResId: Int) : Dialog(context, themeResId) {
+    var listener: OnAddCustomer? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window?.setGravity(Gravity.CENTER);//设置dialog显示居中
         //dialogWindow.setWindowAnimations();设置动画效果
-        setContentView(R.layout.dialog_add_fruit)
+        setContentView(R.layout.dialog_add_customer)
         val activity = scanForActivity(context)
         val windowManager = activity!!.windowManager
         val display = windowManager.getDefaultDisplay()
@@ -34,24 +34,14 @@ class AddFruitDialog(context: Context, themeResId: Int) : Dialog(context, themeR
 
     private fun initView() {
         var etName = findViewById<EditText>(R.id.et_name)
-        var etPrice = findViewById<EditText>(R.id.et_price)
-        var sp = findViewById<Spinner>(R.id.et_weight)
         var tvCancel = findViewById<Button>(R.id.tv_cancel)
         var tvSure = findViewById<Button>(R.id.tv_sure)
-
-        stringArray =(context.resources.getStringArray(R.array.unit)).toList()
-        val startAdapter = ArrayAdapter(context, R.layout.spinner_fruit, stringArray)
-        startAdapter.setDropDownViewResource(R.layout.spinner_fruit)
-        sp.adapter = startAdapter
-        sp.onItemSelectedListener = myItemClickListener()
-
 
         tvSure.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 val name = etName.text.toString()
-                val price = etPrice.text.toString().toDouble()
-                if (name.length > 0 && price > 0 && unit!="计量单位") {
-                    listener?.add(etName.text.toString(), etPrice.text.toString().toDouble(),unit)
+                if (name.length > 0 ) {
+                    listener?.add(etName.text.toString())
                 } else {
                     Toast.makeText(scanForActivity(context),"请输入具体内容",Toast.LENGTH_SHORT).show()
                 }
@@ -64,7 +54,7 @@ class AddFruitDialog(context: Context, themeResId: Int) : Dialog(context, themeR
         })
     }
 
-    fun setOnAddFruitListener(l: OnAddFruit) {
+    fun setOnAddCustomerListener(l: OnAddCustomer) {
         listener = l
     }
 
@@ -77,19 +67,6 @@ class AddFruitDialog(context: Context, themeResId: Int) : Dialog(context, themeR
             return scanForActivity(cont.baseContext)
 
         return null
-    }
-
-    internal inner class myItemClickListener : AdapterView.OnItemSelectedListener {
-        override fun onNothingSelected(parent: AdapterView<*>?) {
-
-        }
-
-        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-            if (position!=0) {
-                Toast.makeText(context, "你的选择是：${stringArray!![position]}", Toast.LENGTH_SHORT).show()
-                unit = stringArray!![position]
-            }
-        }
     }
 
 }
