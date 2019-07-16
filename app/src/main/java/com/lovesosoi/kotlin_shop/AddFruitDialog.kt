@@ -50,7 +50,8 @@ class AddFruitDialog(context: Context, themeResId: Int) : Dialog(context, themeR
             override fun onClick(v: View?) {
                 val name = etName.text.toString()
                 val price = etPrice.text.toString().toDouble()
-                if (name.length > 0 && price > 0 && unit!="计量单位") {
+                Log.e("Lovesosoi",name+" "+price.toString()+" "+unit)
+                if (name.length > 0 && price > 0 && unit!="选择计量单位") {
                     listener?.add(etName.text.toString(), etPrice.text.toString().toDouble(),unit)
                 } else {
                     Toast.makeText(scanForActivity(context),"请输入具体内容",Toast.LENGTH_SHORT).show()
@@ -85,9 +86,9 @@ class AddFruitDialog(context: Context, themeResId: Int) : Dialog(context, themeR
         }
 
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            unit = stringArray!![position]
             if (position!=0) {
                 Toast.makeText(context, "你的选择是：${stringArray!![position]}", Toast.LENGTH_SHORT).show()
-                unit = stringArray!![position]
             }
         }
     }

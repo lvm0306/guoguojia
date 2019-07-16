@@ -7,4 +7,14 @@
         <item>件</item>
         <item>瓶</item>
     </string-array>
+    <string-array name="customer">
+        <item>选择商户</item>
+        <item>学府三</item>
+        <item>学府四</item>
+        <item>幼儿园</item>
+        <item>学府烧烤</item>
+        <item>测绘烧烤</item>
+        <item>哈西烧烤</item>
+        <item>哈西包子</item>
+    </string-array>
 </resources>

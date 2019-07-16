@@ -27,6 +27,7 @@ class OrderAdapter(var context: Context, var data: MutableList<OrderBean>) :
 //            p0?.tv_name?.text="黄瓜"
 //        listener?.click()
         p0.tv_name.text = data.get(p1).name
+        p0.tv_unit.text=data.get(p1).price.toString()+"/"+data.get(p1).unit
         p0.tv_count.text = "" + data.get(p1).count + data.get(p1).unit
         p0.itemView.setOnClickListener { v: View? -> listener?.click(p1, p0.itemView, data.get(p1)) }
         p0.tv_sub.setOnClickListener { v: View? -> listener?.sub(p1, p0.itemView, data.get(p1)) }
@@ -48,5 +49,6 @@ class OrderAdapter(var context: Context, var data: MutableList<OrderBean>) :
         var tv_count: TextView = view.findViewById(R.id.tv_count)
         var tv_sub: TextView = view.findViewById(R.id.tv_sub)
         var tv_add: TextView = view.findViewById(R.id.tv_add)
+        var tv_unit: TextView = view.findViewById(R.id.tv_unit)
     }
 }

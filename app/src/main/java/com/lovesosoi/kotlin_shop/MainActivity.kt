@@ -41,13 +41,12 @@ class MainActivity : AppCompatActivity() {
     lateinit var activity: Activity
     var orderList = mutableListOf<OrderBean>()
     var fruitList = mutableListOf<FruitBean>()
-    var customList = mutableListOf<CustomBean>()
     lateinit var order_adapter: OrderAdapter
     lateinit var fruit_adapter: FruitAdapter
-    lateinit var fruit_control_adapter: FruitAdapter
+    lateinit var fruit_control_adapter: FruitDisplayAdapter
     lateinit var custom_control_adapter: CustomControlAdapter
     val strs = arrayOf("请选择商户", "学府三", "学府四", "哈西包子", "学府三", "学府四", "哈西包子", "学府三", "学府四", "哈西包子", "学府三", "学府四", "哈西包子")
-
+    var customers = mutableListOf<String>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -61,25 +60,17 @@ class MainActivity : AppCompatActivity() {
 //        orderList.add(OrderBean("茄子",2,1.50))
 //        orderList.add(OrderBean("豆角",3,2.00))
 //        orderList.add(OrderBean("豆腐",4,2.30))
-        fruitList.add(FruitBean("黄瓜", 1.00))
-        fruitList.add(FruitBean("茄子", 1.30))
-        fruitList.add(FruitBean("豆角", 1.80))
-        fruitList.add(FruitBean("豆腐", 2.20))
-        fruitList.add(FruitBean("土豆", 1.66))
-        fruitList.add(FruitBean("金针菇", 2.50))
-        fruitList.add(FruitBean("拉皮", 1.50))
-        fruitList.add(FruitBean("肥羊粉", 2.50))
-        fruitList.add(FruitBean("鲜蘑", 4.50))
-        fruitList.add(FruitBean("鸡蛋", 4.20))
-        fruitList.add(FruitBean("西瓜", 1.50))
-        customList.add(CustomBean("哈西包子"))
-        customList.add(CustomBean("烧烤"))
-        customList.add(CustomBean("学府四"))
-        customList.add(CustomBean("学府三"))
-        customList.add(CustomBean("哈西包子"))
-        customList.add(CustomBean("烧烤"))
-        customList.add(CustomBean("学府四"))
-        customList.add(CustomBean("学府三"))
+        fruitList.add(FruitBean("黄瓜", 1.00,"斤"))
+        fruitList.add(FruitBean("茄子", 1.30,"斤"))
+        fruitList.add(FruitBean("豆角", 1.80,"斤"))
+        fruitList.add(FruitBean("豆腐", 2.20,"斤"))
+        fruitList.add(FruitBean("土豆", 1.66,"斤"))
+        fruitList.add(FruitBean("金针菇", 2.50,"斤"))
+        fruitList.add(FruitBean("拉皮", 1.50,"斤"))
+        fruitList.add(FruitBean("肥羊粉", 2.50,"斤"))
+        fruitList.add(FruitBean("鲜蘑", 4.50,"斤"))
+        fruitList.add(FruitBean("鸡蛋", 4.20,"斤"))
+        fruitList.add(FruitBean("西瓜", 1.50,"斤"))
 
     }
 
@@ -88,15 +79,16 @@ class MainActivity : AppCompatActivity() {
         activity = this as Activity
         //rv 初始化
         //spinner 初始化
+        customers = resources.getStringArray(R.array.customer).toMutableList()
         var sp = findViewById<View>(R.id.customer_spinner) as Spinner
-        val startAdapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, strs)
+        val startAdapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, customers)
         startAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
-        val stringArray = resources.getStringArray(R.array.unit)
 
 //        sp.prompt = "选择商户"
         sp.adapter = startAdapter
         var listen = myItemClickListener()
         sp.onItemSelectedListener = listen
+
 
         //列表初始化
         order_adapter = OrderAdapter(context, orderList)
@@ -179,7 +171,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                     if (!flag) {
-                        orderList.add(OrderBean(data.name, 1.00, data.price, "斤"))
+                        orderList.add(OrderBean(data.name, 1.00, data.price, data.unit))
                     }
                     order_adapter.notifyDataSetChanged()
                     refreshOrder()
@@ -224,9 +216,25 @@ class MainActivity : AppCompatActivity() {
                 tv_menu2.setBackgroundColor(Color.parseColor("#aaffffff"))
                 if (rv_change_fruit.adapter == null) {
 
-                    fruit_control_adapter = FruitAdapter(context, fruitList)
+                    fruit_control_adapter = FruitDisplayAdapter(context, fruitList)
                     rv_change_fruit.adapter = fruit_control_adapter
                     rv_change_fruit.layoutManager = GridLayoutManager(this, 6)
+                    fruit_control_adapter.setOnItemClickListener(object :OnListItemLongClickListener{
+                        override fun click(position: Int, view: View, data: Any) {
+
+                            AlertDialog.Builder(context)
+                                .setTitle("确认删除"+fruitList.get(position).name+"?")
+                                .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
+                                    fruitList.removeAt(position)
+                                    fruit_control_adapter.notifyDataSetChanged()
+                                    fruit_adapter.notifyDataSetChanged()
+                                })
+                                .setNeutralButton("取消", null)
+                                .create()
+                                .show()
+
+                        }
+                    })
                 }
 
 
@@ -246,9 +254,23 @@ class MainActivity : AppCompatActivity() {
                 tv_menu4.setBackgroundColor(Color.parseColor("#aaffffff"))
                 if (rv_customer_control.adapter == null) {
 
-                    custom_control_adapter = CustomControlAdapter(context, customList)
+                    custom_control_adapter = CustomControlAdapter(context, customers)
                     rv_customer_control.adapter = custom_control_adapter
                     rv_customer_control.layoutManager = GridLayoutManager(this, 5)
+                    custom_control_adapter.setOnItemClickListener(object :OnListItemLongClickListener{
+                        override fun click(position: Int, view: View, data: Any) {
+                            AlertDialog.Builder(context)
+                                .setTitle("确认删除"+customers.get(position)+"?")
+                                .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
+                                    customers.removeAt(position)
+                                    custom_control_adapter.notifyDataSetChanged()
+                                })
+                                .setNeutralButton("取消", null)
+                                .create()
+                                .show()
+                        }
+
+                    })
                 }
             }
             R.id.tv_commit -> {
@@ -259,7 +281,12 @@ class MainActivity : AppCompatActivity() {
                 var dialog = AddFruitDialog(activity, R.style.DialogTheme)
                 dialog.setOnAddFruitListener(object : OnAddFruit {
                     override fun add(name: String, price: Double, unit: String) {
-                        Toast.makeText(context, name + " " + price + " " + unit, Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(context, name + " " + price + " " + unit, Toast.LENGTH_SHORT).show()
+                        var fruit=FruitBean(name,price,unit)
+                        fruitList.add(fruit)
+                        fruit_control_adapter.notifyDataSetChanged()
+                        fruit_adapter.notifyDataSetChanged()
+                        dialog.dismiss()
                     }
                 })
                 dialog.show()
@@ -269,7 +296,10 @@ class MainActivity : AppCompatActivity() {
                 var dialog = AddCustomerDialog(activity, R.style.DialogTheme)
                 dialog.setOnAddCustomerListener(object : OnAddCustomer {
                     override fun add(name: String) {
-                        Toast.makeText(context, name + " ", Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(context, name + " ", Toast.LENGTH_SHORT).show()
+                        customers.add(name)
+                        custom_control_adapter.notifyDataSetChanged()
+                        dialog.dismiss()
                     }
                 })
                 dialog.show()
@@ -299,7 +329,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
             if (position != 0) {
-                Toast.makeText(context, "你的选择是：${strs[position]}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "你的选择是：${customers[position]}", Toast.LENGTH_SHORT).show()
             }
         }
     }
