@@ -1,4 +1,4 @@
-package com.lovesosoi.kotlin_shop
+package com.lovesosoi.kotlin_shop.adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
@@ -6,9 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.lovesosoi.kotlin_shop.interfaces.OnListItemLongClickListener
+import com.lovesosoi.kotlin_shop.R
+import com.lovesosoi.kotlin_shop.bean.CCustomer
 
 
-class CustomControlAdapter(var context: Context, var data:MutableList<String>) : RecyclerView.Adapter<CustomControlAdapter.CustomControlViewHoler>(){
+class CustomControlAdapter(var context: Context, var data:MutableList<CCustomer.DataBean.CustomerBean>) : RecyclerView.Adapter<CustomControlAdapter.CustomControlViewHoler>(){
     var listener: OnListItemLongClickListener? =null
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): CustomControlViewHoler {
@@ -21,7 +24,7 @@ class CustomControlAdapter(var context: Context, var data:MutableList<String>) :
     }
 
     override fun onBindViewHolder(p0: CustomControlViewHoler, p1: Int) {
-        p0.tv_name.text=data.get(p1)
+        p0.tv_name.text=data.get(p1).customer_name
         if (listener!=null) {
             p0.itemView.setOnLongClickListener(object :View.OnLongClickListener{
                 override fun onLongClick(v: View?): Boolean {
@@ -32,7 +35,7 @@ class CustomControlAdapter(var context: Context, var data:MutableList<String>) :
         }
     }
 
-    fun setOnItemClickListener(click:OnListItemLongClickListener){
+    fun setOnItemClickListener(click: OnListItemLongClickListener){
         listener=click
     }
     inner class CustomControlViewHoler(view: View): RecyclerView.ViewHolder(view){

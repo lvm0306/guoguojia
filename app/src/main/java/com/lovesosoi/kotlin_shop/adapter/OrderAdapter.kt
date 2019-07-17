@@ -1,14 +1,15 @@
-package com.lovesosoi.kotlin_shop
+package com.lovesosoi.kotlin_shop.adapter
 
 import android.content.Context
-import android.os.Parcel
-import android.os.Parcelable
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.Adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.lovesosoi.kotlin_shop.R
+import com.lovesosoi.kotlin_shop.bean.OrderBean
+import com.lovesosoi.kotlin_shop.interfaces.OnCountClick
+import com.lovesosoi.kotlin_shop.interfaces.OnItemClick
 
 class OrderAdapter(var context: Context, var data: MutableList<OrderBean>) :
     RecyclerView.Adapter<OrderAdapter.OrderAdapterHolder>() {

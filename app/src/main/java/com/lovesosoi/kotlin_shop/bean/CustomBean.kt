@@ -1,4 +1,4 @@
-package com.lovesosoi.kotlin_shop
+package com.lovesosoi.kotlin_shop.bean
 
 
 data class CustomBean(var name:String)

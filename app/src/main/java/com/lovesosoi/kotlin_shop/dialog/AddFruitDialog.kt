@@ -1,4 +1,4 @@
-package com.lovesosoi.kotlin_shop
+package com.lovesosoi.kotlin_shop.dialog
 
 import android.app.Activity
 import android.app.Dialog
@@ -7,10 +7,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.view.Window
 import android.view.WindowManager
 import android.content.ContextWrapper
 import android.widget.*
+import com.lovesosoi.kotlin_shop.R
+import com.lovesosoi.kotlin_shop.interfaces.OnAddFruit
 
 
 class AddFruitDialog(context: Context, themeResId: Int) : Dialog(context, themeResId) {

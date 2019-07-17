@@ -1,18 +1,18 @@
-package com.lovesosoi.kotlin_shop
+package com.lovesosoi.kotlin_shop.dialog
 
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import android.content.ContextWrapper
 import android.widget.Toast
+import com.lovesosoi.kotlin_shop.interfaces.OnAddCustomer
+import com.lovesosoi.kotlin_shop.R
 
 
 class AddCustomerDialog(context: Context, themeResId: Int) : Dialog(context, themeResId) {
