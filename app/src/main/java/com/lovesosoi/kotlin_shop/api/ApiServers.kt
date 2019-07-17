@@ -3,6 +3,7 @@ package com.colin.doumovie.api
 import com.lovesosoi.kotlin_shop.bean.BaseStatus
 import com.lovesosoi.kotlin_shop.bean.CCustomer
 import com.lovesosoi.kotlin_shop.bean.CFruitBean
+import com.lovesosoi.kotlin_shop.bean.OrderList
 import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -29,6 +30,8 @@ interface ApiServers {
     fun addCustomer(@QueryMap map:HashMap<String, String>): Observable<BaseStatus>
     @GET(BaseURL.CUSTOMER_DELETE)
     fun deleteCustomer(@QueryMap map:HashMap<String, String>): Observable<BaseStatus>
+    @GET(BaseURL.ORDER_LIST)
+    fun getOrderHistory(): Observable<OrderList>
 //
 //    @GET("v2/movie/subject/{id}")
 //    fun getMovieDetailById(@Path("id") id: String,

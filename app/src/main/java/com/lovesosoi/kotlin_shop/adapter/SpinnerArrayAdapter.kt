@@ -11,7 +11,9 @@ import android.widget.TextView
 import com.lovesosoi.kotlin_shop.R
 import com.lovesosoi.kotlin_shop.bean.CCustomer
 
-class SpinnerArrayAdapter(var context: Context,var list:MutableList<CCustomer.DataBean.CustomerBean>) : BaseAdapter() {
+
+class SpinnerArrayAdapter(var context: Context, var list: MutableList<CCustomer.DataBean.CustomerBean>) :
+    BaseAdapter() {
 
     override fun getCount(): Int {
         return list.size
@@ -19,7 +21,7 @@ class SpinnerArrayAdapter(var context: Context,var list:MutableList<CCustomer.Da
 
     override fun getItem(position: Int): Any? {
 
-        return null
+        return list.get(position)
     }
 
     override fun getItemId(position: Int): Long {
@@ -27,16 +29,23 @@ class SpinnerArrayAdapter(var context: Context,var list:MutableList<CCustomer.Da
     }
 
     override fun getView(position: Int, convertView: View, parent: ViewGroup): View? {
-//        var inflate = LayoutInflater.from(context).inflate(R.layout.spinner_fruit, p0, false)
+        var holder: SpinnerHolder
+        var view=convertView
+        if (convertView == null) {
+            view = LayoutInflater.from(context).inflate(R.layout.spinner_fruit, parent, false)
+            holder = SpinnerHolder(view)
+            view.tag = holder
 
-        return null
+        } else {
+            view = convertView
+            holder=view?.tag as SpinnerHolder
+        }
+        holder.tv.text = list.get(position).customer_name
+
+        return convertView
     }
 
-    inner class OrderAdapterHolder(view: View) {
-        var tv_name: TextView = view.findViewById(R.id.tv_name)
-        var tv_count: TextView = view.findViewById(R.id.tv_count)
-        var tv_sub: TextView = view.findViewById(R.id.tv_sub)
-        var tv_add: TextView = view.findViewById(R.id.tv_add)
-        var tv_unit: TextView = view.findViewById(R.id.tv_unit)
+    inner class SpinnerHolder(view: View) {
+        var tv: TextView = view.findViewById(R.id.tv)
     }
 }

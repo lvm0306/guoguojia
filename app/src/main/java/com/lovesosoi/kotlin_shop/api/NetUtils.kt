@@ -5,6 +5,7 @@ import com.colin.doumovie.api.BuildApi
 import com.lovesosoi.kotlin_shop.bean.BaseStatus
 import com.lovesosoi.kotlin_shop.bean.CCustomer
 import com.lovesosoi.kotlin_shop.bean.CFruitBean
+import com.lovesosoi.kotlin_shop.bean.OrderList
 import com.lovesosoi.kotlin_shop.interfaces.IApiListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -43,6 +44,19 @@ class NetUtils{
     }
     fun getOrderList(listener:IApiListener){
 
+        BuildApi.buildApiServers()
+            ?.getOrderHistory()
+            ?.subscribeOn(Schedulers.newThread())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe(object : ApiResponse<OrderList>() {
+                override fun success(data: OrderList) {
+                    listener.success(data)
+                }
+
+                override fun failure(e: Throwable) {
+                    listener.error(e)
+                }
+            })
     }
     fun addFruit(name:String,price:Double,unit:String,listener:IApiListener){
         val parm = HashMap<String, String>()
