@@ -128,4 +128,50 @@ class NetUtils{
                 }
             })
     }
+    fun deleteOrder(id:Int,listener:IApiListener){
+        val parm = HashMap<String, String>()
+        parm.put("order_id", id.toString())
+        BuildApi.buildApiServers()
+            ?.deleteOrder(parm)
+            ?.subscribeOn(Schedulers.newThread())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe(object : ApiResponse<BaseStatus>() {
+                override fun success(data: BaseStatus) {
+                    listener.success(data)
+                }
+
+                override fun failure(e: Throwable) {
+                    listener.error(e)
+                }
+            })
+    }
+
+    fun addOrder(customer_name:String,
+                 cusomerid:String,
+                 time:String,
+                 all_price:String,
+                 all_item:String,
+                 order_info:String,
+                 listener:IApiListener){
+        val parm = HashMap<String, String>()
+        parm.put("customer_id", cusomerid)
+        parm.put("customer_name", customer_name)
+        parm.put("time", time)
+        parm.put("all_price", all_price)
+        parm.put("all_item", all_item)
+        parm.put("order_info", order_info)
+        BuildApi.buildApiServers()
+            ?.addOrder(parm)
+            ?.subscribeOn(Schedulers.newThread())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe(object : ApiResponse<BaseStatus>() {
+                override fun success(data: BaseStatus) {
+                    listener.success(data)
+                }
+
+                override fun failure(e: Throwable) {
+                    listener.error(e)
+                }
+            })
+    }
 }

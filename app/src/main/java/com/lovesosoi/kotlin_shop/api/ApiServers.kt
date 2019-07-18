@@ -32,6 +32,10 @@ interface ApiServers {
     fun deleteCustomer(@QueryMap map:HashMap<String, String>): Observable<BaseStatus>
     @GET(BaseURL.ORDER_LIST)
     fun getOrderHistory(): Observable<OrderList>
+    @GET(BaseURL.ORDER_ADD)
+    fun addOrder(@QueryMap map:HashMap<String, String>): Observable<BaseStatus>
+    @GET(BaseURL.ORDER_DELETE)
+    fun deleteOrder(@QueryMap map:HashMap<String, String>): Observable<BaseStatus>
 //
 //    @GET("v2/movie/subject/{id}")
 //    fun getMovieDetailById(@Path("id") id: String,

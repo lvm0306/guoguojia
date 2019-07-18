@@ -11,6 +11,8 @@ class BaseURL {
         const val CUSTOMER_LIST="customer_all" //商户列表
         const val CUSTOMER_ADD="customer_add" //商户增加
         const val CUSTOMER_DELETE="customer_delete" //商户删除
-        const val ORDER_LIST="order_all" //商户删除
+        const val ORDER_LIST="order_all" //订单列表
+        const val ORDER_ADD="order_add" //订单增加
+        const val ORDER_DELETE="order_delete" //订单增删除
     }
 }

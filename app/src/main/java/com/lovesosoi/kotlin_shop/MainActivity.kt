@@ -31,6 +31,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
+import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -54,19 +55,23 @@ class MainActivity : AppCompatActivity() {
     lateinit var context: Context
     lateinit var activity: Activity
     var orderList = mutableListOf<OrderBean>()
-    var  fruitList=mutableListOf<CFruitBean.DataBean.FruitBean>()
-    var  customerList=mutableListOf<String>()
-    var  order_history_list=mutableListOf<OrderList.DataBean.OrderBean>()
+    var fruitList = mutableListOf<CFruitBean.DataBean.FruitBean>()
+    var customerList = mutableListOf<String>()
+    var order_history_list = mutableListOf<OrderList.DataBean.OrderBean>()
     lateinit var order_adapter: OrderAdapter
     lateinit var fruit_adapter: FruitAdapter
     lateinit var fruit_control_adapter: FruitDisplayAdapter
     lateinit var custom_control_adapter: CustomControlAdapter
     lateinit var orderHistryAdapter: OrderHistryAdapter
     lateinit var startAdapter: ArrayAdapter<String>
-    lateinit var net:NetUtils
+    lateinit var net: NetUtils
     var customers = mutableListOf<CCustomer.DataBean.CustomerBean>()
-    var fruitAddDialog:AddFruitDialog ?= null
-    var customerAddDialog:AddCustomerDialog ?= null
+    var fruitAddDialog: AddFruitDialog? = null
+    var customerAddDialog: AddCustomerDialog? = null
+    var customername: String? = null
+    var customerid: Int = 0
+    var goodsitem: Int = 0
+    var all_price: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -79,11 +84,11 @@ class MainActivity : AppCompatActivity() {
 
         context = this
         activity = this as Activity
-        net= NetUtils()
+        net = NetUtils()
         //获取水果
-        net.getFruitList(object :IApiListener{
+        net.getFruitList(object : IApiListener {
             override fun success(data: Any) {
-                if (data is CFruitBean){
+                if (data is CFruitBean) {
                     fruitList = data.data?.fruit?.toMutableList()!!
                     fruit_adapter = FruitAdapter(context, fruitList)
                     rv_item.adapter = fruit_adapter
@@ -109,7 +114,14 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 }
                                 if (!flag) {
-                                    orderList.add(OrderBean(data.fruit_name!!, 1.00, data.fruit_price!!.toDouble(), data.fruit_unit!!))
+                                    orderList.add(
+                                        OrderBean(
+                                            data.fruit_name!!,
+                                            1.00,
+                                            data.fruit_price!!.toDouble(),
+                                            data.fruit_unit!!
+                                        )
+                                    )
                                 }
                                 order_adapter.notifyDataSetChanged()
                                 refreshOrder()
@@ -123,13 +135,13 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
-    // 获取商户
-        net.getCustomerList(object :IApiListener{
+        // 获取商户
+        net.getCustomerList(object : IApiListener {
             override fun success(data: Any) {
-                if (data is CCustomer){
-                    customers=data.data!!.customer!!.toMutableList()
+                if (data is CCustomer) {
+                    customers = data.data!!.customer!!.toMutableList()
                     val sp = findViewById<View>(R.id.customer_spinner) as Spinner
-                    for (i in customers){
+                    for (i in customers) {
                         customerList.add(i.customer_name!!)
                     }
                     startAdapter = ArrayAdapter(context, R.layout.support_simple_spinner_dropdown_item, customerList)
@@ -156,24 +168,39 @@ class MainActivity : AppCompatActivity() {
         rv_menu.adapter = order_adapter
         rv_menu.layoutManager = LinearLayoutManager(this, OrientationHelper.VERTICAL, false)
 
-        orderHistryAdapter =OrderHistryAdapter(context,order_history_list)
-        rv_commit_order.adapter=orderHistryAdapter
+        orderHistryAdapter = OrderHistryAdapter(context, order_history_list)
+        rv_commit_order.adapter = orderHistryAdapter
         rv_commit_order.layoutManager = LinearLayoutManager(this, OrientationHelper.VERTICAL, false)
-
-        net.getOrderList(object :IApiListener{
-            override fun error(e: Throwable) {
-
-
+        orderHistryAdapter.setOnItemClickListener(object : OrderHistoryListener {
+            override fun print(position: Int, view: View, data: Any) {
+                Toast.makeText(context, "点击了打印", Toast.LENGTH_SHORT).show()
             }
 
-            override fun success(data: Any) {
-                if (data is OrderList){
-                    order_history_list.clear()
-                    order_history_list.addAll(data.data?.order?.toMutableList()!!)
-                    orderHistryAdapter.notifyDataSetChanged()
-                }
+            override fun delete(position: Int, view: View, data: Any) {
+                AlertDialog.Builder(context)
+                    .setTitle("确认删除" + order_history_list.get(position).time+" 日"+order_history_list.get(position).customer_name+"的订单么" + "?")
+                    .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
+                        net.deleteOrder(order_history_list.get(position).customer_id, object : IApiListener {
+                            override fun success(data: Any) {
+
+                                Toast.makeText(context,"删除成功",Toast.LENGTH_SHORT).show()
+                                order_history_list.removeAt(position)
+                                orderHistryAdapter.notifyDataSetChanged()
+                            }
+
+                            override fun error(e: Throwable) {
+                                Log.e("lovesosoi",e.toString())
+                            }
+
+                        })
+                    })
+                    .setNeutralButton("取消", null)
+                    .create()
+                    .show()
+
             }
         })
+
 
         order_adapter.setOnItemClickListener(object : OnItemClick {
             override fun sub(position: Int, view: View, data: Any) {
@@ -229,23 +256,23 @@ class MainActivity : AppCompatActivity() {
         })
 
 
-        fruitAddDialog=AddFruitDialog(activity, R.style.DialogTheme)
-        customerAddDialog=AddCustomerDialog(activity, R.style.DialogTheme)
+        fruitAddDialog = AddFruitDialog(activity, R.style.DialogTheme)
+        customerAddDialog = AddCustomerDialog(activity, R.style.DialogTheme)
 
         fruitAddDialog?.setOnAddFruitListener(object : OnAddFruit {
             override fun add(name: String, price: Double, unit: String) {
 //                        Toast.makeText(context, name + " " + price + " " + unit, Toast.LENGTH_SHORT).show()
                 var fruit = CFruitBean.DataBean.FruitBean()
-                fruit.fruit_name=name
-                fruit.fruit_unit=unit
-                fruit.fruit_price=price.toString()
+                fruit.fruit_name = name
+                fruit.fruit_unit = unit
+                fruit.fruit_price = price.toString()
                 fruitList.add(fruit)
                 fruit_control_adapter.notifyDataSetChanged()
                 fruit_adapter.notifyDataSetChanged()
-                net.addFruit(name,price,unit,object :IApiListener{
+                net.addFruit(name, price, unit, object : IApiListener {
                     override fun success(data: Any) {
-                        if (data is BaseStatus){
-                            if (data.data!!.flag==1){
+                        if (data is BaseStatus) {
+                            if (data.data!!.flag == 1) {
                                 refreshFruit()
                             }
                         }
@@ -261,16 +288,16 @@ class MainActivity : AppCompatActivity() {
         customerAddDialog = AddCustomerDialog(activity, R.style.DialogTheme)
         customerAddDialog?.setOnAddCustomerListener(object : OnAddCustomer {
             override fun add(name: String) {
-                var c:CCustomer.DataBean.CustomerBean= CCustomer.DataBean.CustomerBean()
-                c.customer_name=name
+                var c: CCustomer.DataBean.CustomerBean = CCustomer.DataBean.CustomerBean()
+                c.customer_name = name
                 customers.add(c)
                 customerList.add(name)
-                Toast.makeText(context,"增加成功",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "增加成功", Toast.LENGTH_SHORT).show()
 
-                net.addCustomer(name,object :IApiListener{
+                net.addCustomer(name, object : IApiListener {
                     override fun success(data: Any) {
-                        if (data is BaseStatus){
-                            if (data.data!!.flag==1){
+                        if (data is BaseStatus) {
+                            if (data.data!!.flag == 1) {
                                 refreshCustomer()
 
                             }
@@ -283,7 +310,24 @@ class MainActivity : AppCompatActivity() {
                 })
             }
         })
+        getOrderList()
+    }
 
+    private fun getOrderList() {
+        net.getOrderList(object : IApiListener {
+            override fun error(e: Throwable) {
+
+
+            }
+
+            override fun success(data: Any) {
+                if (data is OrderList) {
+                    order_history_list.clear()
+                    order_history_list.addAll(data.data?.order?.toMutableList()!!)
+                    orderHistryAdapter.notifyDataSetChanged()
+                }
+            }
+        })
     }
 
 
@@ -294,6 +338,8 @@ class MainActivity : AppCompatActivity() {
             pay += value.count * value.price
             count++
         }
+        goodsitem = count
+        all_price = String.format("%.2f", pay)
         tv_pay.text = "总计:" + String.format("%.2f", pay) + "元"
         tv_goodnum.text = "共计" + count + "件货物"
     }
@@ -331,17 +377,17 @@ class MainActivity : AppCompatActivity() {
                             AlertDialog.Builder(context)
                                 .setTitle("确认删除" + fruitList.get(position).fruit_name + "?")
                                 .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
-                                    net.deleteFruit(fruitList.get(position).fruit_id,object :IApiListener{
+                                    net.deleteFruit(fruitList.get(position).fruit_id, object : IApiListener {
                                         override fun success(data: Any) {
-                                            if (data is BaseStatus){
-                                                if (data.data!!.flag==1){
-                                                    Toast.makeText(context,"删除成功",Toast.LENGTH_SHORT).show()
+                                            if (data is BaseStatus) {
+                                                if (data.data!!.flag == 1) {
+                                                    Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show()
                                                 }
                                             }
                                         }
 
                                         override fun error(e: Throwable) {
-                                            Log.e("Lovesosoi",e.toString())
+                                            Log.e("Lovesosoi", e.toString())
                                         }
                                     })
                                     fruitList.removeAt(position)
@@ -382,17 +428,17 @@ class MainActivity : AppCompatActivity() {
                             AlertDialog.Builder(context)
                                 .setTitle("确认删除" + customers.get(position).customer_name + "?")
                                 .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
-                                    net.deleteCustomer(customers.get(position).customer_id,object :IApiListener{
+                                    net.deleteCustomer(customers.get(position).customer_id, object : IApiListener {
                                         override fun success(data: Any) {
-                                            if (data is BaseStatus){
-                                                if (data.data!!.flag==1){
-                                                    Toast.makeText(context,"删除成功",Toast.LENGTH_SHORT).show()
+                                            if (data is BaseStatus) {
+                                                if (data.data!!.flag == 1) {
+                                                    Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show()
                                                 }
                                             }
                                         }
 
                                         override fun error(e: Throwable) {
-                                            Log.e("Lovesosoi",e.toString())
+                                            Log.e("Lovesosoi", e.toString())
                                         }
                                     })
                                     customers.removeAt(position)
@@ -410,6 +456,56 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.tv_commit -> {
                 //提交订单
+                if (customername == null) {
+                    Toast.makeText(context, "请选择商户", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                if (goodsitem == 0) {
+                    Toast.makeText(context, "请增加商品", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                var simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// HH:mm:ss
+                var date = Date(System.currentTimeMillis())
+                var time = simpleDateFormat.format(date)
+                var info = ""
+                for (i in orderList) {
+                    info += i.name + "|" + i.price + "/" + i.unit + "|" + i.count + i.unit + "|" + String.format(
+                        "%.2f",
+                        i.price * i.count
+                    ) + "元 " + "^"
+                }
+                Log.e(
+                    "Lovesosoi", "customerName=" + customername
+                            + " customerid= " + customerid
+                            + " time= " + time
+                            + " all_price= " + all_price
+                            + " all_item= " + goodsitem
+                            + " order_info= " + info
+                )
+
+                net.addOrder(
+                    customername!!,
+                    customerid.toString(),
+                    time,
+                    all_price.toString(),
+                    goodsitem.toString(),
+                    info,
+                    object : IApiListener {
+                        override fun success(data: Any) {
+                            if (data is BaseStatus) {
+                                if (data.data!!.flag == 1) {
+                                    Toast.makeText(context, "提交成功", Toast.LENGTH_SHORT).show()
+                                    getOrderList()
+                                }
+                            }
+                        }
+
+                        override fun error(e: Throwable) {
+
+                        }
+                    })
+
+
             }
             R.id.tv_add_fruit -> {
                 // 增加菜品
@@ -423,13 +519,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshCustomer() {
-        net.getCustomerList(object :IApiListener{
+        net.getCustomerList(object : IApiListener {
             override fun success(data: Any) {
-                if (data is CCustomer){
+                if (data is CCustomer) {
                     customers.clear()
                     customers.addAll(data.data!!.customer!!.toMutableList())
                     customerList.clear()
-                    for (i in customers){
+                    for (i in customers) {
                         customerList.add(i.customer_name!!)
                     }
                     startAdapter.notifyDataSetChanged()
@@ -448,10 +544,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun refreshFruit() {
 
-        net.getFruitList(object :IApiListener{
+        net.getFruitList(object : IApiListener {
             override fun success(data: Any) {
-                Toast.makeText(context,"增加成功",Toast.LENGTH_SHORT).show()
-                if (data is CFruitBean){
+                Toast.makeText(context, "增加成功", Toast.LENGTH_SHORT).show()
+                if (data is CFruitBean) {
                     fruitList.clear()
                     fruitList.addAll(data.data!!.fruit!!.toMutableList())
                     fruit_control_adapter.notifyDataSetChanged()
@@ -489,9 +585,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-            if (position != 0) {
-                Toast.makeText(context, "你的选择是：${customers[position].customer_name}", Toast.LENGTH_SHORT).show()
-            }
+//            if (position != 0) {
+//                Toast.makeText(context, "你的选择是：${customers[position].customer_name}", Toast.LENGTH_SHORT).show()
+            customername = customers.get(position).customer_name
+            customerid = customers.get(position).customer_id
+//            }
         }
     }
 }
