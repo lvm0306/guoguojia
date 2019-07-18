@@ -180,7 +180,7 @@ class MainActivity : AppCompatActivity() {
                 AlertDialog.Builder(context)
                     .setTitle("确认删除" + order_history_list.get(position).time+" 日"+order_history_list.get(position).customer_name+"的订单么" + "?")
                     .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
-                        net.deleteOrder(order_history_list.get(position).customer_id, object : IApiListener {
+                        net.deleteOrder(order_history_list.get(position).order_id, object : IApiListener {
                             override fun success(data: Any) {
 
                                 Toast.makeText(context,"删除成功",Toast.LENGTH_SHORT).show()
