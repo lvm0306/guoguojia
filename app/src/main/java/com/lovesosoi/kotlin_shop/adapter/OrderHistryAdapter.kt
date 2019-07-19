@@ -36,10 +36,22 @@ class OrderHistryAdapter(var context: Context, var data: MutableList<OrderList.D
 //        listener?.click()
         p0.tv_name.text = data.get(p1).customer_name
         p0.tv_time.text = data.get(p1).time
-        val order_info = data.get(p1).order_info
+        var order_info = data.get(p1).order_info
+        order_info=order_info!!.substring(0,order_info!!.length-1)
 //        var s=order_info!!.replace("^","\n")
 //        var s1=s!!.replace("|","\t\t\t\t")
         p0.ll_info.removeAllViews()
+
+        var view=LayoutInflater.from(context).inflate(R.layout.item_order_item,null)
+        var tv1=view.findViewById<TextView>(R.id.tv1)
+        var tv2=view.findViewById<TextView>(R.id.tv2)
+        var tv3=view.findViewById<TextView>(R.id.tv3)
+        var tv4=view.findViewById<TextView>(R.id.tv4)
+        tv1.text="名字"
+        tv2.text="单价"
+        tv3.text="数量"
+        tv4.text="价格"
+        p0.ll_info.addView(view)
         for (line in order_info!!.split("^")) {
             var view=LayoutInflater.from(context).inflate(R.layout.item_order_item,null)
             var tv1=view.findViewById<TextView>(R.id.tv1)

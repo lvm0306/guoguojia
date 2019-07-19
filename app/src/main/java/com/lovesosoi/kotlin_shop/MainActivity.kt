@@ -491,28 +491,37 @@ class MainActivity : AppCompatActivity() {
                             + " order_info= " + info
                 )
 
-                net.addOrder(
-                    customername!!,
-                    customerid.toString(),
-                    time,
-                    all_price.toString(),
-                    goodsitem.toString(),
-                    info,
-                    object : IApiListener {
-                        override fun success(data: Any) {
-                            if (data is BaseStatus) {
-                                if (data.data!!.flag == 1) {
-                                    util!!.showToast("提交成功")
 
-                                    getOrderList()
+                AlertDialog.Builder(context)
+                    .setTitle("确认提交"+customername+"的订单么" + "?")
+                    .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
+
+                        net.addOrder(
+                            customername!!,
+                            customerid.toString(),
+                            time,
+                            all_price.toString(),
+                            goodsitem.toString(),
+                            info,
+                            object : IApiListener {
+                                override fun success(data: Any) {
+                                    if (data is BaseStatus) {
+                                        if (data.data!!.flag == 1) {
+                                            util!!.showToast("提交成功")
+
+                                            getOrderList()
+                                        }
+                                    }
                                 }
-                            }
-                        }
 
-                        override fun error(e: Throwable) {
+                                override fun error(e: Throwable) {
 
-                        }
+                                }
+                            })
                     })
+                    .setNeutralButton("取消", null)
+                    .create()
+                    .show()
 
 
             }
