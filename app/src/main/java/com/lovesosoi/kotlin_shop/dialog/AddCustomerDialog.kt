@@ -14,7 +14,10 @@ import android.widget.Toast
 import com.lovesosoi.kotlin_shop.interfaces.OnAddCustomer
 import com.lovesosoi.kotlin_shop.R
 
-
+/**
+ * 增加商户dialog
+ * 2019-7-19 Lovesosoi
+ */
 class AddCustomerDialog(context: Context, themeResId: Int) : Dialog(context, themeResId) {
     var listener: OnAddCustomer? = null
     override fun onCreate(savedInstanceState: Bundle?) {

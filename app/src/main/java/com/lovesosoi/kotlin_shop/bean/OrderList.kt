@@ -2,6 +2,10 @@ package com.lovesosoi.kotlin_shop.bean
 
 import java.io.Serializable
 
+/**
+ * 历史订单列表
+ * 2019-7-19 Lovesosoi
+ */
 class OrderList : Serializable {
 
     /**

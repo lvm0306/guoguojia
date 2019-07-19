@@ -11,8 +11,15 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.HashMap
 
-class NetUtils{
-    fun getFruitList(listener:IApiListener){
+/**
+ * 网络请求
+ * 2019-7-19 Lovesosoi
+ */
+class NetUtils {
+    /**
+     * 获取水果列表
+     */
+    fun getFruitList(listener: IApiListener) {
         BuildApi.buildApiServers()
             ?.getFruitList()
             ?.subscribeOn(Schedulers.newThread())
@@ -27,7 +34,11 @@ class NetUtils{
                 }
             })
     }
-    fun getCustomerList(listener:IApiListener){
+
+    /**
+     * 获取商户列表
+     */
+    fun getCustomerList(listener: IApiListener) {
         BuildApi.buildApiServers()
             ?.getCustomerList()
             ?.subscribeOn(Schedulers.newThread())
@@ -42,7 +53,11 @@ class NetUtils{
                 }
             })
     }
-    fun getOrderList(listener:IApiListener){
+
+    /**
+     * 获取订单列表
+     */
+    fun getOrderList(listener: IApiListener) {
 
         BuildApi.buildApiServers()
             ?.getOrderHistory()
@@ -58,7 +73,11 @@ class NetUtils{
                 }
             })
     }
-    fun addFruit(name:String,price:Double,unit:String,listener:IApiListener){
+
+    /**
+     * 增加水果
+     */
+    fun addFruit(name: String, price: Double, unit: String, listener: IApiListener) {
         val parm = HashMap<String, String>()
         parm.put("fruit_name", name)
         parm.put("fruit_price", price.toString())
@@ -77,7 +96,11 @@ class NetUtils{
                 }
             })
     }
-    fun deleteFruit(id:Int,listener:IApiListener){
+
+    /**
+     * 删除水果
+     */
+    fun deleteFruit(id: Int, listener: IApiListener) {
         val parm = HashMap<String, String>()
         parm.put("fruit_id", id.toString())
         BuildApi.buildApiServers()
@@ -94,7 +117,11 @@ class NetUtils{
                 }
             })
     }
-    fun addCustomer(name:String,listener:IApiListener){
+
+    /**
+     * 增加商户
+     */
+    fun addCustomer(name: String, listener: IApiListener) {
         val parm = HashMap<String, String>()
         parm.put("customer_name", name)
         BuildApi.buildApiServers()
@@ -111,7 +138,11 @@ class NetUtils{
                 }
             })
     }
-    fun deleteCustomer(id:Int,listener:IApiListener){
+
+    /**
+     * 删除商户
+     */
+    fun deleteCustomer(id: Int, listener: IApiListener) {
         val parm = HashMap<String, String>()
         parm.put("customer_id", id.toString())
         BuildApi.buildApiServers()
@@ -128,7 +159,11 @@ class NetUtils{
                 }
             })
     }
-    fun deleteOrder(id:Int,listener:IApiListener){
+
+    /**
+     * 删除订单
+     */
+    fun deleteOrder(id: Int, listener: IApiListener) {
         val parm = HashMap<String, String>()
         parm.put("order_id", id.toString())
         BuildApi.buildApiServers()
@@ -146,13 +181,18 @@ class NetUtils{
             })
     }
 
-    fun addOrder(customer_name:String,
-                 cusomerid:String,
-                 time:String,
-                 all_price:String,
-                 all_item:String,
-                 order_info:String,
-                 listener:IApiListener){
+    /**
+     * 增加订单
+     */
+    fun addOrder(
+        customer_name: String,
+        cusomerid: String,
+        time: String,
+        all_price: String,
+        all_item: String,
+        order_info: String,
+        listener: IApiListener
+    ) {
         val parm = HashMap<String, String>()
         parm.put("customer_id", cusomerid)
         parm.put("customer_name", customer_name)

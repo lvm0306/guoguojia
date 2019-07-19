@@ -15,6 +15,10 @@ import com.lovesosoi.kotlin_shop.interfaces.OnCountClick
 import com.lovesosoi.kotlin_shop.interfaces.OnItemClick
 import com.lovesosoi.kotlin_shop.interfaces.OrderHistoryListener
 
+/**
+ * 历史订单
+ * 2019-7-19 Lovesosoi
+ */
 class OrderHistryAdapter(var context: Context, var data: MutableList<OrderList.DataBean.OrderBean>) :
     RecyclerView.Adapter<OrderHistryAdapter.OrderHistoryAdapterHolder>() {
     lateinit var listener: OrderHistoryListener

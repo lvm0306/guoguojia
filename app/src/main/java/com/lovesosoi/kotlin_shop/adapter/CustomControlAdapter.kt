@@ -10,7 +10,10 @@ import com.lovesosoi.kotlin_shop.interfaces.OnListItemLongClickListener
 import com.lovesosoi.kotlin_shop.R
 import com.lovesosoi.kotlin_shop.bean.CCustomer
 
-
+/**
+ * 商户管理
+ * 2019-7-19 Lovesosoi
+ */
 class CustomControlAdapter(var context: Context, var data:MutableList<CCustomer.DataBean.CustomerBean>) : RecyclerView.Adapter<CustomControlAdapter.CustomControlViewHoler>(){
     var listener: OnListItemLongClickListener? =null
 

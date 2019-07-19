@@ -2,6 +2,10 @@ package com.lovesosoi.kotlin_shop.bean
 
 import java.io.Serializable
 
+/**
+ * 水果
+ * 2019-7-19 Lovesosoi
+ */
 class CFruitBean : Serializable {
 
     /**

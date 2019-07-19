@@ -15,7 +15,8 @@ import okhttp3.ResponseBody;
 import okio.Buffer;
 
 /**
- * Created by tianweiping on 2017/11/7.
+ * 拦截日志
+ * 2019-7-19 Lovesosoi
  */
 
 public class HttpLogInterceptor implements Interceptor {

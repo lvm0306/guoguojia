@@ -11,7 +11,8 @@ import retrofit2.http.Query
 import retrofit2.http.QueryMap
 
 /**
- * Created by tianweiping on 2017/12/18.
+ * rxjava+ retrofit
+ * 2019-7-19 Lovesosoi
  */
 interface ApiServers {
 

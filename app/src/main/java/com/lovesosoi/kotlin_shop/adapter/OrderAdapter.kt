@@ -11,6 +11,10 @@ import com.lovesosoi.kotlin_shop.bean.OrderBean
 import com.lovesosoi.kotlin_shop.interfaces.OnCountClick
 import com.lovesosoi.kotlin_shop.interfaces.OnItemClick
 
+/**
+ * 下单
+ * 2019-7-19 Lovesosoi
+ */
 class OrderAdapter(var context: Context, var data: MutableList<OrderBean>) :
     RecyclerView.Adapter<OrderAdapter.OrderAdapterHolder>() {
     lateinit var listener: OnItemClick

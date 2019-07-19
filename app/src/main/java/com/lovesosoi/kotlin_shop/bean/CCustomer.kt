@@ -2,6 +2,10 @@ package com.lovesosoi.kotlin_shop.bean
 
 import java.io.Serializable
 
+/**
+ * 商户
+ * 2019-7-19 Lovesosoi
+ */
 class CCustomer :Serializable{
 
     /**

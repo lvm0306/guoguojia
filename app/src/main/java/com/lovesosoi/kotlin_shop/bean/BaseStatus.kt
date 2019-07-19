@@ -2,6 +2,10 @@ package com.lovesosoi.kotlin_shop.bean
 
 import java.io.Serializable
 
+/**
+ * base 请求信息
+ * 2019-7-19 Lovesosoi
+ */
 class BaseStatus :Serializable{
 
     /**

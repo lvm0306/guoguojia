@@ -8,9 +8,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.lovesosoi.kotlin_shop.R
 import com.lovesosoi.kotlin_shop.bean.CFruitBean
-import com.lovesosoi.kotlin_shop.bean.FruitBean
 import com.lovesosoi.kotlin_shop.interfaces.OnItemClick
 
+/**
+ * 水果
+ * 2019-7-19 Lovesosoi
+ */
 class FruitAdapter(var context:Context,var data:MutableList<CFruitBean.DataBean.FruitBean>) : RecyclerView.Adapter<FruitAdapter.FruitAdapterHolder>(){
     var listener: OnItemClick? =null
 

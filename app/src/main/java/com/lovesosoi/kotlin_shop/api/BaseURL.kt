@@ -1,6 +1,9 @@
 package com.colin.doumovie.api
 
-
+/**
+ * 网络请求地址
+ * 2019-7-19 Lovesosoi
+ */
 class BaseURL {
     companion object {
         val SERVER_URL = "http://149.28.158.28:8000/api/fruit/"

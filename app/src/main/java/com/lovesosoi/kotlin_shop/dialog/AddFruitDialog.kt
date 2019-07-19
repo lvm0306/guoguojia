@@ -13,7 +13,10 @@ import android.widget.*
 import com.lovesosoi.kotlin_shop.R
 import com.lovesosoi.kotlin_shop.interfaces.OnAddFruit
 
-
+/**
+ * 增加水果dialog
+ * 2019-7-19 Lovesosoi
+ */
 class AddFruitDialog(context: Context, themeResId: Int) : Dialog(context, themeResId) {
     var listener: OnAddFruit? = null
     var stringArray:List<String>?=null

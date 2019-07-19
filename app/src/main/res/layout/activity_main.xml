@@ -15,6 +15,7 @@
         android:orientation="vertical"
         tools:context=".MainActivity">
     <RelativeLayout
+            android:visibility="gone"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="50dp">
@@ -139,8 +140,70 @@
                               android:layout_width="wrap_content"
                               android:layout_height="30dp"/>
                 </RelativeLayout>
-                <android.support.v7.widget.RecyclerView
+
+                <RelativeLayout
                         android:layout_marginTop="40dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:orientation="vertical">
+
+                    <TextView
+                            android:id="@+id/tv_name"
+                            android:textSize="14sp"
+                            android:textColor="#333"
+                            android:text="名字"
+                            android:gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"/>
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:gravity="center"
+                            android:id="@+id/tv_unit"
+                            android:textSize="14sp"
+                            android:textColor="#333"
+                            android:layout_height="match_parent"/>
+                    <LinearLayout
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:layout_width="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerHorizontal="true"
+                            android:layout_height="match_parent">
+                        <TextView
+                                android:id="@+id/tv_sub"
+                                android:layout_width="wrap_content"
+                                android:textSize="18sp"
+                                android:text="一"
+                                android:padding="10dp"
+                                android:layout_height="wrap_content"/>
+                        <TextView
+                                android:id="@+id/tv_count"
+                                android:layout_width="wrap_content"
+                                android:textSize="14sp"
+                                android:text="1"
+                                android:minWidth="40dp"
+                                android:gravity="center"
+                                android:layout_height="wrap_content"/>
+                        <TextView android:id="@+id/tv_add"
+                                  android:layout_width="wrap_content"
+                                  android:textSize="18sp"
+                                  android:text="+"
+                                  android:padding="10dp"
+                                  android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <View android:layout_alignParentBottom="true"
+                          android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/mainbg"/>
+
+
+                </RelativeLayout>
+                <android.support.v7.widget.RecyclerView
+                        android:layout_marginTop="81dp"
                         android:id="@+id/rv_menu"
                         android:layout_width="match_parent"
                         tools:itemCount="6"

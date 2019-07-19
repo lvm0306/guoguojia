@@ -34,6 +34,10 @@ import org.reactivestreams.Subscription
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * 首页
+ * 2019-7-19 Lovesosoi
+ */
 class MainActivity : AppCompatActivity() {
 
     //    @BindView(R.id.tv_title)
@@ -72,6 +76,7 @@ class MainActivity : AppCompatActivity() {
     var customerid: Int = 0
     var goodsitem: Int = 0
     var all_price: String? = null
+    var util:Utils? =null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -85,6 +90,7 @@ class MainActivity : AppCompatActivity() {
         context = this
         activity = this as Activity
         net = NetUtils()
+        util= Utils(context)
         //获取水果
         net.getFruitList(object : IApiListener {
             override fun success(data: Any) {
@@ -173,7 +179,8 @@ class MainActivity : AppCompatActivity() {
         rv_commit_order.layoutManager = LinearLayoutManager(this, OrientationHelper.VERTICAL, false)
         orderHistryAdapter.setOnItemClickListener(object : OrderHistoryListener {
             override fun print(position: Int, view: View, data: Any) {
-                Toast.makeText(context, "点击了打印", Toast.LENGTH_SHORT).show()
+                util!!.showToast("点击了打印")
+
             }
 
             override fun delete(position: Int, view: View, data: Any) {
@@ -182,8 +189,7 @@ class MainActivity : AppCompatActivity() {
                     .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
                         net.deleteOrder(order_history_list.get(position).order_id, object : IApiListener {
                             override fun success(data: Any) {
-
-                                Toast.makeText(context,"删除成功",Toast.LENGTH_SHORT).show()
+                                util!!.showToast("删除成功")
                                 order_history_list.removeAt(position)
                                 orderHistryAdapter.notifyDataSetChanged()
                             }
@@ -241,7 +247,7 @@ class MainActivity : AppCompatActivity() {
                         .setTitle(msg)
                         .setView(et)
                         .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
-                            Toast.makeText(context, et.text.toString(), Toast.LENGTH_SHORT).show()
+                            util!!.showToast(et.text.toString())
                             orderList.get(position).count = et.text.toString().toDouble()
                             refreshOrder()
                             order_adapter.notifyDataSetChanged()
@@ -292,7 +298,8 @@ class MainActivity : AppCompatActivity() {
                 c.customer_name = name
                 customers.add(c)
                 customerList.add(name)
-                Toast.makeText(context, "增加成功", Toast.LENGTH_SHORT).show()
+                util!!.showToast("增加成功")
+
 
                 net.addCustomer(name, object : IApiListener {
                     override fun success(data: Any) {
@@ -381,7 +388,8 @@ class MainActivity : AppCompatActivity() {
                                         override fun success(data: Any) {
                                             if (data is BaseStatus) {
                                                 if (data.data!!.flag == 1) {
-                                                    Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show()
+                                                    util!!.showToast("删除成功")
+
                                                 }
                                             }
                                         }
@@ -432,19 +440,19 @@ class MainActivity : AppCompatActivity() {
                                         override fun success(data: Any) {
                                             if (data is BaseStatus) {
                                                 if (data.data!!.flag == 1) {
-                                                    Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show()
+                                                    util!!.showToast("删除成功")
+                                                    customers.removeAt(position)
+                                                    customerList.removeAt(position)
+                                                    custom_control_adapter.notifyDataSetChanged()
+                                                    startAdapter.notifyDataSetChanged()
                                                 }
                                             }
                                         }
 
                                         override fun error(e: Throwable) {
-                                            Log.e("Lovesosoi", e.toString())
+                                            util!!.e( e.toString())
                                         }
                                     })
-                                    customers.removeAt(position)
-                                    customerList.removeAt(position)
-                                    custom_control_adapter.notifyDataSetChanged()
-                                    startAdapter.notifyDataSetChanged()
                                 })
                                 .setNeutralButton("取消", null)
                                 .create()
@@ -457,16 +465,16 @@ class MainActivity : AppCompatActivity() {
             R.id.tv_commit -> {
                 //提交订单
                 if (customername == null) {
-                    Toast.makeText(context, "请选择商户", Toast.LENGTH_SHORT).show()
+                    util!!.showToast("请选择商户")
                     return
                 }
                 if (goodsitem == 0) {
-                    Toast.makeText(context, "请增加商品", Toast.LENGTH_SHORT).show()
+                    util!!.showToast("请增加商品")
                     return
                 }
-                var simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// HH:mm:ss
-                var date = Date(System.currentTimeMillis())
-                var time = simpleDateFormat.format(date)
+                val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// HH:mm:ss
+                val date = Date(System.currentTimeMillis())
+                val time = simpleDateFormat.format(date)
                 var info = ""
                 for (i in orderList) {
                     info += i.name + "|" + i.price + "/" + i.unit + "|" + i.count + i.unit + "|" + String.format(
@@ -494,7 +502,8 @@ class MainActivity : AppCompatActivity() {
                         override fun success(data: Any) {
                             if (data is BaseStatus) {
                                 if (data.data!!.flag == 1) {
-                                    Toast.makeText(context, "提交成功", Toast.LENGTH_SHORT).show()
+                                    util!!.showToast("提交成功")
+
                                     getOrderList()
                                 }
                             }
@@ -518,6 +527,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * 增加商户后，刷新商户
+     */
     private fun refreshCustomer() {
         net.getCustomerList(object : IApiListener {
             override fun success(data: Any) {
@@ -542,11 +554,16 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    /**
+     *
+     * 增加水果后，刷新水果
+     */
     private fun refreshFruit() {
 
         net.getFruitList(object : IApiListener {
             override fun success(data: Any) {
-                Toast.makeText(context, "增加成功", Toast.LENGTH_SHORT).show()
+                util!!.showToast("增加成功")
+
                 if (data is CFruitBean) {
                     fruitList.clear()
                     fruitList.addAll(data.data!!.fruit!!.toMutableList())
@@ -564,6 +581,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * 切换标签
+     */
     fun closeTab() {
         ll_change_fruit.visibility = View.GONE
         ll_order.visibility = View.GONE
@@ -579,6 +599,9 @@ class MainActivity : AppCompatActivity() {
         tv_menu4.setBackgroundColor(Color.parseColor("#aa464447"))
     }
 
+    /**
+     * Spinner 点击 内部类
+     */
     internal inner class myItemClickListener : AdapterView.OnItemSelectedListener {
         override fun onNothingSelected(parent: AdapterView<*>?) {
 

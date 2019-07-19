@@ -2,6 +2,11 @@ package com.lovesosoi.kotlin_shop.api
 
 import org.reactivestreams.Subscriber
 
+/**
+ * observer 扩展
+ *
+ * 2019-7-19 Lovesosoi
+ */
 abstract class BaseObserver<T> : Subscriber<T> {
     override fun onError(e: Throwable?) {
         onFail(e)

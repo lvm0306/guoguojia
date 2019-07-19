@@ -10,8 +10,11 @@ import android.widget.TextView
 import com.lovesosoi.kotlin_shop.interfaces.OnListItemLongClickListener
 import com.lovesosoi.kotlin_shop.R
 import com.lovesosoi.kotlin_shop.bean.CFruitBean
-import com.lovesosoi.kotlin_shop.bean.FruitBean
 
+/**
+ * 水果展示
+ * 2019-7-19 Lovesosoi
+ */
 class FruitDisplayAdapter(var context:Context,var data:MutableList<CFruitBean.DataBean.FruitBean>) : RecyclerView.Adapter<FruitDisplayAdapter.FruitAdapterHolder>(){
     var listener: OnListItemLongClickListener? =null
 
