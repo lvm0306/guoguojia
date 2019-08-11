@@ -1,11 +1,17 @@
 package com.lovesosoi.kotlin_shop
 
+import android.Manifest
 import android.app.Activity
-import android.content.Context
-import android.content.DialogInterface
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothManager
+import android.content.*
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
@@ -26,9 +32,11 @@ import com.lovesosoi.kotlin_shop.bean.*
 import com.lovesosoi.kotlin_shop.dialog.AddCustomerDialog
 import com.lovesosoi.kotlin_shop.dialog.AddFruitDialog
 import com.lovesosoi.kotlin_shop.interfaces.*
+import com.lovesosoi.kotlin_shop.utils.DeviceReceiver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.internal.Util
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
 import java.text.SimpleDateFormat
@@ -179,13 +187,13 @@ class MainActivity : AppCompatActivity() {
         rv_commit_order.layoutManager = LinearLayoutManager(this, OrientationHelper.VERTICAL, false)
         orderHistryAdapter.setOnItemClickListener(object : OrderHistoryListener {
             override fun print(position: Int, view: View, data: Any) {
-                util!!.showToast("点击了打印")
-
+               //判断是否打开蓝牙
+                openBlu()
             }
 
             override fun delete(position: Int, view: View, data: Any) {
                 AlertDialog.Builder(context)
-                    .setTitle("确认删除" + order_history_list.get(position).time+" 日"+order_history_list.get(position).customer_name+"的订单么" + "?")
+                    .setTitle("确认删除" + order_history_list.get(position).time + " 日" + order_history_list.get(position).customer_name + "的订单么" + "?")
                     .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
                         net.deleteOrder(order_history_list.get(position).order_id, object : IApiListener {
                             override fun success(data: Any) {
@@ -195,7 +203,7 @@ class MainActivity : AppCompatActivity() {
                             }
 
                             override fun error(e: Throwable) {
-                                Log.e("lovesosoi",e.toString())
+                                Log.e("lovesosoi", e.toString())
                             }
 
                         })
@@ -318,6 +326,55 @@ class MainActivity : AppCompatActivity() {
             }
         })
         getOrderList()
+    }
+
+    /**
+     * 打开蓝牙
+     */
+    private fun openBlu() {
+        //判断权限
+        isHaveQX()
+        //打开蓝牙
+        var mBluetoothManager: BluetoothManager = this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager;
+        var mBluetoothAdapter: BluetoothAdapter = mBluetoothManager.getAdapter()
+        if (!mBluetoothAdapter.isEnabled()) {
+            var enableBtIntent: Intent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            enableBtIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(enableBtIntent)
+        }
+
+        mBluetoothAdapter.startDiscovery()
+//        var myDevice: DeviceReceiver = DeviceReceiver( deviceList_found, adapter2, lv2)
+
+//        //注册蓝牙广播接收者
+//        val filterStart = IntentFilter(BluetoothDevice.ACTION_FOUND)
+//        val filterEnd = IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+//        registerReceiver(myDevice, filterStart)
+//        registerReceiver(myDevice, filterEnd)
+    }
+
+    private fun isHaveQX() {
+        val permissions = arrayOf(
+            Manifest.permission.BLUETOOTH_PRIVILEGED,
+            Manifest.permission.BLUETOOTH_ADMIN,
+            Manifest.permission.BLUETOOTH
+        )
+
+        val mPermissionList = ArrayList<String>()
+
+        //逐个判断你要的权限是否已经通过
+        for (i in permissions.indices) {
+            if (ContextCompat.checkSelfPermission(context, permissions[i]) != PackageManager.PERMISSION_GRANTED) {
+                mPermissionList.add(permissions[i])//添加还未授予的权限
+            }
+        }
+        //申请权限
+        if (mPermissionList.size > 0) {//有权限没有通过，需要申请
+            ActivityCompat.requestPermissions(activity, permissions, 1)
+        } else {
+            //说明权限都已经通过，可以做你想做的事情去
+            Log.e(ContentValues.TAG, "请随意发挥")
+        }
     }
 
     private fun getOrderList() {
