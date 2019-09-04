@@ -1,6 +1,7 @@
 package com.lovesosoi.kotlin_shop
 
 import android.Manifest
+import android.annotation.TargetApi
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -8,8 +9,12 @@ import android.bluetooth.BluetoothManager
 import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.IBinder
+import android.os.Message
+import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
@@ -32,10 +37,16 @@ import com.lovesosoi.kotlin_shop.bean.*
 import com.lovesosoi.kotlin_shop.dialog.AddCustomerDialog
 import com.lovesosoi.kotlin_shop.dialog.AddFruitDialog
 import com.lovesosoi.kotlin_shop.interfaces.*
-import com.lovesosoi.kotlin_shop.utils.DeviceReceiver
+import com.lovesosoi.kotlin_shop.receiver.DeviceReceiver
+import com.lovesosoi.kotlin_shop.utils.StringUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import net.posprinter.posprinterface.IMyBinder
+import net.posprinter.posprinterface.ProcessData
+import net.posprinter.posprinterface.UiExecute
+import net.posprinter.service.PosprinterService
+import net.posprinter.utils.DataForSendToPrinterPos76
 import okhttp3.internal.Util
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
@@ -76,7 +87,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var custom_control_adapter: CustomControlAdapter
     lateinit var orderHistryAdapter: OrderHistryAdapter
     lateinit var startAdapter: ArrayAdapter<String>
-    lateinit var net: NetUtils
+    lateinit var api: NetUtils
     var customers = mutableListOf<CCustomer.DataBean.CustomerBean>()
     var fruitAddDialog: AddFruitDialog? = null
     var customerAddDialog: AddCustomerDialog? = null
@@ -85,10 +96,27 @@ class MainActivity : AppCompatActivity() {
     var goodsitem: Int = 0
     var all_price: String? = null
     var util:Utils? =null
+    var mAddress=""//蓝牙 设备地址
+    var mName=""//蓝牙  设备名字
+    var binder: IMyBinder?=null
+    //bindService的参数connection
+    internal var conn: ServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
+            //绑定成功
+            binder = iBinder as IMyBinder
+            Log.e("binder", "connected")
+        }
+
+        override fun onServiceDisconnected(componentName: ComponentName) {
+            Log.e("disbinder", "disconnected")
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         ButterKnife.bind(this)
+        val intent = Intent(this, PosprinterService::class.java)
+        bindService(intent, conn, Context.BIND_AUTO_CREATE)
         initData()
         initView()
     }
@@ -97,10 +125,10 @@ class MainActivity : AppCompatActivity() {
 
         context = this
         activity = this as Activity
-        net = NetUtils()
+        api = NetUtils()
         util= Utils(context)
         //获取水果
-        net.getFruitList(object : IApiListener {
+        api.getFruitList(object : IApiListener {
             override fun success(data: Any) {
                 if (data is CFruitBean) {
                     fruitList = data.data?.fruit?.toMutableList()!!
@@ -150,7 +178,7 @@ class MainActivity : AppCompatActivity() {
 
         })
         // 获取商户
-        net.getCustomerList(object : IApiListener {
+        api.getCustomerList(object : IApiListener {
             override fun success(data: Any) {
                 if (data is CCustomer) {
                     customers = data.data!!.customer!!.toMutableList()
@@ -186,6 +214,7 @@ class MainActivity : AppCompatActivity() {
         rv_commit_order.adapter = orderHistryAdapter
         rv_commit_order.layoutManager = LinearLayoutManager(this, OrientationHelper.VERTICAL, false)
         orderHistryAdapter.setOnItemClickListener(object : OrderHistoryListener {
+            @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
             override fun print(position: Int, view: View, data: Any) {
                //判断是否打开蓝牙
                 openBlu()
@@ -195,7 +224,7 @@ class MainActivity : AppCompatActivity() {
                 AlertDialog.Builder(context)
                     .setTitle("确认删除" + order_history_list.get(position).time + " 日" + order_history_list.get(position).customer_name + "的订单么" + "?")
                     .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
-                        net.deleteOrder(order_history_list.get(position).order_id, object : IApiListener {
+                        api.deleteOrder(order_history_list.get(position).order_id, object : IApiListener {
                             override fun success(data: Any) {
                                 util!!.showToast("删除成功")
                                 order_history_list.removeAt(position)
@@ -283,7 +312,7 @@ class MainActivity : AppCompatActivity() {
                 fruitList.add(fruit)
                 fruit_control_adapter.notifyDataSetChanged()
                 fruit_adapter.notifyDataSetChanged()
-                net.addFruit(name, price, unit, object : IApiListener {
+                api.addFruit(name, price, unit, object : IApiListener {
                     override fun success(data: Any) {
                         if (data is BaseStatus) {
                             if (data.data!!.flag == 1) {
@@ -309,7 +338,7 @@ class MainActivity : AppCompatActivity() {
                 util!!.showToast("增加成功")
 
 
-                net.addCustomer(name, object : IApiListener {
+                api.addCustomer(name, object : IApiListener {
                     override fun success(data: Any) {
                         if (data is BaseStatus) {
                             if (data.data!!.flag == 1) {
@@ -331,26 +360,86 @@ class MainActivity : AppCompatActivity() {
     /**
      * 打开蓝牙
      */
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private fun openBlu() {
         //判断权限
         isHaveQX()
         //打开蓝牙
-        var mBluetoothManager: BluetoothManager = this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager;
+        var mBluetoothManager: BluetoothManager = this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         var mBluetoothAdapter: BluetoothAdapter = mBluetoothManager.getAdapter()
         if (!mBluetoothAdapter.isEnabled()) {
-            var enableBtIntent: Intent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            var enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             enableBtIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(enableBtIntent)
         }
-
-        mBluetoothAdapter.startDiscovery()
-//        var myDevice: DeviceReceiver = DeviceReceiver( deviceList_found, adapter2, lv2)
-
+        if (!mBluetoothAdapter.isDiscovering()) {
+            mBluetoothAdapter.startDiscovery()
+        }
+//        var deviceList_found=ArrayList<String>()
+//        var myDevice= DeviceReceiver(deviceList_found)
 //        //注册蓝牙广播接收者
 //        val filterStart = IntentFilter(BluetoothDevice.ACTION_FOUND)
 //        val filterEnd = IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
 //        registerReceiver(myDevice, filterStart)
 //        registerReceiver(myDevice, filterEnd)
+        var bonded=mBluetoothAdapter.bondedDevices
+        for (i in bonded){
+            if (i.name=="Printer001"||i.address=="DC:0D:30:7C:0A:E8"){
+                mName=i.name
+                mAddress=i.address
+                util!!.e(mName+"-- name" + mAddress+"-- adress")
+
+            }
+        }
+        if (mName.length==0){
+            util!!.showToast("请先在系统设置中链接打印设备")
+        }else{
+            util!!.showToast("已找到设备，开始连接")
+            if (mBluetoothAdapter.isDiscovering()) {
+                mBluetoothAdapter.cancelDiscovery()
+            }
+            binder!!.connectBtPort(mAddress, object : UiExecute {
+                override fun onsucess() {
+                    util!!.showToast("连接成功")
+//                    ISCONNECT = true
+//                    val b = binder.readBuffer()
+//                    val message = Message()
+//                    message.what = 1
+//                    handler.handleMessage(message)
+                }
+                override fun onfailed() {
+                    //连接失败后在UI线程中的执行
+//                    ISCONNECT = false
+                    util!!.showToast("连接失败")
+                }
+            })
+            binder!!.writeDataByYouself(object : UiExecute {
+                override fun onsucess() {
+//                    showSnackbar("ok")
+                }
+
+                override fun onfailed() {
+                    //                showSnackbar("failed");
+//                    showSnackbar("2")
+
+                }
+            }, ProcessData {
+                Log.e("bttext", "bttext1")
+                val list = ArrayList<ByteArray>()
+                //创建一段我们想打印的文本,转换为byte[]类型，并添加到要发送的数据的集合list中
+                val str =
+                    "Welcome to use the impact and thermal printer manufactured by professional POS receipt printer company!"
+                val data = StringUtils.strTobytes(str)
+                list.add(DataForSendToPrinterPos76.initializePrinter())
+                list.add(data)
+                //追加一个打印换行指令，因为，pos打印机满一行才打印，不足一行，不打印
+                list.add(net.posprinter.utils.DataForSendToPrinterPos76.printAndFeedLine())
+
+                list
+            })
+        }
+
     }
 
     private fun isHaveQX() {
@@ -378,7 +467,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getOrderList() {
-        net.getOrderList(object : IApiListener {
+        api.getOrderList(object : IApiListener {
             override fun error(e: Throwable) {
 
 
@@ -441,7 +530,7 @@ class MainActivity : AppCompatActivity() {
                             AlertDialog.Builder(context)
                                 .setTitle("确认删除" + fruitList.get(position).fruit_name + "?")
                                 .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
-                                    net.deleteFruit(fruitList.get(position).fruit_id, object : IApiListener {
+                                    api.deleteFruit(fruitList.get(position).fruit_id, object : IApiListener {
                                         override fun success(data: Any) {
                                             if (data is BaseStatus) {
                                                 if (data.data!!.flag == 1) {
@@ -493,7 +582,7 @@ class MainActivity : AppCompatActivity() {
                             AlertDialog.Builder(context)
                                 .setTitle("确认删除" + customers.get(position).customer_name + "?")
                                 .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
-                                    net.deleteCustomer(customers.get(position).customer_id, object : IApiListener {
+                                    api.deleteCustomer(customers.get(position).customer_id, object : IApiListener {
                                         override fun success(data: Any) {
                                             if (data is BaseStatus) {
                                                 if (data.data!!.flag == 1) {
@@ -553,7 +642,7 @@ class MainActivity : AppCompatActivity() {
                     .setTitle("确认提交"+customername+"的订单么" + "?")
                     .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
 
-                        net.addOrder(
+                        api.addOrder(
                             customername!!,
                             customerid.toString(),
                             time,
@@ -592,12 +681,24 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    override fun onDestroy() {
+        super.onDestroy()
+        binder!!.disconnectCurrentPort(object : UiExecute {
+            override fun onsucess() {
 
+            }
+
+            override fun onfailed() {
+
+            }
+        })
+        unbindService(conn)
+    }
     /**
      * 增加商户后，刷新商户
      */
     private fun refreshCustomer() {
-        net.getCustomerList(object : IApiListener {
+        api.getCustomerList(object : IApiListener {
             override fun success(data: Any) {
                 if (data is CCustomer) {
                     customers.clear()
@@ -626,7 +727,7 @@ class MainActivity : AppCompatActivity() {
      */
     private fun refreshFruit() {
 
-        net.getFruitList(object : IApiListener {
+        api.getFruitList(object : IApiListener {
             override fun success(data: Any) {
                 util!!.showToast("增加成功")
 

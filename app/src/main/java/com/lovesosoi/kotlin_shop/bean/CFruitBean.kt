@@ -32,6 +32,7 @@ class CFruitBean : Serializable {
             var fruit_name: String? = null
             var fruit_price: String? = null
             var fruit_unit: String? = null
+
         }
     }
 }
