@@ -95,22 +95,25 @@ class MainActivity : AppCompatActivity() {
     var customerid: Int = 0
     var goodsitem: Int = 0
     var all_price: String? = null
-    var util:Utils? =null
-    var mAddress=""//蓝牙 设备地址
-    var mName=""//蓝牙  设备名字
-    var binder: IMyBinder?=null
+    var util: Utils? = null
+    var mAddress = ""//蓝牙 设备地址
+    var mName = ""//蓝牙  设备名字
+    var CONNECT = false
+    var binder: IMyBinder? = null
     //bindService的参数connection
-    internal var conn: ServiceConnection = object : ServiceConnection {
-        override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
+    var conn: ServiceConnection? = object : ServiceConnection {
+        override fun onServiceConnected(componentName: ComponentName, b: IBinder) {
             //绑定成功
-            binder = iBinder as IMyBinder
             Log.e("binder", "connected")
+
+            binder = (b as IMyBinder)
         }
 
         override fun onServiceDisconnected(componentName: ComponentName) {
             Log.e("disbinder", "disconnected")
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -126,7 +129,8 @@ class MainActivity : AppCompatActivity() {
         context = this
         activity = this as Activity
         api = NetUtils()
-        util= Utils(context)
+        util = Utils(context)
+
         //获取水果
         api.getFruitList(object : IApiListener {
             override fun success(data: Any) {
@@ -216,8 +220,12 @@ class MainActivity : AppCompatActivity() {
         orderHistryAdapter.setOnItemClickListener(object : OrderHistoryListener {
             @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
             override fun print(position: Int, view: View, data: Any) {
-               //判断是否打开蓝牙
-                openBlu()
+                //判断是否打开蓝牙
+                if (!CONNECT) {
+                    openBlu()
+                } else {
+                    BluWrite()
+                }
             }
 
             override fun delete(position: Int, view: View, data: Any) {
@@ -366,8 +374,8 @@ class MainActivity : AppCompatActivity() {
         //判断权限
         isHaveQX()
         //打开蓝牙
-        var mBluetoothManager: BluetoothManager = this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        var mBluetoothAdapter: BluetoothAdapter = mBluetoothManager.getAdapter()
+        val mBluetoothManager: BluetoothManager = this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        val mBluetoothAdapter: BluetoothAdapter = mBluetoothManager.getAdapter()
         if (!mBluetoothAdapter.isEnabled()) {
             var enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             enableBtIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -376,72 +384,68 @@ class MainActivity : AppCompatActivity() {
         if (!mBluetoothAdapter.isDiscovering()) {
             mBluetoothAdapter.startDiscovery()
         }
-//        var deviceList_found=ArrayList<String>()
-//        var myDevice= DeviceReceiver(deviceList_found)
-//        //注册蓝牙广播接收者
-//        val filterStart = IntentFilter(BluetoothDevice.ACTION_FOUND)
-//        val filterEnd = IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
-//        registerReceiver(myDevice, filterStart)
-//        registerReceiver(myDevice, filterEnd)
-        var bonded=mBluetoothAdapter.bondedDevices
-        for (i in bonded){
-            if (i.name=="Printer001"||i.address=="DC:0D:30:7C:0A:E8"){
-                mName=i.name
-                mAddress=i.address
-                util!!.e(mName+"-- name" + mAddress+"-- adress")
-
+        val bonded = mBluetoothAdapter.bondedDevices
+        for (i in bonded) {
+            if (i.name == "Printer001" || i.address == "DC:0D:30:7C:0A:E8") {
+                mName = i.name
+                mAddress = i.address
+                util!!.e(mName + "-- name" + mAddress + "-- adress")
             }
         }
-        if (mName.length==0){
+        if (mName.length == 0) {
             util!!.showToast("请先在系统设置中链接打印设备")
-        }else{
-            util!!.showToast("已找到设备，开始连接")
+        } else {
+            util!!.showToast("已找到设备"+mName+"，开始连接")
             if (mBluetoothAdapter.isDiscovering()) {
                 mBluetoothAdapter.cancelDiscovery()
             }
-            binder!!.connectBtPort(mAddress, object : UiExecute {
-                override fun onsucess() {
-                    util!!.showToast("连接成功")
-//                    ISCONNECT = true
-//                    val b = binder.readBuffer()
-//                    val message = Message()
-//                    message.what = 1
-//                    handler.handleMessage(message)
-                }
-                override fun onfailed() {
-                    //连接失败后在UI线程中的执行
-//                    ISCONNECT = false
-                    util!!.showToast("连接失败")
-                }
-            })
-            binder!!.writeDataByYouself(object : UiExecute {
-                override fun onsucess() {
-//                    showSnackbar("ok")
-                }
-
-                override fun onfailed() {
-                    //                showSnackbar("failed");
-//                    showSnackbar("2")
-
-                }
-            }, ProcessData {
-                Log.e("bttext", "bttext1")
-                val list = ArrayList<ByteArray>()
-                //创建一段我们想打印的文本,转换为byte[]类型，并添加到要发送的数据的集合list中
-                val str =
-                    "Welcome to use the impact and thermal printer manufactured by professional POS receipt printer company!"
-                val data = StringUtils.strTobytes(str)
-                list.add(DataForSendToPrinterPos76.initializePrinter())
-                list.add(data)
-                //追加一个打印换行指令，因为，pos打印机满一行才打印，不足一行，不打印
-                list.add(net.posprinter.utils.DataForSendToPrinterPos76.printAndFeedLine())
-
-                list
-            })
+            BluWrite()
         }
 
     }
 
+    private fun BluWrite() {
+        binder!!.connectBtPort(mAddress, object : UiExecute {
+            override fun onsucess() {
+                util!!.showToast("打印机连接成功")
+                CONNECT = true
+            }
+
+            override fun onfailed() {
+                //连接失败后在UI线程中的执行
+                CONNECT = false
+                util!!.showToast("打印机连接失败")
+            }
+        })
+        binder!!.writeDataByYouself(object : UiExecute {
+            override fun onsucess() {
+//                    showSnackbar("ok")
+            }
+
+            override fun onfailed() {
+                //                showSnackbar("failed");
+//                    showSnackbar("2")
+
+            }
+        }, ProcessData {
+            Log.e("bttext", "bttext1")
+            val list = ArrayList<ByteArray>()
+            //创建一段我们想打印的文本,转换为byte[]类型，并添加到要发送的数据的集合list中
+            val str =
+                "Welcome to use the impact and thermal printer manufactured by professional POS receipt printer company!Welcome to use the impact and thermal printer manufactured by professional POS receipt printer company!Welcome to use the impact and thermal printer manufactured by professional POS receipt printer company!"
+            val data = StringUtils.strTobytes(str)
+            list.add(DataForSendToPrinterPos76.initializePrinter())
+            list.add(data)
+            //追加一个打印换行指令，因为，pos打印机满一行才打印，不足一行，不打印
+            list.add(net.posprinter.utils.DataForSendToPrinterPos76.printAndFeedLine())
+
+            list
+        })
+    }
+
+    /**
+     * 是否有权限
+     */
     private fun isHaveQX() {
         val permissions = arrayOf(
             Manifest.permission.BLUETOOTH_PRIVILEGED,
@@ -596,7 +600,7 @@ class MainActivity : AppCompatActivity() {
                                         }
 
                                         override fun error(e: Throwable) {
-                                            util!!.e( e.toString())
+                                            util!!.e(e.toString())
                                         }
                                     })
                                 })
@@ -639,7 +643,7 @@ class MainActivity : AppCompatActivity() {
 
 
                 AlertDialog.Builder(context)
-                    .setTitle("确认提交"+customername+"的订单么" + "?")
+                    .setTitle("确认提交" + customername + "的订单么" + "?")
                     .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
 
                         api.addOrder(
@@ -681,6 +685,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         binder!!.disconnectCurrentPort(object : UiExecute {
@@ -694,6 +699,7 @@ class MainActivity : AppCompatActivity() {
         })
         unbindService(conn)
     }
+
     /**
      * 增加商户后，刷新商户
      */
@@ -783,3 +789,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+
+//        var deviceList_found=ArrayList<String>()
+//        var myDevice= DeviceReceiver(deviceList_found)
+//        //注册蓝牙广播接收者
+//        val filterStart = IntentFilter(BluetoothDevice.ACTION_FOUND)
+//        val filterEnd = IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+//        registerReceiver(myDevice, filterStart)
+//        registerReceiver(myDevice, filterEnd)

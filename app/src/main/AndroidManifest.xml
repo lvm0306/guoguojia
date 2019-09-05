@@ -29,6 +29,8 @@
                 android:name=".MainActivity"
                 android:screenOrientation="landscape">
         </activity>
+        <service android:name="net.posprinter.service.PosprinterService" />
+
     </application>
 
 </manifest>
