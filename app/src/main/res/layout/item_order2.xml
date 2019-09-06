@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:id="@+id/ll"
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <RelativeLayout android:layout_width="match_parent"
+                    android:background="@color/whiteht"
+                    android:layout_height="35dp">
+        <TextView
+                android:layout_width="wrap_content"
+                android:id="@+id/tv_name"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:textColor="#333"
+                android:text="商户名:学府三"
+                android:paddingLeft="25dp"
+                android:layout_height="match_parent"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:id="@+id/tv_time"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:textColor="#333"
+                android:layout_alignParentRight="true"
+                android:text="2019-7-17"
+                android:paddingRight="25dp"
+                android:layout_height="match_parent"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:id="@+id/tv_money"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:textColor="#333"
+                android:layout_centerInParent="true"
+                android:text="总价：16元"
+                android:layout_height="match_parent"/>
+    </RelativeLayout>
+
+
+</LinearLayout>

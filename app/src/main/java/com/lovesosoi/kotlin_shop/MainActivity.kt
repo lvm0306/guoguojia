@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.TargetApi
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.content.*
 import android.content.pm.PackageManager
@@ -13,7 +12,6 @@ import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
-import android.os.Message
 import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -28,28 +26,20 @@ import android.view.View
 import android.widget.*
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.colin.doumovie.api.BuildApi
 import com.lovesosoi.kotlin_shop.adapter.*
-import com.lovesosoi.kotlin_shop.api.ApiResponse
-import com.lovesosoi.kotlin_shop.api.BaseObserver
 import com.lovesosoi.kotlin_shop.api.NetUtils
 import com.lovesosoi.kotlin_shop.bean.*
 import com.lovesosoi.kotlin_shop.dialog.AddCustomerDialog
 import com.lovesosoi.kotlin_shop.dialog.AddFruitDialog
+import com.lovesosoi.kotlin_shop.dialog.OrderShowDialog
 import com.lovesosoi.kotlin_shop.interfaces.*
-import com.lovesosoi.kotlin_shop.receiver.DeviceReceiver
 import com.lovesosoi.kotlin_shop.utils.StringUtils
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import net.posprinter.posprinterface.IMyBinder
 import net.posprinter.posprinterface.ProcessData
 import net.posprinter.posprinterface.UiExecute
 import net.posprinter.service.PosprinterService
-import net.posprinter.utils.DataForSendToPrinterPos76
-import okhttp3.internal.Util
-import org.reactivestreams.Subscriber
-import org.reactivestreams.Subscription
+import net.posprinter.utils.DataForSendToPrinterPos80
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -85,12 +75,13 @@ class MainActivity : AppCompatActivity() {
     lateinit var fruit_adapter: FruitAdapter
     lateinit var fruit_control_adapter: FruitDisplayAdapter
     lateinit var custom_control_adapter: CustomControlAdapter
-    lateinit var orderHistryAdapter: OrderHistryAdapter
+    lateinit var orderHistryAdapter: OrderHistryAdapter2
     lateinit var startAdapter: ArrayAdapter<String>
     lateinit var api: NetUtils
     var customers = mutableListOf<CCustomer.DataBean.CustomerBean>()
     var fruitAddDialog: AddFruitDialog? = null
     var customerAddDialog: AddCustomerDialog? = null
+    var orderShowDialog: OrderShowDialog? = null
     var customername: String? = null
     var customerid: Int = 0
     var goodsitem: Int = 0
@@ -207,6 +198,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView() {
+
+        orderShowDialog = OrderShowDialog(activity, R.style.DialogTheme)
         //rv 初始化
 
         //列表初始化
@@ -214,45 +207,49 @@ class MainActivity : AppCompatActivity() {
         rv_menu.adapter = order_adapter
         rv_menu.layoutManager = LinearLayoutManager(this, OrientationHelper.VERTICAL, false)
 
-        orderHistryAdapter = OrderHistryAdapter(context, order_history_list)
+        orderHistryAdapter = OrderHistryAdapter2(context, order_history_list)
         rv_commit_order.adapter = orderHistryAdapter
         rv_commit_order.layoutManager = LinearLayoutManager(this, OrientationHelper.VERTICAL, false)
-        orderHistryAdapter.setOnItemClickListener(object : OrderHistoryListener {
-            @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-            override fun print(position: Int, view: View, data: Any) {
-                //判断是否打开蓝牙
-                if (!CONNECT) {
-                    openBlu()
-                } else {
-                    BluWrite()
-                }
-            }
-
-            override fun delete(position: Int, view: View, data: Any) {
-                AlertDialog.Builder(context)
-                    .setTitle("确认删除" + order_history_list.get(position).time + " 日" + order_history_list.get(position).customer_name + "的订单么" + "?")
-                    .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
-                        api.deleteOrder(order_history_list.get(position).order_id, object : IApiListener {
-                            override fun success(data: Any) {
-                                util!!.showToast("删除成功")
-                                order_history_list.removeAt(position)
-                                orderHistryAdapter.notifyDataSetChanged()
-                            }
-
-                            override fun error(e: Throwable) {
-                                Log.e("lovesosoi", e.toString())
-                            }
-
-                        })
-                    })
-                    .setNeutralButton("取消", null)
-                    .create()
-                    .show()
-
+        orderHistryAdapter.setOnItemClickListener(object : IOnOrderListClick {
+            override fun click(position: Int, view: View, data: Any) {
+                val data = order_history_list.get(position)
+                orderShowDialog!!.initData(data)
+                orderShowDialog!!.show()
             }
         })
 
-
+//        @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+//        override fun print(position: Int, view: View, data: Any) {
+//            //判断是否打开蓝牙
+//            if (!CONNECT) {
+//                openBlu()
+//            } else {
+//                BluWrite()
+//            }
+//        }
+//
+//        override fun delete(position: Int, view: View, data: Any) {
+//            AlertDialog.Builder(context)
+//                .setTitle("确认删除" + order_history_list.get(position).time + " 日" + order_history_list.get(position).customer_name + "的订单么" + "?")
+//                .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
+//                    api.deleteOrder(order_history_list.get(position).order_id, object : IApiListener {
+//                        override fun success(data: Any) {
+//                            util!!.showToast("删除成功")
+//                            order_history_list.removeAt(position)
+//                            orderHistryAdapter.notifyDataSetChanged()
+//                        }
+//
+//                        override fun error(e: Throwable) {
+//                            Log.e("lovesosoi", e.toString())
+//                        }
+//
+//                    })
+//                })
+//                .setNeutralButton("取消", null)
+//                .create()
+//                .show()
+//
+//        }
         order_adapter.setOnItemClickListener(object : OnItemClick {
             override fun sub(position: Int, view: View, data: Any) {
                 var count = orderList.get(position).count
@@ -428,16 +425,42 @@ class MainActivity : AppCompatActivity() {
 
             }
         }, ProcessData {
+            /**
+             *
+            list.add(DataForSendToPrinterPos80.selectAlignment(1));//居中
+            list.add(DataForSendToPrinterPos80.selectAlignment(0));//居左
+            list.add(DataForSendToPrinterPos80.selectAlignment(2));//居右
+            list.add(DataForSendToPrinterPos80.printAndFeedForward(2));//走纸
+             */
             Log.e("bttext", "bttext1")
+            val line = "-----------------------------------------------" + "\n"
             val list = ArrayList<ByteArray>()
             //创建一段我们想打印的文本,转换为byte[]类型，并添加到要发送的数据的集合list中
-            val str =
-                "Welcome to use the impact and thermal printer manufactured by professional POS receipt printer company!Welcome to use the impact and thermal printer manufactured by professional POS receipt printer company!Welcome to use the impact and thermal printer manufactured by professional POS receipt printer company!"
-            val data = StringUtils.strTobytes(str)
-            list.add(DataForSendToPrinterPos76.initializePrinter())
-            list.add(data)
-            //追加一个打印换行指令，因为，pos打印机满一行才打印，不足一行，不打印
-            list.add(net.posprinter.utils.DataForSendToPrinterPos76.printAndFeedLine())
+            list.add(DataForSendToPrinterPos80.initializePrinter())
+            list.add(DataForSendToPrinterPos80.selectInternationalCharacterSets(15))
+            list.add(DataForSendToPrinterPos80.selectCharacterSize(0))
+            list.add(DataForSendToPrinterPos80.selectAlignment(0))//居左
+            list.add(StringUtils.strTobytes("客户:小包子\n"))
+            list.add(StringUtils.strTobytes("单号:XD-2019-08-11-15-58\n"))
+            list.add(StringUtils.strTobytes("日期:2019-08-11-15-58\n"))
+            list.add(StringUtils.strTobytes(line))
+            list.add(StringUtils.strTobytes("商品\t\t数量\t单价\t金额\n"))
+            list.add(StringUtils.strTobytes("鲜蘑\t\t2.0斤\t3.6\t7.2元\n"))
+            list.add(StringUtils.strTobytes("小白菜\t\t2.22斤\t3.60\t7.21元\n"))
+            list.add(StringUtils.strTobytes("大豆油\t\t12.0斤\t3.6\t17.22元\n"))
+            list.add(StringUtils.strTobytes("干豆腐\t\t2.0斤\t3.6\t37.2元\n"))
+            list.add(StringUtils.strTobytes("干将莫邪\t\t2.0斤\t3.6\t47.2元\n"))
+            list.add(StringUtils.strTobytes(line))
+            list.add(StringUtils.strTobytes("合计\t\t10.9\t\t363.13\n"))
+            list.add(DataForSendToPrinterPos80.printAndFeedForward(2))
+            list.add(StringUtils.strTobytes("打印日期:XD-2019-08-11-15-58\n"))
+            list.add(StringUtils.strTobytes("打印日期:2019-08-11-15-58\n"))
+            list.add(DataForSendToPrinterPos80.printAndFeedForward(2))
+            list.add(DataForSendToPrinterPos80.selectAlignment(1))//居中
+            list.add(DataForSendToPrinterPos80.selectCharacterSize(17))
+            list.add(StringUtils.strTobytes("老郭菜店"))
+            list.add(DataForSendToPrinterPos80.printAndFeedForward(7))
+            list.add(DataForSendToPrinterPos80.selectCutPagerModerAndCutPager(0))
 
             list
         })
@@ -622,7 +645,7 @@ class MainActivity : AppCompatActivity() {
                     util!!.showToast("请增加商品")
                     return
                 }
-                val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// HH:mm:ss
+                val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm");// HH:mm:ss
                 val date = Date(System.currentTimeMillis())
                 val time = simpleDateFormat.format(date)
                 var info = ""
