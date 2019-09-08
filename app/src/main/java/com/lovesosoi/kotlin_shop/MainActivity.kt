@@ -70,6 +70,8 @@ class MainActivity : AppCompatActivity() {
     var orderList = mutableListOf<OrderBean>()
     var fruitList = mutableListOf<CFruitBean.DataBean.FruitBean>()
     var customerList = mutableListOf<String>()
+    var orderDateList = mutableListOf<String>()//订单的日期列表
+    var orderCustomerList = mutableListOf<String>()//订单的商户选择
     var order_history_list = mutableListOf<OrderList.DataBean.OrderBean>()
     lateinit var order_adapter: OrderAdapter
     lateinit var fruit_adapter: FruitAdapter
@@ -77,12 +79,16 @@ class MainActivity : AppCompatActivity() {
     lateinit var custom_control_adapter: CustomControlAdapter
     lateinit var orderHistryAdapter: OrderHistryAdapter2
     lateinit var startAdapter: ArrayAdapter<String>
+    lateinit var orderDateAdapter: ArrayAdapter<String>
+    lateinit var orderCustomerAdapter: ArrayAdapter<String>
     lateinit var api: NetUtils
     var customers = mutableListOf<CCustomer.DataBean.CustomerBean>()
     var fruitAddDialog: AddFruitDialog? = null
     var customerAddDialog: AddCustomerDialog? = null
     var orderShowDialog: OrderShowDialog? = null
-    var customername: String? = null
+    var customername: String? = null//商户的选择
+    var orderCustomername: String? = null//商户的选择
+    var orderDate: String? = null // 订单的日期选择
     var customerid: Int = 0
     var goodsitem: Int = 0
     var all_price: String? = null
@@ -180,7 +186,9 @@ class MainActivity : AppCompatActivity() {
                     val sp = findViewById<View>(R.id.customer_spinner) as Spinner
                     for (i in customers) {
                         customerList.add(i.customer_name!!)
+                        orderCustomerList.add(i.customer_name!!)
                     }
+                    orderCustomerList.add(0, "全部")
                     startAdapter = ArrayAdapter(context, R.layout.support_simple_spinner_dropdown_item, customerList)
                     startAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
                     sp.adapter = startAdapter
@@ -212,42 +220,67 @@ class MainActivity : AppCompatActivity() {
         rv_commit_order.layoutManager = LinearLayoutManager(this, OrientationHelper.VERTICAL, false)
         orderHistryAdapter.setOnItemClickListener(object : IOnOrderListClick {
             override fun click(position: Int, view: View, data: Any) {
-                val data = order_history_list.get(position)
-                orderShowDialog!!.initData(data)
+                val data: OrderList.DataBean.OrderBean = order_history_list.get(position)
+
+                orderShowDialog!!.refreshData(data)
                 orderShowDialog!!.show()
+                orderShowDialog!!.setOnAddFruitListener(object : IOrderDIalog {
+                    override fun close(position: Int, data: Any) {
+                        orderShowDialog!!.dismiss()
+                    }
+
+                    override fun print(position: Int, data: Any) {
+                        //判断是否打开蓝牙
+                        if (!CONNECT) {
+                            openBlu(data as OrderList.DataBean.OrderBean)
+                        } else {
+                            BluWrite(data as OrderList.DataBean.OrderBean)
+
+                        }
+                    }
+
+                    override fun delete(position: Int, data: Any) {
+                        AlertDialog.Builder(context)
+                            .setTitle(
+                                "确认删除" + order_history_list.get(position).time + " 日" + order_history_list.get(
+                                    position
+                                ).customer_name + "的订单么" + "?"
+                            )
+                            .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
+                                api.deleteOrder(order_history_list.get(position).order_id, object : IApiListener {
+                                    override fun success(data: Any) {
+                                        util!!.showToast("删除成功")
+                                        order_history_list.removeAt(position)
+                                        orderHistryAdapter.notifyDataSetChanged()
+                                    }
+
+                                    override fun error(e: Throwable) {
+                                        Log.e("lovesosoi", e.toString())
+                                    }
+
+                                })
+                            })
+                            .setNeutralButton("取消", null)
+                            .create()
+                            .show()
+
+                    }
+
+                    override fun edit(position: Int, data: Any) {
+                        util!!.showToast("编辑")
+                    }
+
+                })
+
             }
         })
 
 //        @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 //        override fun print(position: Int, view: View, data: Any) {
-//            //判断是否打开蓝牙
-//            if (!CONNECT) {
-//                openBlu()
-//            } else {
-//                BluWrite()
-//            }
+
 //        }
 //
 //        override fun delete(position: Int, view: View, data: Any) {
-//            AlertDialog.Builder(context)
-//                .setTitle("确认删除" + order_history_list.get(position).time + " 日" + order_history_list.get(position).customer_name + "的订单么" + "?")
-//                .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
-//                    api.deleteOrder(order_history_list.get(position).order_id, object : IApiListener {
-//                        override fun success(data: Any) {
-//                            util!!.showToast("删除成功")
-//                            order_history_list.removeAt(position)
-//                            orderHistryAdapter.notifyDataSetChanged()
-//                        }
-//
-//                        override fun error(e: Throwable) {
-//                            Log.e("lovesosoi", e.toString())
-//                        }
-//
-//                    })
-//                })
-//                .setNeutralButton("取消", null)
-//                .create()
-//                .show()
 //
 //        }
         order_adapter.setOnItemClickListener(object : OnItemClick {
@@ -340,6 +373,7 @@ class MainActivity : AppCompatActivity() {
                 c.customer_name = name
                 customers.add(c)
                 customerList.add(name)
+                orderCustomerList.add(name)
                 util!!.showToast("增加成功")
 
 
@@ -367,7 +401,7 @@ class MainActivity : AppCompatActivity() {
      */
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private fun openBlu() {
+    private fun openBlu(data: OrderList.DataBean.OrderBean) {
         //判断权限
         isHaveQX()
         //打开蓝牙
@@ -392,36 +426,34 @@ class MainActivity : AppCompatActivity() {
         if (mName.length == 0) {
             util!!.showToast("请先在系统设置中链接打印设备")
         } else {
-            util!!.showToast("已找到设备"+mName+"，开始连接")
+            util!!.showToast("已找到设备" + mName + "，开始连接")
+            binder!!.connectBtPort(mAddress, object : UiExecute {
+                override fun onsucess() {
+                    util!!.showToast("打印机连接成功")
+                    CONNECT = true
+                }
+
+                override fun onfailed() {
+                    //连接失败后在UI线程中的执行
+                    CONNECT = false
+                    util!!.showToast("打印机连接失败")
+                }
+            })
             if (mBluetoothAdapter.isDiscovering()) {
                 mBluetoothAdapter.cancelDiscovery()
             }
-            BluWrite()
+            BluWrite(data)
         }
 
     }
 
-    private fun BluWrite() {
-        binder!!.connectBtPort(mAddress, object : UiExecute {
-            override fun onsucess() {
-                util!!.showToast("打印机连接成功")
-                CONNECT = true
-            }
-
-            override fun onfailed() {
-                //连接失败后在UI线程中的执行
-                CONNECT = false
-                util!!.showToast("打印机连接失败")
-            }
-        })
+    private fun BluWrite(data: OrderList.DataBean.OrderBean) {
         binder!!.writeDataByYouself(object : UiExecute {
             override fun onsucess() {
-//                    showSnackbar("ok")
+                util!!.showToast("已打印")
             }
 
             override fun onfailed() {
-                //                showSnackbar("failed");
-//                    showSnackbar("2")
 
             }
         }, ProcessData {
@@ -440,21 +472,37 @@ class MainActivity : AppCompatActivity() {
             list.add(DataForSendToPrinterPos80.selectInternationalCharacterSets(15))
             list.add(DataForSendToPrinterPos80.selectCharacterSize(0))
             list.add(DataForSendToPrinterPos80.selectAlignment(0))//居左
-            list.add(StringUtils.strTobytes("客户:小包子\n"))
-            list.add(StringUtils.strTobytes("单号:XD-2019-08-11-15-58\n"))
-            list.add(StringUtils.strTobytes("日期:2019-08-11-15-58\n"))
+            list.add(StringUtils.strTobytes("客户:" + data.customer_name + "\n"))
+//            list.add(StringUtils.strTobytes("单号:XD-2019-08-11-15-58\n"))
+            list.add(StringUtils.strTobytes("日期:" + data.time + "\n"))
             list.add(StringUtils.strTobytes(line))
-            list.add(StringUtils.strTobytes("商品\t\t数量\t单价\t金额\n"))
-            list.add(StringUtils.strTobytes("鲜蘑\t\t2.0斤\t3.6\t7.2元\n"))
-            list.add(StringUtils.strTobytes("小白菜\t\t2.22斤\t3.60\t7.21元\n"))
-            list.add(StringUtils.strTobytes("大豆油\t\t12.0斤\t3.6\t17.22元\n"))
-            list.add(StringUtils.strTobytes("干豆腐\t\t2.0斤\t3.6\t37.2元\n"))
-            list.add(StringUtils.strTobytes("干将莫邪\t\t2.0斤\t3.6\t47.2元\n"))
+            list.add(StringUtils.strTobytes("商品\t单a\t\t数量\t金额\n"))
+
+            for (line1 in data.order_info!!.split("^")) {
+                for ((index, value) in line1.split("|").withIndex()) {
+                    var temp = ""
+                    if (index == 0) {
+                        temp += value + "  \t"
+                    } else if (index == 1) {
+                        temp += value + "\t\t"
+                    } else if (index == 2) {
+                        temp += value + "  \t"
+                    } else if (index == 3) {
+                        temp += value + "\n"
+                    }
+                    list.add(StringUtils.strTobytes(temp))
+                }
+            }
+//            list.add(StringUtils.strTobytes("鲜蘑\t\t2.0斤\t3.6\t7.2元\n"))
+//            list.add(StringUtils.strTobytes("小白菜\t\t2.22斤\t3.60\t7.21元\n"))
+//            list.add(StringUtils.strTobytes("大豆油\t\t12.0斤\t3.6\t17.22元\n"))
+//            list.add(StringUtils.strTobytes("干豆腐\t\t2.0斤\t3.6\t37.2元\n"))
+//            list.add(StringUtils.strTobytes("干将莫邪\t\t2.0斤\t3.6\t47.2元\n"))
+            list.add(StringUtils.strTobytes("\n"))
             list.add(StringUtils.strTobytes(line))
-            list.add(StringUtils.strTobytes("合计\t\t10.9\t\t363.13\n"))
+            list.add(StringUtils.strTobytes("合计\t\t" + data.all_item + "样\t\t" + data.all_price + "元\n"))
             list.add(DataForSendToPrinterPos80.printAndFeedForward(2))
-            list.add(StringUtils.strTobytes("打印日期:XD-2019-08-11-15-58\n"))
-            list.add(StringUtils.strTobytes("打印日期:2019-08-11-15-58\n"))
+            list.add(StringUtils.strTobytes("打印日期:" + data.time + "\n"))
             list.add(DataForSendToPrinterPos80.printAndFeedForward(2))
             list.add(DataForSendToPrinterPos80.selectAlignment(1))//居中
             list.add(DataForSendToPrinterPos80.selectCharacterSize(17))
@@ -493,7 +541,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * 获取订单列表
+     */
     private fun getOrderList() {
+        var stime = ""
+        var etime = ""
+//        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm");// HH:mm:ss
+//        val date = Date(System.currentTimeMillis())
+//        val time = simpleDateFormat.format(date)
+//        if (orderDate == "今日") {
+//            stime=time
+//            etime=time
+//        }else if(orderDate=="昨天"){
+//
+//        }else if(orderDate=="一周"){
+//
+//        }else if(orderDate=="本月"){
+//
+//        }
+
         api.getOrderList(object : IApiListener {
             override fun error(e: Throwable) {
 
@@ -507,10 +574,13 @@ class MainActivity : AppCompatActivity() {
                     orderHistryAdapter.notifyDataSetChanged()
                 }
             }
-        })
+        }, stime, etime, orderCustomername!!)
     }
 
 
+    /**
+     * 刷新订单
+     */
     fun refreshOrder() {
         var pay = 0.00
         var count = 0
@@ -531,7 +601,8 @@ class MainActivity : AppCompatActivity() {
         R.id.tv_menu4,
         R.id.tv_commit,
         R.id.tv_add_fruit,
-        R.id.tv_add_custom
+        R.id.tv_add_custom,
+        R.id.tv_order_serch
     )
     fun onClick(view: View) {
         when (view.id) {
@@ -591,6 +662,28 @@ class MainActivity : AppCompatActivity() {
                 tv_menu3.setTextColor(Color.parseColor("#aa464447"))
                 tv_menu3.setBackgroundColor(Color.parseColor("#aaffffff"))
 
+                /**
+                 * 订单的日期选择
+                 */
+                val dateSp = findViewById<View>(R.id.sp_order_date) as Spinner
+                orderDateList = (context.resources.getStringArray(R.array.date).toMutableList())
+                orderDateAdapter = ArrayAdapter(context, R.layout.support_simple_spinner_dropdown_item, orderDateList)
+                orderDateAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
+                dateSp.adapter = orderDateAdapter
+                val dateListener = mDateClicListener()
+                dateSp.onItemSelectedListener = dateListener
+
+
+                /**
+                 * 订单的商户选择
+                 */
+                val customerSp = findViewById<View>(R.id.sp_order_custom) as Spinner
+                orderCustomerAdapter =
+                    ArrayAdapter(context, R.layout.support_simple_spinner_dropdown_item, orderCustomerList)
+                orderCustomerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
+                customerSp.adapter = orderCustomerAdapter
+                val customerListener = mCustomClickListener()
+                customerSp.onItemSelectedListener = customerListener
 
             }
             R.id.tv_menu4 -> {
@@ -616,6 +709,7 @@ class MainActivity : AppCompatActivity() {
                                                     util!!.showToast("删除成功")
                                                     customers.removeAt(position)
                                                     customerList.removeAt(position)
+                                                    orderCustomerList.removeAt(position)
                                                     custom_control_adapter.notifyDataSetChanged()
                                                     startAdapter.notifyDataSetChanged()
                                                 }
@@ -706,6 +800,9 @@ class MainActivity : AppCompatActivity() {
                 // 增加客户
                 customerAddDialog?.show()
             }
+            R.id.tv_order_serch -> {
+                util!!.showToast(orderCustomername + "---" + orderDate + "点击了查找")
+            }
         }
     }
 
@@ -733,9 +830,12 @@ class MainActivity : AppCompatActivity() {
                     customers.clear()
                     customers.addAll(data.data!!.customer!!.toMutableList())
                     customerList.clear()
+                    orderCustomerList.clear()
                     for (i in customers) {
                         customerList.add(i.customer_name!!)
+                        orderCustomerList.add(i.customer_name!!)
                     }
+                    orderCustomerList.add(0, "全部")
                     startAdapter.notifyDataSetChanged()
                     custom_control_adapter.notifyDataSetChanged()
                     customerAddDialog?.dismiss()
@@ -800,15 +900,43 @@ class MainActivity : AppCompatActivity() {
      */
     internal inner class myItemClickListener : AdapterView.OnItemSelectedListener {
         override fun onNothingSelected(parent: AdapterView<*>?) {
-
         }
 
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-//            if (position != 0) {
-//                Toast.makeText(context, "你的选择是：${customers[position].customer_name}", Toast.LENGTH_SHORT).show()
             customername = customers.get(position).customer_name
             customerid = customers.get(position).customer_id
-//            }
+        }
+    }
+
+    /**
+     * 订单日期 下拉列表
+     */
+    internal inner class mDateClicListener : AdapterView.OnItemSelectedListener {
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+        }
+
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            if (position == 0) {
+                orderDate = "今天"
+            } else {
+                orderDate = orderDateList.get(position)
+            }
+        }
+    }
+
+    /**
+     * 订单商户 下拉列表
+     */
+    internal inner class mCustomClickListener : AdapterView.OnItemSelectedListener {
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+        }
+
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            if (position == 0) {
+                orderCustomername = "全部"
+            } else {
+                orderCustomername = orderCustomerList.get(position)
+            }
         }
     }
 }

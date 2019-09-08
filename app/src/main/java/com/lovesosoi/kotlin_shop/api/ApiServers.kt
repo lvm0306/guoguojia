@@ -32,7 +32,7 @@ interface ApiServers {
     @GET(BaseURL.CUSTOMER_DELETE)
     fun deleteCustomer(@QueryMap map:HashMap<String, String>): Observable<BaseStatus>
     @GET(BaseURL.ORDER_LIST)
-    fun getOrderHistory(): Observable<OrderList>
+    fun getOrderHistory(@QueryMap map:HashMap<String, String>): Observable<OrderList>
     @GET(BaseURL.ORDER_ADD)
     fun addOrder(@QueryMap map:HashMap<String, String>): Observable<BaseStatus>
     @GET(BaseURL.ORDER_DELETE)

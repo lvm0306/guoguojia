@@ -57,10 +57,13 @@ class NetUtils {
     /**
      * 获取订单列表
      */
-    fun getOrderList(listener: IApiListener) {
-
+    fun getOrderList(listener: IApiListener,stime :String,etime :String,customer_name :String) {
+        val parm = HashMap<String, String>()
+        parm.put("customer_name", customer_name)
+        parm.put("stime",stime)
+        parm.put("etime", etime)
         BuildApi.buildApiServers()
-            ?.getOrderHistory()
+            ?.getOrderHistory(parm)
             ?.subscribeOn(Schedulers.newThread())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(object : ApiResponse<OrderList>() {

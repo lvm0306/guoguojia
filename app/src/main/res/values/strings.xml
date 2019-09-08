@@ -17,4 +17,11 @@
         <item>哈西烧烤</item>
         <item>哈西包子</item>
     </string-array>
+    <string-array name="date">
+        <item>今天</item>
+        <item>昨天</item>
+        <item>一周</item>
+        <item>本月</item>
+        <item>今年</item>
+    </string-array>
 </resources>

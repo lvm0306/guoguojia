@@ -39,6 +39,20 @@ class OrderList : Serializable {
             var all_price: String? = null
             var all_item: String? = null
             var order_info: String? = null
+            override fun toString(): String {
+                return "OrderBean(order_id=$order_id, customer_id=$customer_id, customer_name=$customer_name, time=$time, all_price=$all_price, all_item=$all_item, order_info=$order_info)"
+            }
+
         }
+
+        override fun toString(): String {
+            return "DataBean(order=$order)"
+        }
+
     }
+
+    override fun toString(): String {
+        return "OrderList(data=$data, error=$error, status=$status)"
+    }
+
 }

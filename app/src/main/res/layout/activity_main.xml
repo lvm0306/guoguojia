@@ -5,7 +5,9 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:src="@drawable/bg1"
+    <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+               android:src="@drawable/bg1"
+               android:visibility="visible"
                android:scaleType="centerCrop"/>
     <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
@@ -303,33 +305,54 @@
                         android:layout_height="30dp"/>
 
 
-                    <LinearLayout
-                            android:layout_marginTop="10dp"
-                            android:layout_marginBottom="10dp"
-                            android:orientation="horizontal"
+                <LinearLayout
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginRight="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp">
+                    <Spinner
+                            android:id="@+id/sp_order_custom"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
                             android:gravity="center"
-                            android:layout_marginRight="10dp"
-                            android:layout_width="match_parent"
-                            android:layout_height="30dp">
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:textColor="#000"
+                            android:background="@drawable/shape_menu_title_bg"
+                            android:spinnerMode="dropdown">
 
-                        <TextView
-                                android:text="商家"
-                                android:background="@drawable/shape_menu_title_bg"
-                                android:gravity="center"
-                                android:layout_centerInParent="true"
-                                android:textColor="#000"
-                                android:layout_width="wrap_content"
-                                android:layout_height="30dp"/>
-                        <TextView
-                                android:text="日期列表"
-                                android:gravity="center"
-                                android:layout_marginLeft="15dp"
-                                android:background="@drawable/shape_menu_title_bg"
-                                android:layout_centerInParent="true"
-                                android:textColor="#000"
-                                android:layout_width="wrap_content"
-                                android:layout_height="30dp"/>
-                    </LinearLayout>
+                    </Spinner>
+                    <Spinner
+                            android:layout_marginLeft="50dp"
+                            android:id="@+id/sp_order_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:gravity="center"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:textColor="#000"
+                            android:background="@drawable/shape_menu_title_bg"
+                            android:spinnerMode="dropdown">
+
+                    </Spinner>
+
+                    <TextView
+                            android:text="查找"
+                            android:id="@+id/tv_order_serch"
+                            android:background="@drawable/shape_menu_title_bg"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:layout_centerInParent="true"
+                            android:textColor="#000"
+                            android:textSize="16sp"
+                            android:layout_marginLeft="50dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"/>
+
+                </LinearLayout>
 
                 <android.support.v7.widget.RecyclerView
                         android:id="@+id/rv_commit_order"
