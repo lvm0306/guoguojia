@@ -30,8 +30,8 @@ class OrderHistryAdapter2(var context: Context, var data: MutableList<OrderList.
     }
 
     override fun onBindViewHolder(p0: OrderHistoryAdapterHolder, p1: Int) {
-        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm");// HH:mm:ss
-        val date = simpleDateFormat.parse(data.get(p1).time)
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// HH:mm:ss
+        val date = simpleDateFormat.parse(data.get(p1).time!!.replace("T"," "))
         val time = simpleDateFormat.format(date)
         p0.tv_name.text = data.get(p1).customer_name
         p0.tv_time.text = time

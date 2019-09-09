@@ -310,7 +310,7 @@
                         android:layout_marginBottom="10dp"
                         android:orientation="horizontal"
                         android:gravity="center"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginRight="20dp"
                         android:layout_width="match_parent"
                         android:layout_height="30dp">
                     <Spinner
@@ -318,27 +318,36 @@
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
                             android:gravity="center"
-                            android:layout_alignParentLeft="true"
-                            android:layout_centerVertical="true"
                             android:textColor="#000"
                             android:background="@drawable/shape_menu_title_bg"
                             android:spinnerMode="dropdown">
 
                     </Spinner>
-                    <Spinner
-                            android:layout_marginLeft="50dp"
-                            android:id="@+id/sp_order_date"
+
+                    <TextView
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:layout_marginLeft="20dp"
+                            android:id="@+id/tv_now_time"
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
                             android:gravity="center"
-                            android:layout_alignParentLeft="true"
-                            android:layout_centerVertical="true"
                             android:textColor="#000"
-                            android:background="@drawable/shape_menu_title_bg"
-                            android:spinnerMode="dropdown">
+                            android:background="@drawable/shape_menu_title_bg">
 
-                    </Spinner>
+                    </TextView>
+                    <TextView
+                            android:layout_marginLeft="20dp"
+                            android:id="@+id/tv_last_time"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:gravity="center"
+                            android:textColor="#000"
+                            android:background="@drawable/shape_menu_title_bg">
 
+                    </TextView>
                     <TextView
                             android:text="查找"
                             android:id="@+id/tv_order_serch"
@@ -348,7 +357,7 @@
                             android:layout_centerInParent="true"
                             android:textColor="#000"
                             android:textSize="16sp"
-                            android:layout_marginLeft="50dp"
+                            android:layout_marginLeft="20dp"
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"/>
 

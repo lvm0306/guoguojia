@@ -46,4 +46,6 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation files('libs/posprinterconnectandsendsdk.jar')
     implementation files('libs/QRSDK_Ver2.2.1.jar')
+    implementation 'cn.carbswang.android:NumberPickerView:1.2.0'
+    implementation 'cn.carbs.android:IndicatorView:1.0.2'
 }

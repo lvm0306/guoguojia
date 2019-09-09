@@ -1,6 +1,7 @@
 package com.lovesosoi.kotlin_shop
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
@@ -26,11 +27,13 @@ import android.view.View
 import android.widget.*
 import butterknife.ButterKnife
 import butterknife.OnClick
+import cn.carbswang.android.numberpickerview.library.NumberPickerView
 import com.lovesosoi.kotlin_shop.adapter.*
 import com.lovesosoi.kotlin_shop.api.NetUtils
 import com.lovesosoi.kotlin_shop.bean.*
 import com.lovesosoi.kotlin_shop.dialog.AddCustomerDialog
 import com.lovesosoi.kotlin_shop.dialog.AddFruitDialog
+import com.lovesosoi.kotlin_shop.dialog.DialogNPV
 import com.lovesosoi.kotlin_shop.dialog.OrderShowDialog
 import com.lovesosoi.kotlin_shop.interfaces.*
 import com.lovesosoi.kotlin_shop.utils.StringUtils
@@ -97,6 +100,10 @@ class MainActivity : AppCompatActivity() {
     var mName = ""//蓝牙  设备名字
     var CONNECT = false
     var binder: IMyBinder? = null
+    var stime: String = ""
+    var etime: String = ""
+    lateinit var tvETime: TextView
+    lateinit var tvSTime: TextView
     //bindService的参数connection
     var conn: ServiceConnection? = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName, b: IBinder) {
@@ -128,6 +135,10 @@ class MainActivity : AppCompatActivity() {
         api = NetUtils()
         util = Utils(context)
 
+        val time = SimpleDateFormat("yyyy-MM-dd").format(Date(System.currentTimeMillis()))
+        stime = time
+        etime = time
+        orderCustomername = "全部"
         //获取水果
         api.getFruitList(object : IApiListener {
             override fun success(data: Any) {
@@ -206,6 +217,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView() {
+        tvETime = findViewById<View>(R.id.tv_last_time) as TextView
+        tvSTime = findViewById<View>(R.id.tv_now_time) as TextView
+        val time = SimpleDateFormat("yyyy-MM-dd").format(Date(System.currentTimeMillis()))
+        tvSTime.text = "起始时间：" + time
+        tvETime.text = "结束时间：" + time
 
         orderShowDialog = OrderShowDialog(activity, R.style.DialogTheme)
         //rv 初始化
@@ -221,14 +237,13 @@ class MainActivity : AppCompatActivity() {
         orderHistryAdapter.setOnItemClickListener(object : IOnOrderListClick {
             override fun click(position: Int, view: View, data: Any) {
                 val data: OrderList.DataBean.OrderBean = order_history_list.get(position)
-
-                orderShowDialog!!.refreshData(data)
-                orderShowDialog!!.show()
                 orderShowDialog!!.setOnAddFruitListener(object : IOrderDIalog {
                     override fun close(position: Int, data: Any) {
                         orderShowDialog!!.dismiss()
                     }
 
+                    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+                    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
                     override fun print(position: Int, data: Any) {
                         //判断是否打开蓝牙
                         if (!CONNECT) {
@@ -250,8 +265,11 @@ class MainActivity : AppCompatActivity() {
                                 api.deleteOrder(order_history_list.get(position).order_id, object : IApiListener {
                                     override fun success(data: Any) {
                                         util!!.showToast("删除成功")
+
                                         order_history_list.removeAt(position)
                                         orderHistryAdapter.notifyDataSetChanged()
+                                        orderShowDialog!!.dismiss()
+
                                     }
 
                                     override fun error(e: Throwable) {
@@ -271,6 +289,8 @@ class MainActivity : AppCompatActivity() {
                     }
 
                 })
+                orderShowDialog!!.show()
+                orderShowDialog!!.refreshData(data)
 
             }
         })
@@ -393,6 +413,8 @@ class MainActivity : AppCompatActivity() {
                 })
             }
         })
+
+
         getOrderList()
     }
 
@@ -545,22 +567,6 @@ class MainActivity : AppCompatActivity() {
      * 获取订单列表
      */
     private fun getOrderList() {
-        var stime = ""
-        var etime = ""
-//        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm");// HH:mm:ss
-//        val date = Date(System.currentTimeMillis())
-//        val time = simpleDateFormat.format(date)
-//        if (orderDate == "今日") {
-//            stime=time
-//            etime=time
-//        }else if(orderDate=="昨天"){
-//
-//        }else if(orderDate=="一周"){
-//
-//        }else if(orderDate=="本月"){
-//
-//        }
-
         api.getOrderList(object : IApiListener {
             override fun error(e: Throwable) {
 
@@ -574,7 +580,8 @@ class MainActivity : AppCompatActivity() {
                     orderHistryAdapter.notifyDataSetChanged()
                 }
             }
-        }, stime, etime, orderCustomername!!)
+        }, stime + " 00:00:00", etime + " 23:59:59", orderCustomername!!)
+//        }, stime, etime, orderCustomername!!)
     }
 
 
@@ -594,6 +601,7 @@ class MainActivity : AppCompatActivity() {
         tv_goodnum.text = "共计" + count + "件货物"
     }
 
+    @SuppressLint("SimpleDateFormat", "SetTextI18n")
     @OnClick(
         R.id.tv_menu1,
         R.id.tv_menu2,
@@ -665,13 +673,59 @@ class MainActivity : AppCompatActivity() {
                 /**
                  * 订单的日期选择
                  */
-                val dateSp = findViewById<View>(R.id.sp_order_date) as Spinner
-                orderDateList = (context.resources.getStringArray(R.array.date).toMutableList())
-                orderDateAdapter = ArrayAdapter(context, R.layout.support_simple_spinner_dropdown_item, orderDateList)
-                orderDateAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
-                dateSp.adapter = orderDateAdapter
-                val dateListener = mDateClicListener()
-                dateSp.onItemSelectedListener = dateListener
+
+                tvSTime.setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(v: View?) {
+
+                        val mDialogNPV = DialogNPV(context, "请选择开始的时间")
+                        mDialogNPV.show()
+                        mDialogNPV.setListener(object : IPickListener {
+                            @SuppressLint("SetTextI18n")
+                            override fun pick(year: Int, month: Int, day: Int) {
+                                util!!.showToast("选择的开始时间--" + year + "-" + month + "-" + day)
+                                var temp = ""
+                                if (month < 10) {
+                                    temp += year.toString() + "-0" + month
+                                } else {
+                                    temp += year.toString() + "-" + month
+                                }
+                                if (day < 10) {
+                                    temp += "-0" + day
+                                } else {
+                                    temp += "-" + day
+                                }
+                                tvSTime.text = "起始时间：" + temp
+                                stime = temp
+                            }
+                        })
+                    }
+                })
+                tvETime.setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(v: View?) {
+
+                        val mDialogNPV = DialogNPV(context, "请选择结束的时间")
+                        mDialogNPV.show()
+                        mDialogNPV.setListener(object : IPickListener {
+                            @SuppressLint("SetTextI18n")
+                            override fun pick(year: Int, month: Int, day: Int) {
+                                util!!.showToast("选择的结束时间--" + year + "-" + month + "-" + day)
+                                var temp = ""
+                                if (month < 10) {
+                                    temp += year.toString() + "-0" + month
+                                } else {
+                                    temp += year.toString() + "-" + month
+                                }
+                                if (day < 10) {
+                                    temp += "-0" + day
+                                } else {
+                                    temp += "-" + day
+                                }
+                                tvETime.text = "结束时间：" + temp
+                                etime = temp
+                            }
+                        })
+                    }
+                })
 
 
                 /**
@@ -775,7 +829,8 @@ class MainActivity : AppCompatActivity() {
                                     if (data is BaseStatus) {
                                         if (data.data!!.flag == 1) {
                                             util!!.showToast("提交成功")
-
+                                            orderList.clear()
+                                            order_adapter.notifyDataSetChanged()
                                             getOrderList()
                                         }
                                     }
@@ -801,7 +856,7 @@ class MainActivity : AppCompatActivity() {
                 customerAddDialog?.show()
             }
             R.id.tv_order_serch -> {
-                util!!.showToast(orderCustomername + "---" + orderDate + "点击了查找")
+                getOrderList()
             }
         }
     }
