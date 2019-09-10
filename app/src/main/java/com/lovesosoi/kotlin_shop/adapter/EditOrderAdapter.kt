@@ -22,7 +22,7 @@ class EditOrderAdapter(var context:Context,var data:MutableList<EditOrderBean>) 
     var listener: OnItemClick? =null
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): EditOrderHolder {
-        var inflate= LayoutInflater.from(context).inflate(R.layout.item_fruit,p0,false)
+        var inflate= LayoutInflater.from(context).inflate(R.layout.item_edit_order,p0,false)
         return EditOrderHolder(inflate)
     }
 
