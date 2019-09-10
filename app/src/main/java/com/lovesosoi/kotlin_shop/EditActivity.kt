@@ -38,24 +38,24 @@ class EditActivity : AppCompatActivity() {
         tv_date.text = date?.time!!.replace("T", " ")
 
         for (line in date?.order_info!!.split("^")) {
-            var temp=EditOrderBean("","","","")
+            var temp = EditOrderBean("", "", "", "")
             for ((index, value) in line.split("|").withIndex()) {
-                if (index==0){
-                    temp.fruit_name=value
-                }else if (index==1){
-                    temp.fruit_unit=value
-                }else if (index==2){
-                    temp.fruit_amount=value
-                }else if (index==3){
-                    temp.fruit_total=value
+                if (index == 0) {
+                    temp.fruit_name = value
+                } else if (index == 1) {
+                    temp.fruit_unit = value
+                } else if (index == 2) {
+                    temp.fruit_amount = value
+                } else if (index == 3) {
+                    temp.fruit_total = value
                 }
             }
             fruitList.add(temp)
         }
-        val mAdapter=EditOrderAdapter(context,fruitList)
+        val mAdapter = EditOrderAdapter(context, fruitList)
         val rv = findViewById<View>(R.id.rv_edit) as RecyclerView
+        rv.adapter = mAdapter
         rv.layoutManager = LinearLayoutManager(this, OrientationHelper.VERTICAL, false)
-        rv.adapter=mAdapter
 
     }
 
