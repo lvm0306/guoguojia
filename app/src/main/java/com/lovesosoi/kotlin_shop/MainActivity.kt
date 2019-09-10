@@ -257,9 +257,7 @@ class MainActivity : AppCompatActivity() {
                     override fun delete(position: Int, data: Any) {
                         AlertDialog.Builder(context)
                             .setTitle(
-                                "确认删除" + order_history_list.get(position).time + " 日" + order_history_list.get(
-                                    position
-                                ).customer_name + "的订单么" + "?"
+                                "确认删除" + order_history_list.get(position).time + " 日" + order_history_list.get(position).customer_name + "的订单么" + "?"
                             )
                             .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
                                 api.deleteOrder(order_history_list.get(position).order_id, object : IApiListener {
@@ -286,6 +284,11 @@ class MainActivity : AppCompatActivity() {
 
                     override fun edit(position: Int, data: Any) {
                         util!!.showToast("编辑")
+                        orderShowDialog!!.dismiss()
+                        val date =order_history_list.get(position)
+                        val i=Intent(context, EditActivity::class.java)
+                        i.putExtra("date",date)
+                        startActivity(i)
                     }
 
                 })
@@ -617,14 +620,14 @@ class MainActivity : AppCompatActivity() {
             R.id.tv_menu1 -> {
                 closeTab()
                 ll_order.visibility = View.VISIBLE
-                tv_menu1.setTextColor(Color.parseColor("#aa464447"))
-                tv_menu1.setBackgroundColor(Color.parseColor("#aaffffff"))
+                tv_menu1.setTextColor(Color.parseColor("#ffffff"))
+                tv_menu1.setBackgroundColor(Color.parseColor("#F95B4F"))
             }
             R.id.tv_menu2 -> {
                 closeTab()
                 ll_change_fruit.visibility = View.VISIBLE
-                tv_menu2.setTextColor(Color.parseColor("#aa464447"))
-                tv_menu2.setBackgroundColor(Color.parseColor("#aaffffff"))
+                tv_menu2.setTextColor(Color.parseColor("#ffffff"))
+                tv_menu2.setBackgroundColor(Color.parseColor("#F95B4F"))
                 if (rv_change_fruit.adapter == null) {
                     fruit_control_adapter = FruitDisplayAdapter(context, fruitList)
                     rv_change_fruit.adapter = fruit_control_adapter
@@ -667,8 +670,8 @@ class MainActivity : AppCompatActivity() {
             R.id.tv_menu3 -> {
                 closeTab()
                 ll_commit_order.visibility = View.VISIBLE
-                tv_menu3.setTextColor(Color.parseColor("#aa464447"))
-                tv_menu3.setBackgroundColor(Color.parseColor("#aaffffff"))
+                tv_menu3.setTextColor(Color.parseColor("#ffffff"))
+                tv_menu3.setBackgroundColor(Color.parseColor("#F95B4F"))
 
                 /**
                  * 订单的日期选择
@@ -743,8 +746,8 @@ class MainActivity : AppCompatActivity() {
             R.id.tv_menu4 -> {
                 closeTab()
                 ll_customer_control.visibility = View.VISIBLE
-                tv_menu4.setTextColor(Color.parseColor("#aa464447"))
-                tv_menu4.setBackgroundColor(Color.parseColor("#aaffffff"))
+                tv_menu4.setTextColor(Color.parseColor("#ffffff"))
+                tv_menu4.setBackgroundColor(Color.parseColor("#F95B4F"))
                 if (rv_customer_control.adapter == null) {
 
                     custom_control_adapter = CustomControlAdapter(context, customers)
@@ -940,14 +943,14 @@ class MainActivity : AppCompatActivity() {
         ll_order.visibility = View.GONE
         ll_commit_order.visibility = View.GONE
         ll_customer_control.visibility = View.GONE
-        tv_menu1.setTextColor(Color.parseColor("#aaffffff"))
-        tv_menu2.setTextColor(Color.parseColor("#aaffffff"))
-        tv_menu3.setTextColor(Color.parseColor("#aaffffff"))
-        tv_menu4.setTextColor(Color.parseColor("#aaffffff"))
-        tv_menu1.setBackgroundColor(Color.parseColor("#aa464447"))
-        tv_menu2.setBackgroundColor(Color.parseColor("#aa464447"))
-        tv_menu3.setBackgroundColor(Color.parseColor("#aa464447"))
-        tv_menu4.setBackgroundColor(Color.parseColor("#aa464447"))
+        tv_menu1.setTextColor(Color.parseColor("#FC9C95"))
+        tv_menu2.setTextColor(Color.parseColor("#FC9C95"))
+        tv_menu3.setTextColor(Color.parseColor("#FC9C95"))
+        tv_menu4.setTextColor(Color.parseColor("#FC9C95"))
+        tv_menu1.setBackgroundColor(Color.parseColor("#ffffff"))
+        tv_menu2.setBackgroundColor(Color.parseColor("#ffffff"))
+        tv_menu3.setBackgroundColor(Color.parseColor("#ffffff"))
+        tv_menu4.setBackgroundColor(Color.parseColor("#ffffff"))
     }
 
     /**

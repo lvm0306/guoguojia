@@ -5,10 +5,6 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
-               android:src="@drawable/bg1"
-               android:visibility="visible"
-               android:scaleType="centerCrop"/>
     <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -39,8 +35,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
         </RelativeLayout>
-        <View android:layout_width="match_parent" android:layout_height="1dp"
-              android:background="@color/mainbg"/>
         <LinearLayout
                 android:layout_width="match_parent"
                 android:orientation="horizontal"
@@ -54,8 +48,8 @@
                 <TextView
                         android:id="@+id/tv_menu1"
                         android:textSize="16sp"
-                        android:background="#aaffffff"
-                        android:textColor="#464447"
+                        android:background="#F95B4F"
+                        android:textColor="#FFFCFB"
                         android:layout_height="50dp"
                         android:text="点单"
                         android:gravity="center"
@@ -65,8 +59,8 @@
                 <TextView
                         android:id="@+id/tv_menu3"
                         android:textSize="16sp"
-                        android:background="#aa464447"
-                        android:textColor="#fff"
+                        android:background="@color/colorWhite"
+                        android:textColor="#FC9C95"
                         android:layout_height="50dp"
                         android:text="已点菜单"
                         android:gravity="center"
@@ -77,25 +71,24 @@
                 <TextView
                         android:id="@+id/tv_menu2"
                         android:textSize="16sp"
-                        android:background="#aa464447"
-                        android:textColor="#fff"
+                        android:background="@color/colorWhite"
+                        android:textColor="#FC9C95"
                         android:layout_height="50dp"
                         android:text="菜品管理"
                         android:gravity="center"
                         android:layout_width="match_parent"/>
-                <View android:layout_width="match_parent" android:layout_height="1dp"
+                <View android:layout_width="match_parent"
+                      android:layout_height="1dp"
                       android:background="@color/mainbg"/>
                 <TextView
                         android:id="@+id/tv_menu4"
                         android:textSize="16sp"
-                        android:background="#aa464447"
-                        android:textColor="#fff"
+                        android:background="@color/colorWhite"
+                        android:textColor="#FC9C95"
                         android:layout_height="50dp"
                         android:text="商户管理"
                         android:gravity="center"
                         android:layout_width="match_parent"/>
-                <View android:layout_width="match_parent" android:layout_height="1dp"
-                      android:background="@color/mainbg"/>
             </LinearLayout>
             <!--点单-->
             <LinearLayout
@@ -111,6 +104,7 @@
                         android:background="@color/greybg"
                         android:layout_height="match_parent">
                     <RelativeLayout
+                            android:background="@color/grey4a"
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
                             android:paddingRight="15dp"
@@ -121,10 +115,10 @@
                                 android:layout_height="30dp"
                                 android:gravity="center"
                                 android:layout_alignParentLeft="true"
-                                android:layout_centerVertical="true"
                                 android:textColor="#000"
                                 android:background="@drawable/shape_menu_title_bg"
-                                android:spinnerMode="dropdown">
+                                android:spinnerMode="dropdown" android:layout_alignParentBottom="true"
+                                android:layout_marginBottom="5dp">
 
                         </Spinner>
                         <TextView
@@ -153,13 +147,14 @@
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
                             android:paddingLeft="10dp"
+                            android:background="@color/grey4a"
                             android:paddingRight="10dp"
                             android:orientation="vertical">
 
                         <TextView
                                 android:id="@+id/tv_name"
                                 android:textSize="14sp"
-                                android:textColor="#333"
+                                android:textColor="@color/greyf6"
                                 android:text="名字"
                                 android:gravity="center"
                                 android:layout_width="wrap_content"
@@ -171,7 +166,7 @@
                                 android:id="@+id/tv_unit"
                                 android:text="单价"
                                 android:textSize="14sp"
-                                android:textColor="#333"
+                                android:textColor="@color/greyf6"
                                 android:layout_height="match_parent"/>
                         <LinearLayout
                                 android:paddingLeft="10dp"
@@ -196,6 +191,7 @@
                                     android:textSize="14sp"
                                     android:text="数量"
                                     android:minWidth="40dp"
+                                    android:textColor="@color/greyf6"
                                     android:gravity="center"
                                     android:layout_height="wrap_content"/>
                             <TextView android:id="@+id/tv_add"
@@ -218,12 +214,13 @@
                             android:id="@+id/rv_menu"
                             android:layout_width="match_parent"
                             tools:itemCount="6"
+                            android:background="@color/colorWhite"
                             tools:listitem="@layout/item_menu"
                             tools:layoutManager="LinearLayoutManager"
                             android:layout_marginBottom="40dp"
                             android:layout_height="wrap_content"/>
                     <LinearLayout
-                            android:background="@color/whiteht"
+                            android:background="@color/colorWhite"
                             android:layout_width="match_parent"
                             android:layout_alignParentBottom="true"
                             android:orientation="horizontal"
@@ -259,12 +256,12 @@
                         android:layout_height="match_parent">
                     <LinearLayout android:layout_width="match_parent"
                                   android:gravity="center"
+                                  android:background="@color/grey4a"
                                   android:layout_height="40dp">
                         <TextView
                                 android:text="菜品种类"
                                 android:gravity="center"
-                                android:textColor="#000"
-                                android:background="@drawable/shape_menu_title_bg"
+                                android:textColor="#fff"
                                 android:layout_width="80dp"
                                 android:layout_height="30dp"/>
                     </LinearLayout>
@@ -274,6 +271,7 @@
                             tools:itemCount="12"
                             tools:listitem="@layout/item_fruit"
                             tools:spanCount="3"
+                            android:background="@color/colorWhite"
                             tools:layoutManager="GridLayoutManager"
                             android:layout_height="match_parent"/>
                 </LinearLayout>
@@ -296,13 +294,14 @@
                     android:layout_height="match_parent">
                 <TextView
                         android:text="已点菜单"
-                        android:background="@drawable/shape_menu_title_bg"
+                        android:background="@color/grey4a"
                         android:gravity="center"
                         android:layout_gravity="center"
                         android:layout_centerInParent="true"
-                        android:textColor="#000"
-                        android:layout_width="wrap_content"
-                        android:layout_height="30dp"/>
+                        android:textSize="16sp"
+                        android:textColor="@color/whitefb"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"/>
 
 
                 <LinearLayout
@@ -368,6 +367,7 @@
                         android:layout_width="match_parent"
                         tools:itemCount="12"
                         tools:listitem="@layout/item_fruit"
+                        android:background="@color/colorWhite"
                         tools:spanCount="3"
                         tools:layoutManager="GridLayoutManager"
                         android:layout_height="match_parent"/>
@@ -384,15 +384,16 @@
 
                 <RelativeLayout android:layout_width="match_parent"
                                 android:layout_height="40dp">
-
                     <TextView
                             android:text="菜品管理"
-                            android:background="@drawable/shape_menu_title_bg"
+                            android:background="@color/grey4a"
                             android:gravity="center"
-                            android:textColor="#000"
+                            android:layout_gravity="center"
                             android:layout_centerInParent="true"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"/>
+                            android:textSize="16sp"
+                            android:textColor="@color/whitefb"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"/>
 
 
                     <TextView
@@ -402,7 +403,7 @@
                             android:gravity="center"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:layout_marginRight="20dp"
+                            android:layout_marginRight="30dp"
                             android:textSize="18sp"
                             android:layout_width="45dp"
                             android:layout_height="30dp"/>
@@ -414,6 +415,7 @@
                         android:layout_width="match_parent"
                         tools:itemCount="12"
                         tools:listitem="@layout/item_fruit"
+                        android:background="@color/colorWhite"
                         tools:spanCount="6"
                         tools:layoutManager="GridLayoutManager"
                         android:layout_height="match_parent"/>
@@ -428,29 +430,28 @@
                     android:layout_height="match_parent">
                 <RelativeLayout android:layout_width="match_parent"
                                 android:layout_height="40dp">
-
                     <TextView
                             android:text="商户管理"
-                            android:background="@drawable/shape_menu_title_bg"
+                            android:background="@color/grey4a"
                             android:gravity="center"
-                            android:textColor="#000"
+                            android:layout_gravity="center"
                             android:layout_centerInParent="true"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"/>
+                            android:textSize="16sp"
+                            android:textColor="@color/whitefb"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"/>
 
 
                     <TextView
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:id="@+id/tv_add_custom"
                             android:text="+"
+                            android:id="@+id/tv_add_custom"
                             android:background="@drawable/shape_custom_add_bg"
                             android:gravity="center"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:layout_marginRight="20dp"
+                            android:layout_marginRight="30dp"
                             android:textSize="18sp"
-                            android:layout_width="wrap_content"
+                            android:layout_width="45dp"
                             android:layout_height="30dp"/>
 
 
@@ -459,6 +460,7 @@
                         android:id="@+id/rv_customer_control"
                         android:layout_width="match_parent"
                         tools:itemCount="12"
+                        android:background="@color/colorWhite"
                         tools:listitem="@layout/item_fruit"
                         tools:spanCount="3"
                         tools:layoutManager="GridLayoutManager"

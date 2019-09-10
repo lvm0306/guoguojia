@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:padding="15dp"
         android:layout_margin="7dp"
-        android:background="@color/whiteht"
+        android:background="#F9F9F9"
         android:layout_width="wrap_content"
         android:minWidth="100dp"
         android:minHeight="35dp"
@@ -16,7 +16,7 @@
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:textSize="16sp"
-            android:textColor="#333"
+            android:textColor="@color/grey37"
             android:text="哈西包子"
             android:layout_height="wrap_content"/>
 </LinearLayout>

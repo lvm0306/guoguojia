@@ -13,4 +13,11 @@
     <color name="colorIndicatorTextNormal">#FF555555</color>
     <color name="colorTransparent">#00000000</color>
     <color name="colorWhite">#ffffffff</color>
+    <color name="bgfen">#F95B4F</color>
+    <color name="grey4a">#4A4A4A</color>
+    <color name="zifen">#FC9C95</color>
+    <color name="grey37">#373737</color>
+    <color name="greya9">#A9A9A9</color>
+    <color name="whitefb">#FFFCFB</color>
+    <color name="greyf6">#F6FAFF</color>
 </resources>

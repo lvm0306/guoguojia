@@ -48,23 +48,24 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/shape_menu_title_bg"
                 android:text="获取当天的日期"/>
+
+        <Button
+                android:id="@+id/close"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/shape_menu_title_bg"
+                android:layout_height="match_parent"
+                android:text="取消"/>
         <Button
             android:id="@+id/sure"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:background="@drawable/shape_menu_title_bg"
             android:text="确认"/>
-        <Button
-                android:id="@+id/close"
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_marginRight="20dp"
-                android:background="@drawable/shape_menu_title_bg"
-                android:layout_height="match_parent"
-                android:text="取消"/>
     </LinearLayout>
-
+    <View android:layout_width="match_parent" android:layout_height="20dp" android:background="@color/colorWhite"/>
 </LinearLayout>
