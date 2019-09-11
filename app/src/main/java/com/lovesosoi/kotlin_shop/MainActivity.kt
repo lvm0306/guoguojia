@@ -364,6 +364,30 @@ class MainActivity : AppCompatActivity() {
         customerAddDialog = AddCustomerDialog(activity, R.style.DialogTheme)
 
         fruitAddDialog?.setOnAddFruitListener(object : OnAddFruit {
+            override fun upDate(name: String, price: Double, unit: String, id: Int) {
+//                var fruit = CFruitBean.DataBean.FruitBean()
+//                fruit.fruit_name = name
+//                fruit.fruit_unit = unit
+//                fruit.fruit_price = price.toString()
+//                fruitList.add(fruit)
+//                fruit_control_adapter.notifyDataSetChanged()
+//                fruit_adapter.notifyDataSetChanged()
+                api.upDateFruit(name, price, unit,id ,object : IApiListener {
+                    override fun success(data: Any) {
+                        if (data is BaseStatus) {
+                            util!!.showToast("修改成功")
+//                            if (data.data!!.flag == 1) {
+//                                refreshFruit()
+//                            }
+                        }
+                    }
+
+                    override fun error(e: Throwable) {
+
+                    }
+                })
+            }
+
             override fun add(name: String, price: Double, unit: String) {
 //                        Toast.makeText(context, name + " " + price + " " + unit, Toast.LENGTH_SHORT).show()
                 var fruit = CFruitBean.DataBean.FruitBean()
@@ -634,8 +658,15 @@ class MainActivity : AppCompatActivity() {
                     rv_change_fruit.layoutManager = GridLayoutManager(this, 6)
                     fruit_control_adapter.setOnItemClickListener(object :
                         OnListItemLongClickListener {
-                        override fun click(position: Int, view: View, data: Any) {
+                        override fun onClick(position: Int, view: View, data: Any) {
+                            //单按 编辑
+                            fruitAddDialog?.show()
+                            val fruit = fruitList.get(position)
+                            fruitAddDialog?.setDate(fruit.fruit_name!!,fruit.fruit_price!!,fruit.fruit_unit!!,fruit.fruit_id)
+                        }
 
+                        override fun onLongClick(position: Int, view: View, data: Any) {
+                            //长按 删除
                             AlertDialog.Builder(context)
                                 .setTitle("确认删除" + fruitList.get(position).fruit_name + "?")
                                 .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
@@ -755,7 +786,12 @@ class MainActivity : AppCompatActivity() {
                     rv_customer_control.layoutManager = GridLayoutManager(this, 5)
                     custom_control_adapter.setOnItemClickListener(object :
                         OnListItemLongClickListener {
-                        override fun click(position: Int, view: View, data: Any) {
+                        override fun onClick(position: Int, view: View, data: Any) {
+                            //单按
+                        }
+
+                        override fun onLongClick(position: Int, view: View, data: Any) {
+                            //长按
                             AlertDialog.Builder(context)
                                 .setTitle("确认删除" + customers.get(position).customer_name + "?")
                                 .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->

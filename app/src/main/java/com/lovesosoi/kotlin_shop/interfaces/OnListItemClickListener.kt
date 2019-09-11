@@ -7,5 +7,6 @@ import android.view.View
  * 2019-7-19 Lovesosoi
  */
 interface OnListItemLongClickListener{
-    fun click(position:Int, view: View, data:Any)
+    fun onLongClick(position:Int, view: View, data:Any)
+    fun onClick(position:Int, view: View, data:Any)
 }

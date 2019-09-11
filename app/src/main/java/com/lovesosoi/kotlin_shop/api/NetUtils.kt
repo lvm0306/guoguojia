@@ -101,6 +101,30 @@ class NetUtils {
     }
 
     /**
+     * 修改水果
+     */
+    fun upDateFruit(name: String, price: Double, unit: String, id:Int,listener: IApiListener) {
+        val parm = HashMap<String, String>()
+        parm.put("fruit_name", name)
+        parm.put("fruit_price", price.toString())
+        parm.put("fruit_unit", unit)
+        parm.put("fruit_id", id.toString())
+        BuildApi.buildApiServers()
+            ?.addFruit(parm)
+            ?.subscribeOn(Schedulers.newThread())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe(object : ApiResponse<BaseStatus>() {
+                override fun success(data: BaseStatus) {
+                    listener.success(data)
+                }
+
+                override fun failure(e: Throwable) {
+                    listener.error(e)
+                }
+            })
+    }
+
+    /**
      * 删除水果
      */
     fun deleteFruit(id: Int, listener: IApiListener) {

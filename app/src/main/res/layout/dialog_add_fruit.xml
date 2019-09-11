@@ -61,17 +61,16 @@
                   android:textSize="16sp"
                   android:layout_weight="1"/>
 
-        <Spinner
-                android:id="@+id/et_weight"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:background="#fff"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:textColor="#000"
-                android:spinnerMode="dropdown">
+        <EditText android:layout_width="0dp"
+                  android:background="#ffff"
+                  android:id="@+id/et_unit"
+                  android:layout_height="match_parent"
+                  android:paddingLeft="10dp"
+                  android:hint="请输入计量单位"
+                  android:gravity="start|center_vertical"
+                  android:textSize="16sp"
+                  android:layout_weight="1"/>
 
-        </Spinner>
     </LinearLayout>
     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#9999"/>
     <LinearLayout

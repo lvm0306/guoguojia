@@ -33,8 +33,13 @@ class FruitDisplayAdapter(var context:Context,var data:MutableList<CFruitBean.Da
         if (listener!=null) {
             p0.itemView.setOnLongClickListener(object :View.OnLongClickListener{
                 override fun onLongClick(v: View?): Boolean {
-                    listener?.click(p1, p0.itemView, data.get(p1))
+                    listener?.onLongClick(p1, p0.itemView, data.get(p1))
                     return true
+                }
+            })
+            p0.itemView.setOnClickListener(object :View.OnClickListener{
+                override fun onClick(v: View?) {
+                    listener?.onClick(p1, p0.itemView, data.get(p1))
                 }
             })
         }

@@ -23,6 +23,8 @@ interface ApiServers {
     fun getFruitList(): Observable<CFruitBean>
     @GET(BaseURL.FRUIT_ADD)
     fun addFruit(@QueryMap map:HashMap<String, String>): Observable<BaseStatus>
+    @GET(BaseURL.FRUIT_UPDATE)
+    fun updateFruit(@QueryMap map:HashMap<String, String>): Observable<BaseStatus>
     @GET(BaseURL.FRUIT_DELETE)
     fun deleteFruit(@QueryMap map:HashMap<String, String>): Observable<BaseStatus>
     @GET(BaseURL.CUSTOMER_LIST)
