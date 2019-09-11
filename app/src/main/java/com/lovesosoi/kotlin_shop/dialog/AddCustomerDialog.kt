@@ -20,6 +20,8 @@ import com.lovesosoi.kotlin_shop.R
  */
 class AddCustomerDialog(context: Context, themeResId: Int) : Dialog(context, themeResId) {
     var listener: OnAddCustomer? = null
+    var etName: EditText? = null
+    var mId: Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window?.setGravity(Gravity.CENTER);//设置dialog显示居中
@@ -36,29 +38,53 @@ class AddCustomerDialog(context: Context, themeResId: Int) : Dialog(context, the
     }
 
     private fun initView() {
-        var etName = findViewById<EditText>(R.id.et_name)
+        etName = findViewById<EditText>(R.id.et_name)
         var tvCancel = findViewById<Button>(R.id.tv_cancel)
         var tvSure = findViewById<Button>(R.id.tv_sure)
 
         tvSure.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-                val name = etName.text.toString()
-                if (name.length > 0 ) {
-                    listener?.add(etName.text.toString())
-                } else {
-                    Toast.makeText(scanForActivity(context),"请输入具体内容",Toast.LENGTH_SHORT).show()
+                val tName = etName?.text
+                if (tName.toString() == "") {
+                    Toast.makeText(scanForActivity(context), "请输入商户名", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                if (mId==0) {
+                    listener?.add(tName.toString())
+                }else{
+                    listener?.update(tName.toString(),mId)
                 }
             }
         })
         tvCancel.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-                dismiss()
+                close()
             }
         })
     }
 
     fun setOnAddCustomerListener(l: OnAddCustomer) {
         listener = l
+    }
+
+    fun setDate(name: String, id: Int) {
+        etName?.setText(name)
+        this.mId = id
+    }
+
+    fun show(id: Int) {
+        if (id == 0) {
+            mId = 0
+        } else {
+            mId = id
+        }
+        show()
+    }
+
+    fun close() {
+        mId = 0
+        etName?.setText("")
+        dismiss()
     }
 
     private fun scanForActivity(cont: Context?): Activity? {

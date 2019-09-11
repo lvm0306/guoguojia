@@ -31,6 +31,8 @@ interface ApiServers {
     fun getCustomerList(): Observable<CCustomer>
     @GET(BaseURL.CUSTOMER_ADD)
     fun addCustomer(@QueryMap map:HashMap<String, String>): Observable<BaseStatus>
+    @GET(BaseURL.CUSTOMER_UPDATE)
+    fun updateCustomer(@QueryMap map:HashMap<String, String>): Observable<BaseStatus>
     @GET(BaseURL.CUSTOMER_DELETE)
     fun deleteCustomer(@QueryMap map:HashMap<String, String>): Observable<BaseStatus>
     @GET(BaseURL.ORDER_LIST)

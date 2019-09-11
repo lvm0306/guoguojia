@@ -87,7 +87,7 @@ class AddFruitDialog(context: Context, themeResId: Int) : Dialog(context, themeR
         })
         tvCancel?.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-                dismiss()
+                close()
             }
         })
     }
@@ -110,6 +110,14 @@ class AddFruitDialog(context: Context, themeResId: Int) : Dialog(context, themeR
             mId = id
         }
         show()
+    }
+
+    fun close(){
+        mId = 0
+        etName?.setText("")
+        etPrice?.setText("")
+        et_unit?.setText("")
+        dismiss()
     }
 
     private fun scanForActivity(cont: Context?): Activity? {

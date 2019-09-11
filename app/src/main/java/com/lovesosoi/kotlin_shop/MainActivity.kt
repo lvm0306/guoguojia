@@ -365,20 +365,13 @@ class MainActivity : AppCompatActivity() {
 
         fruitAddDialog?.setOnAddFruitListener(object : OnAddFruit {
             override fun upDate(name: String, price: Double, unit: String, id: Int) {
-//                var fruit = CFruitBean.DataBean.FruitBean()
-//                fruit.fruit_name = name
-//                fruit.fruit_unit = unit
-//                fruit.fruit_price = price.toString()
-//                fruitList.add(fruit)
-//                fruit_control_adapter.notifyDataSetChanged()
-//                fruit_adapter.notifyDataSetChanged()
                 api.upDateFruit(name, price, unit,id ,object : IApiListener {
                     override fun success(data: Any) {
                         if (data is BaseStatus) {
                             util!!.showToast("修改成功")
-//                            if (data.data!!.flag == 1) {
-//                                refreshFruit()
-//                            }
+                            if (data.data!!.flag == 1) {
+                                refreshFruit()
+                            }
                         }
                     }
 
@@ -389,14 +382,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun add(name: String, price: Double, unit: String) {
-//                        Toast.makeText(context, name + " " + price + " " + unit, Toast.LENGTH_SHORT).show()
-                var fruit = CFruitBean.DataBean.FruitBean()
-                fruit.fruit_name = name
-                fruit.fruit_unit = unit
-                fruit.fruit_price = price.toString()
-                fruitList.add(fruit)
-                fruit_control_adapter.notifyDataSetChanged()
-                fruit_adapter.notifyDataSetChanged()
                 api.addFruit(name, price, unit, object : IApiListener {
                     override fun success(data: Any) {
                         if (data is BaseStatus) {
@@ -415,19 +400,31 @@ class MainActivity : AppCompatActivity() {
 
         customerAddDialog = AddCustomerDialog(activity, R.style.DialogTheme)
         customerAddDialog?.setOnAddCustomerListener(object : OnAddCustomer {
+            override fun update(name: String, id: Int) {
+
+                api.updateCustomer(name, id,object : IApiListener {
+                    override fun success(data: Any) {
+                        if (data is BaseStatus) {
+                            if (data.data!!.flag == 1) {
+                                util!!.showToast("修改成功")
+                                refreshCustomer()
+
+                            }
+                        }
+                    }
+
+                    override fun error(e: Throwable) {
+
+                    }
+                })
+            }
+
             override fun add(name: String) {
-                var c: CCustomer.DataBean.CustomerBean = CCustomer.DataBean.CustomerBean()
-                c.customer_name = name
-                customers.add(c)
-                customerList.add(name)
-                orderCustomerList.add(name)
-                util!!.showToast("增加成功")
-
-
                 api.addCustomer(name, object : IApiListener {
                     override fun success(data: Any) {
                         if (data is BaseStatus) {
                             if (data.data!!.flag == 1) {
+                                util!!.showToast("增加成功")
                                 refreshCustomer()
 
                             }
@@ -660,8 +657,8 @@ class MainActivity : AppCompatActivity() {
                         OnListItemLongClickListener {
                         override fun onClick(position: Int, view: View, data: Any) {
                             //单按 编辑
-                            fruitAddDialog?.show()
                             val fruit = fruitList.get(position)
+                            fruitAddDialog?.show(fruit.fruit_id)
                             fruitAddDialog?.setDate(fruit.fruit_name!!,fruit.fruit_price!!,fruit.fruit_unit!!,fruit.fruit_id)
                         }
 
@@ -675,6 +672,9 @@ class MainActivity : AppCompatActivity() {
                                             if (data is BaseStatus) {
                                                 if (data.data!!.flag == 1) {
                                                     util!!.showToast("删除成功")
+                                                    fruitList.removeAt(position)
+                                                    fruit_control_adapter.notifyDataSetChanged()
+                                                    fruit_adapter.notifyDataSetChanged()
 
                                                 }
                                             }
@@ -684,9 +684,6 @@ class MainActivity : AppCompatActivity() {
                                             Log.e("Lovesosoi", e.toString())
                                         }
                                     })
-                                    fruitList.removeAt(position)
-                                    fruit_control_adapter.notifyDataSetChanged()
-                                    fruit_adapter.notifyDataSetChanged()
                                 })
                                 .setNeutralButton("取消", null)
                                 .create()
@@ -788,6 +785,9 @@ class MainActivity : AppCompatActivity() {
                         OnListItemLongClickListener {
                         override fun onClick(position: Int, view: View, data: Any) {
                             //单按
+                            val customer = customers.get(position)
+                            customerAddDialog?.show(customer.customer_id)
+                            customerAddDialog?.setDate(customer.customer_name!!,customer.customer_id)
                         }
 
                         override fun onLongClick(position: Int, view: View, data: Any) {
@@ -888,7 +888,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.tv_add_fruit -> {
                 // 增加菜品
-                fruitAddDialog?.show()
+                fruitAddDialog?.show(0)
             }
             R.id.tv_add_custom -> {
                 // 增加客户
@@ -932,7 +932,7 @@ class MainActivity : AppCompatActivity() {
                     orderCustomerList.add(0, "全部")
                     startAdapter.notifyDataSetChanged()
                     custom_control_adapter.notifyDataSetChanged()
-                    customerAddDialog?.dismiss()
+                    customerAddDialog?.close()
                 }
             }
 
@@ -952,14 +952,12 @@ class MainActivity : AppCompatActivity() {
 
         api.getFruitList(object : IApiListener {
             override fun success(data: Any) {
-                util!!.showToast("增加成功")
-
                 if (data is CFruitBean) {
                     fruitList.clear()
                     fruitList.addAll(data.data!!.fruit!!.toMutableList())
                     fruit_control_adapter.notifyDataSetChanged()
                     fruit_adapter.notifyDataSetChanged()
-                    fruitAddDialog?.dismiss()
+                    fruitAddDialog?.close()
                 }
             }
 

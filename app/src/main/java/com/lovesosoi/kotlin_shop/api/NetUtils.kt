@@ -110,7 +110,7 @@ class NetUtils {
         parm.put("fruit_unit", unit)
         parm.put("fruit_id", id.toString())
         BuildApi.buildApiServers()
-            ?.addFruit(parm)
+            ?.updateFruit(parm)
             ?.subscribeOn(Schedulers.newThread())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(object : ApiResponse<BaseStatus>() {
@@ -132,6 +132,28 @@ class NetUtils {
         parm.put("fruit_id", id.toString())
         BuildApi.buildApiServers()
             ?.deleteFruit(parm)
+            ?.subscribeOn(Schedulers.newThread())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe(object : ApiResponse<BaseStatus>() {
+                override fun success(data: BaseStatus) {
+                    listener.success(data)
+                }
+
+                override fun failure(e: Throwable) {
+                    listener.error(e)
+                }
+            })
+    }
+
+    /**
+     * 增加商户
+     */
+    fun updateCustomer(name: String,id:Int, listener: IApiListener) {
+        val parm = HashMap<String, String>()
+        parm.put("customer_name", name)
+        parm.put("customer_id", id.toString())
+        BuildApi.buildApiServers()
+            ?.updateCustomer(parm)
             ?.subscribeOn(Schedulers.newThread())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(object : ApiResponse<BaseStatus>() {
