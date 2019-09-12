@@ -31,10 +31,7 @@ import cn.carbswang.android.numberpickerview.library.NumberPickerView
 import com.lovesosoi.kotlin_shop.adapter.*
 import com.lovesosoi.kotlin_shop.api.NetUtils
 import com.lovesosoi.kotlin_shop.bean.*
-import com.lovesosoi.kotlin_shop.dialog.AddCustomerDialog
-import com.lovesosoi.kotlin_shop.dialog.AddFruitDialog
-import com.lovesosoi.kotlin_shop.dialog.DialogNPV
-import com.lovesosoi.kotlin_shop.dialog.OrderShowDialog
+import com.lovesosoi.kotlin_shop.dialog.*
 import com.lovesosoi.kotlin_shop.interfaces.*
 import com.lovesosoi.kotlin_shop.utils.StringUtils
 import kotlinx.android.synthetic.main.activity_main.*
@@ -89,6 +86,7 @@ class MainActivity : AppCompatActivity() {
     var fruitAddDialog: AddFruitDialog? = null
     var customerAddDialog: AddCustomerDialog? = null
     var orderShowDialog: OrderShowDialog? = null
+    var fruitAddOrderDialog: FruitAddOrderDialog? = null
     var customername: String? = null//商户的选择
     var orderCustomername: String? = null//商户的选择
     var orderDate: String? = null // 订单的日期选择
@@ -146,7 +144,7 @@ class MainActivity : AppCompatActivity() {
                     fruitList = data.data?.fruit?.toMutableList()!!
                     fruit_adapter = FruitAdapter(context, fruitList)
                     rv_item.adapter = fruit_adapter
-                    rv_item.layoutManager = GridLayoutManager(context, 3) as RecyclerView.LayoutManager?
+                    rv_item.layoutManager = GridLayoutManager(context, 4) as RecyclerView.LayoutManager?
 
                     fruit_adapter.setOnItemClickListener(object : OnItemClick {
                         override fun add(position: Int, view: View, data: Any) {
@@ -158,27 +156,34 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         override fun click(position: Int, view: View, data: Any) {
+
                             if (data is CFruitBean.DataBean.FruitBean) {
-                                var flag = false
-                                for ((index, value) in orderList.withIndex()) {
-                                    flag = value.name == data.fruit_name
-                                    if (flag) {
-                                        orderList.get(index).count += 1
-                                        break
+
+                                fruitAddOrderDialog=FruitAddOrderDialog(context,R.style.DialogTheme)
+                                fruitAddOrderDialog?.show()
+                                fruitAddOrderDialog?.setDate(data.fruit_name!!,data.fruit_unit!!,data.fruit_price!!)
+                                fruitAddOrderDialog?.setOnAddCustomerListener(object :IOnAddFruitInOrder{
+                                    override fun add(name: String, unit: String, unit_price: String, count: String) {
+                                        var flag = false
+                                        for ((index, value) in orderList.withIndex()) {
+                                            flag = value.name == data.fruit_name
+                                            if (flag) {
+                                                orderList.get(index).count += count.toDouble()
+                                                break
+                                            }
+                                        }
+                                        if (!flag) {
+                                            orderList.add(
+                                                OrderBean(data.fruit_name!!, count.toDouble(), data.fruit_price!!.toDouble(), data.fruit_unit!!)
+                                            )
+                                        }
+                                        order_adapter.notifyDataSetChanged()
+                                        refreshOrder()
+                                        fruitAddOrderDialog?.close()
                                     }
-                                }
-                                if (!flag) {
-                                    orderList.add(
-                                        OrderBean(
-                                            data.fruit_name!!,
-                                            1.00,
-                                            data.fruit_price!!.toDouble(),
-                                            data.fruit_unit!!
-                                        )
-                                    )
-                                }
-                                order_adapter.notifyDataSetChanged()
-                                refreshOrder()
+
+                                })
+
                             }
                         }
                     })
@@ -256,9 +261,7 @@ class MainActivity : AppCompatActivity() {
 
                     override fun delete(position: Int, data: Any) {
                         AlertDialog.Builder(context)
-                            .setTitle(
-                                "确认删除" + order_history_list.get(position).time + " 日" + order_history_list.get(position).customer_name + "的订单么" + "?"
-                            )
+                            .setTitle("确认删除" + order_history_list.get(position).time + " 日" + order_history_list.get(position).customer_name + "的订单么" + "?")
                             .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
                                 api.deleteOrder(order_history_list.get(position).order_id, object : IApiListener {
                                     override fun success(data: Any) {

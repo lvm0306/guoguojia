@@ -27,8 +27,7 @@ class FruitAdapter(var context:Context,var data:MutableList<CFruitBean.DataBean.
     }
 
     override fun onBindViewHolder(p0: FruitAdapterHolder, p1: Int) {
-        p0.tv_name.text=data.get(p1).fruit_name
-        p0.tv_price.text= "单价：" + data.get(p1).fruit_price+data.get(p1).fruit_unit
+        p0.tv_name.text=data.get(p1).fruit_name+"("+data.get(p1).fruit_unit+")"
         if (listener!=null) {
             p0.itemView.setOnClickListener { v: View? -> listener?.click(p1, p0.itemView, data.get(p1)) }
         }
@@ -39,6 +38,5 @@ class FruitAdapter(var context:Context,var data:MutableList<CFruitBean.DataBean.
     }
     inner class FruitAdapterHolder(view:View):RecyclerView.ViewHolder(view){
         var tv_name: TextView = view.findViewById(R.id.tv_name)
-        var tv_price: TextView = view.findViewById(R.id.tv_price)
     }
 }

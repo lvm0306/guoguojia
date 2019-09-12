@@ -4,9 +4,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_margin="7dp"
-        android:minWidth="70dp"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
+        android:minWidth="100dp"
         android:background="#F9F9F9"
         android:orientation="vertical"
         android:gravity="center"
@@ -14,8 +12,15 @@
     <TextView
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
-            android:textSize="14sp"
+            android:textSize="15sp"
             android:textColor="#333"
             android:text="黄瓜"
             android:layout_height="wrap_content"/>
+    <TextView android:id="@+id/tv_price"
+              android:layout_marginTop="5dp"
+              android:layout_width="wrap_content"
+              android:textSize="12sp"
+              android:textColor="#333"
+              android:text="单价：1.5/斤"
+              android:layout_height="wrap_content"/>
 </LinearLayout>

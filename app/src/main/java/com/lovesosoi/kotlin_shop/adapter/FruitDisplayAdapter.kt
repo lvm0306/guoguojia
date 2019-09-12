@@ -19,7 +19,7 @@ class FruitDisplayAdapter(var context:Context,var data:MutableList<CFruitBean.Da
     var listener: OnListItemLongClickListener? =null
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): FruitAdapterHolder {
-        var inflate= LayoutInflater.from(context).inflate(R.layout.item_fruit,p0,false)
+        var inflate= LayoutInflater.from(context).inflate(R.layout.item_fruit_display,p0,false)
         return FruitAdapterHolder(inflate)
     }
 
@@ -29,7 +29,7 @@ class FruitDisplayAdapter(var context:Context,var data:MutableList<CFruitBean.Da
 
     override fun onBindViewHolder(p0: FruitAdapterHolder, p1: Int) {
         p0.tv_name.text=data.get(p1).fruit_name
-        p0.tv_price.text= "单价：" + data.get(p1).fruit_price+data.get(p1).fruit_unit
+        p0.tv_price.text= "单价：" + data.get(p1).fruit_price+"/"+data.get(p1).fruit_unit
         if (listener!=null) {
             p0.itemView.setOnLongClickListener(object :View.OnLongClickListener{
                 override fun onLongClick(v: View?): Boolean {
