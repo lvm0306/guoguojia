@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.OrientationHelper
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
@@ -43,10 +44,12 @@ class EditActivity : AppCompatActivity() {
                 if (index == 0) {
                     temp.fruit_name = value
                 } else if (index == 1) {
-                    temp.fruit_unit = value
-                } else if (index == 2) {
                     temp.fruit_amount = value
+                } else if (index == 2) {
+                    temp.fruit_unit = value
                 } else if (index == 3) {
+                    temp.fruit_amount += value
+                } else if (index == 4) {
                     temp.fruit_total = value
                 }
             }
@@ -63,6 +66,7 @@ class EditActivity : AppCompatActivity() {
         context = this
         util = Utils(context)
         date = intent.getSerializableExtra("date") as OrderList.DataBean.OrderBean
+        Log.e("Lovesosoi", date.toString())
     }
 
     @OnClick(
@@ -74,7 +78,15 @@ class EditActivity : AppCompatActivity() {
     fun onClick(view: View) {
         when (view.id) {
             R.id.tv_cancel -> finish()
-            R.id.tv_sure -> util!!.showToast("确认订单")
+            R.id.tv_sure -> {
+                var info = ""
+                for (i in fruitList) {
+                    info += i.fruit_name + "|" + i.fruit_total + "/" + i.fruit_unit + "|" + i.fruit_amount + i.fruit_unit + "|" + String.format(
+                        "%.2f", i.fruit_total.toDouble() * i.fruit_amount.toDouble()
+                    ) + "^"
+                }
+                Log.e("lovesosoi", "order---" + info)
+            }
         }
     }
 }

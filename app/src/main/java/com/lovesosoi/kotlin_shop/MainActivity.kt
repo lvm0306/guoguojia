@@ -147,6 +147,9 @@ class MainActivity : AppCompatActivity() {
                     rv_item.layoutManager = GridLayoutManager(context, 4) as RecyclerView.LayoutManager?
 
                     fruit_adapter.setOnItemClickListener(object : OnItemClick {
+                        override fun subLong(position: Int, view: View, data: Any) {
+                        }
+
                         override fun add(position: Int, view: View, data: Any) {
 
                         }
@@ -169,12 +172,14 @@ class MainActivity : AppCompatActivity() {
                                             flag = value.name == data.fruit_name
                                             if (flag) {
                                                 orderList.get(index).count += count.toDouble()
+                                                orderList.get(index).price = unit_price.toDouble()
+                                                orderList.get(index).unit = unit
                                                 break
                                             }
                                         }
                                         if (!flag) {
                                             orderList.add(
-                                                OrderBean(data.fruit_name!!, count.toDouble(), data.fruit_price!!.toDouble(), data.fruit_unit!!)
+                                                OrderBean(data.fruit_name!!, count.toDouble(), unit_price!!.toDouble(),unit)
                                             )
                                         }
                                         order_adapter.notifyDataSetChanged()
@@ -288,9 +293,9 @@ class MainActivity : AppCompatActivity() {
                     override fun edit(position: Int, data: Any) {
                         util!!.showToast("编辑")
                         orderShowDialog!!.dismiss()
-                        val date =order_history_list.get(position)
+//                        val date =order_history_list.get(position)
                         val i=Intent(context, EditActivity::class.java)
-                        i.putExtra("date",date)
+                        i.putExtra("date",data as OrderList.DataBean.OrderBean)
                         startActivity(i)
                     }
 
@@ -310,6 +315,20 @@ class MainActivity : AppCompatActivity() {
 //
 //        }
         order_adapter.setOnItemClickListener(object : OnItemClick {
+            override fun subLong(position: Int, view: View, data: Any) {
+                AlertDialog.Builder(context)
+                    .setTitle("确认删除" + orderList.get(position).name + "么" + "?")
+                    .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
+
+                        orderList.removeAt(position)
+                        order_adapter.notifyDataSetChanged()
+                        refreshOrder()
+                    })
+                    .setNeutralButton("取消", null)
+                    .create()
+                    .show()
+            }
+
             override fun sub(position: Int, view: View, data: Any) {
                 var count = orderList.get(position).count
                 if (count > 1) {
@@ -523,23 +542,56 @@ class MainActivity : AppCompatActivity() {
             list.add(DataForSendToPrinterPos80.selectAlignment(0))//居左
             list.add(StringUtils.strTobytes("客户:" + data.customer_name + "\n"))
 //            list.add(StringUtils.strTobytes("单号:XD-2019-08-11-15-58\n"))
-            list.add(StringUtils.strTobytes("日期:" + data.time + "\n"))
+            list.add(StringUtils.strTobytes("日期:" + data.time!!.replace("T"," ")+ "\n"))
             list.add(StringUtils.strTobytes(line))
-            list.add(StringUtils.strTobytes("商品\t单a\t\t数量\t金额\n"))
+            var title="商品"
+            for (temp in 7 downTo 1){
+                title+=" "
+            }
+            title+="数量"
+            for (temp in 7 downTo 1){
+                title+=" "
+            }
+            title+="单价(元)"
+            for (temp in 5 downTo 1){
+                title+=" "
+            }
+            title+="金额(元)"
+            for (temp in 5  downTo 1){
+                title+=" "
+            }
+            title+="\n"
+            list.add(StringUtils.strTobytes(title))
 
             for (line1 in data.order_info!!.split("^")) {
+                var unit = ""
                 for ((index, value) in line1.split("|").withIndex()) {
-                    var temp = ""
+                    var print = ""
                     if (index == 0) {
-                        temp += value + "  \t"
+                        print+=value
+                        for (temp in( 13- value.length*2) downTo 1){
+                            print+=" "
+                        }
                     } else if (index == 1) {
-                        temp += value + "\t\t"
+                        print+=value
+                        for (temp in( 11- value.length) downTo 1){
+                            print+=" "
+                        }
                     } else if (index == 2) {
-                        temp += value + "  \t"
+                        unit+=value
                     } else if (index == 3) {
-                        temp += value + "\n"
+                        print+=unit+value
+                        for (temp in( 13- value.length*2-unit.length) downTo 1){
+                            print+=" "
+                        }
+                    }else if (index == 4) {
+                        print+=value
+                        for (temp in( 11- value.length) downTo 1){
+                            print+=" "
+                        }
+                        print +="\n"
                     }
-                    list.add(StringUtils.strTobytes(temp))
+                    list.add(StringUtils.strTobytes(print))
                 }
             }
 //            list.add(StringUtils.strTobytes("鲜蘑\t\t2.0斤\t3.6\t7.2元\n"))
@@ -549,14 +601,15 @@ class MainActivity : AppCompatActivity() {
 //            list.add(StringUtils.strTobytes("干将莫邪\t\t2.0斤\t3.6\t47.2元\n"))
             list.add(StringUtils.strTobytes("\n"))
             list.add(StringUtils.strTobytes(line))
-            list.add(StringUtils.strTobytes("合计\t\t" + data.all_item + "样\t\t" + data.all_price + "元\n"))
+            list.add(StringUtils.strTobytes("合计\t\t\t" + data.all_item + "样\t" + data.all_price + "元\n"))
             list.add(DataForSendToPrinterPos80.printAndFeedForward(2))
-            list.add(StringUtils.strTobytes("打印日期:" + data.time + "\n"))
-            list.add(DataForSendToPrinterPos80.printAndFeedForward(2))
+            list.add(StringUtils.strTobytes("打印日期:" + data.time!!.replace("T"," ") + "\n"))
+            list.add(StringUtils.strTobytes("TEL:13946045328" +  "\n"))
+            list.add(DataForSendToPrinterPos80.printAndFeedForward(4))
             list.add(DataForSendToPrinterPos80.selectAlignment(1))//居中
             list.add(DataForSendToPrinterPos80.selectCharacterSize(17))
             list.add(StringUtils.strTobytes("老郭菜店"))
-            list.add(DataForSendToPrinterPos80.printAndFeedForward(7))
+            list.add(DataForSendToPrinterPos80.printAndFeedForward(9))
             list.add(DataForSendToPrinterPos80.selectCutPagerModerAndCutPager(0))
 
             list
@@ -840,10 +893,10 @@ class MainActivity : AppCompatActivity() {
                 val time = simpleDateFormat.format(date)
                 var info = ""
                 for (i in orderList) {
-                    info += i.name + "|" + i.price + "/" + i.unit + "|" + i.count + i.unit + "|" + String.format(
+                    info += i.name + "|" + i.count+"|" +String.format("%.2f",i.price ) + "|" + i.unit + "|" + String.format(
                         "%.2f",
                         i.price * i.count
-                    ) + "元 " + "^"
+                    ) + "^"
                 }
                 Log.e(
                     "Lovesosoi", "customerName=" + customername

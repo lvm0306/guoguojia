@@ -75,9 +75,9 @@ class OrderShowDialog(context: Context, themeResId: Int) : Dialog(context, theme
         var tv3 = view.findViewById<TextView>(R.id.tv3)
         var tv4 = view.findViewById<TextView>(R.id.tv4)
         tv1.text = "名字"
-        tv2.text = "单价"
-        tv3.text = "数量"
-        tv4.text = "价格"
+        tv2.text = "数量"
+        tv3.text = "单价(元)"
+        tv4.text = "合计(元)"
         ll_info?.addView(view)
         for (line in order_info!!.split("^")) {
             var view = LayoutInflater.from(context).inflate(R.layout.item_order_item, null)
@@ -85,14 +85,19 @@ class OrderShowDialog(context: Context, themeResId: Int) : Dialog(context, theme
             var tv2 = view.findViewById<TextView>(R.id.tv2)
             var tv3 = view.findViewById<TextView>(R.id.tv3)
             var tv4 = view.findViewById<TextView>(R.id.tv4)
+            var unit=""
             for ((index, value) in line.split("|").withIndex()) {
                 if (index == 0) {
                     tv1.text = value
                 } else if (index == 1) {
-                    tv2.text = value
+                    unit += value
                 } else if (index == 2) {
                     tv3.text = value
                 } else if (index == 3) {
+                    unit += value
+                    tv2.text=unit
+                }
+                 else if (index == 4) {
                     tv4.text = value
                 }
 

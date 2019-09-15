@@ -46,7 +46,7 @@
                   android:layout_height="wrap_content"/>
         <EditText android:layout_width="0dp"
                   android:textSize="14sp"
-                  android:text="单价"
+                  android:text="数量"
                   android:id="@+id/et_unit"
                   android:layout_weight="3"
                   android:textColor="@color/colorWhite"
@@ -56,7 +56,7 @@
                   android:textSize="14sp"
                   android:id="@+id/et_amount"
                   android:paddingRight="15dp"
-                  android:text="数量"
+                  android:text="单价(元)"
                   android:textColor="@color/colorWhite"
                   android:layout_weight="3"
                   android:background="@null"
@@ -68,7 +68,7 @@
                   android:gravity="left"
                   android:textColor="@color/colorWhite"
                   android:textSize="14sp"
-                  android:text="合计"
+                  android:text="合计(元)"
                   android:layout_height="wrap_content"/>
     </LinearLayout>
     <android.support.v7.widget.RecyclerView

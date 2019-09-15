@@ -32,12 +32,21 @@ class OrderAdapter(var context: Context, var data: MutableList<OrderBean>) :
 //            p0?.tv_name?.text="黄瓜"
 //        listener?.click()
         p0.tv_name.text = data.get(p1).name
-        p0.tv_unit.text=data.get(p1).price.toString()+"/"+data.get(p1).unit
-        p0.tv_count.text = "" + data.get(p1).count + data.get(p1).unit
-        p0.itemView.setOnClickListener { v: View? -> listener?.click(p1, p0.itemView, data.get(p1)) }
-        p0.tv_sub.setOnClickListener { v: View? -> listener?.sub(p1, p0.itemView, data.get(p1)) }
-        p0.tv_add.setOnClickListener { v: View? -> listener?.add(p1, p0.itemView, data.get(p1)) }
-        p0.tv_count.setOnClickListener { v: View? -> countListener?.countClick(p1, p0.itemView, data.get(p1)) }
+        p0.tv_unit.text=data.get(p1).price.toString()
+        p0.tv_count.text = "" + data.get(p1).count
+        if (listener!=null) {
+            p0.itemView.setOnClickListener { v: View? -> listener?.click(p1, p0.itemView, data.get(p1)) }
+            p0.tv_sub.setOnClickListener { v: View? -> listener?.sub(p1, p0.itemView, data.get(p1)) }
+            p0.tv_add.setOnClickListener { v: View? -> listener?.add(p1, p0.itemView, data.get(p1)) }
+            p0.tv_count.setOnClickListener { v: View? -> countListener?.countClick(p1, p0.itemView, data.get(p1)) }
+            p0.tv_sub.setOnLongClickListener(object :View.OnLongClickListener{
+                override fun onLongClick(v: View?): Boolean {
+                    listener?.subLong(p1, p0.itemView, data.get(p1))
+                    return true
+                }
+
+            })
+        }
 
     }
 
