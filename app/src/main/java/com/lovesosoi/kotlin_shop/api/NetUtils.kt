@@ -240,12 +240,14 @@ class NetUtils {
         all_price: String,
         all_item: String,
         order_info: String,
+        otime: String,
         listener: IApiListener
     ) {
         val parm = HashMap<String, String>()
         parm.put("customer_id", cusomerid)
         parm.put("customer_name", customer_name)
         parm.put("time", time)
+        parm.put("otime", otime)
         parm.put("all_price", all_price)
         parm.put("all_item", all_item)
         parm.put("order_info", order_info)

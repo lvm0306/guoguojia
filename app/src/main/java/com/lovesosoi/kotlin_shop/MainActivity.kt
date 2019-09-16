@@ -100,8 +100,10 @@ class MainActivity : AppCompatActivity() {
     var binder: IMyBinder? = null
     var stime: String = ""
     var etime: String = ""
+    var otime: String = ""
     lateinit var tvETime: TextView
     lateinit var tvSTime: TextView
+    lateinit var tvOrderTime: TextView
     //bindService的参数connection
     var conn: ServiceConnection? = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName, b: IBinder) {
@@ -229,9 +231,12 @@ class MainActivity : AppCompatActivity() {
     private fun initView() {
         tvETime = findViewById<View>(R.id.tv_last_time) as TextView
         tvSTime = findViewById<View>(R.id.tv_now_time) as TextView
+        tvOrderTime = findViewById<View>(R.id.tv_order_time) as TextView
         val time = SimpleDateFormat("yyyy-MM-dd").format(Date(System.currentTimeMillis()))
         tvSTime.text = "起始时间：" + time
         tvETime.text = "结束时间：" + time
+        tvOrderTime.text = "送货时间：" + time
+        otime=time
 
         orderShowDialog = OrderShowDialog(activity, R.style.DialogTheme)
         //rv 初始化
@@ -690,7 +695,8 @@ class MainActivity : AppCompatActivity() {
         R.id.tv_commit,
         R.id.tv_add_fruit,
         R.id.tv_add_custom,
-        R.id.tv_order_serch
+        R.id.tv_order_serch,
+        R.id.tv_order_time
     )
     fun onClick(view: View) {
         when (view.id) {
@@ -902,6 +908,7 @@ class MainActivity : AppCompatActivity() {
                     "Lovesosoi", "customerName=" + customername
                             + " customerid= " + customerid
                             + " time= " + time
+                            + " ordertime= " + otime+" 00:00:00"
                             + " all_price= " + all_price
                             + " all_item= " + goodsitem
                             + " order_info= " + info
@@ -916,6 +923,7 @@ class MainActivity : AppCompatActivity() {
                             customername!!,
                             customerid.toString(),
                             time,
+                            otime,
                             all_price.toString(),
                             goodsitem.toString(),
                             info,
@@ -952,6 +960,29 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.tv_order_serch -> {
                 getOrderList()
+            }
+            R.id.tv_order_time ->{
+                val mDialogNPV = DialogNPV(context, "请选择结束的时间")
+                mDialogNPV.show()
+                mDialogNPV.setListener(object : IPickListener {
+                    @SuppressLint("SetTextI18n")
+                    override fun pick(year: Int, month: Int, day: Int) {
+                        util!!.showToast("选择下单时间--" + year + "-" + month + "-" + day)
+                        var temp = ""
+                        if (month < 10) {
+                            temp += year.toString() + "-0" + month
+                        } else {
+                            temp += year.toString() + "-" + month
+                        }
+                        if (day < 10) {
+                            temp += "-0" + day
+                        } else {
+                            temp += "-" + day
+                        }
+                        tvOrderTime.text = "送货时间：" + temp
+                        otime = temp
+                    }
+                })
             }
         }
     }

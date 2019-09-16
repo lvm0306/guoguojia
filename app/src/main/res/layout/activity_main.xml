@@ -117,29 +117,37 @@
                                 android:layout_alignParentLeft="true"
                                 android:textColor="#000"
                                 android:background="@drawable/shape_menu_title_bg"
-                                android:spinnerMode="dropdown" android:layout_alignParentBottom="true"
+                                android:spinnerMode="dropdown"
+                                android:layout_alignParentBottom="true"
                                 android:layout_marginBottom="5dp">
 
                         </Spinner>
-                        <TextView
-                                android:visibility="gone"
-                                android:text="已选列表√"
-                                android:gravity="center"
-                                android:layout_alignParentLeft="true"
-                                android:layout_centerVertical="true"
-                                android:layout_width="wrap_content"
-                                android:textColor="#000"
-                                android:background="@drawable/shape_menu_title_bg"
-                                android:layout_height="30dp"/>
-                        <TextView android:gravity="center"
-                                  android:text="提交订单"
-                                  android:textColor="#fff"
-                                  android:id="@+id/tv_commit"
-                                  android:layout_centerVertical="true"
-                                  android:background="@drawable/shape_menu_commit_bg"
-                                  android:layout_alignParentRight="true"
-                                  android:layout_width="wrap_content"
-                                  android:layout_height="30dp"/>
+                        <LinearLayout android:layout_width="wrap_content"
+                                      android:orientation="horizontal"
+                                      android:layout_alignParentRight="true"
+                                      android:layout_centerVertical="true"
+                                      android:layout_height="wrap_content">
+
+                            <TextView
+                                    android:id="@+id/tv_order_time"
+                                    android:visibility="visible"
+                                    android:text="送货时间:2019-09-16"
+                                    android:gravity="center"
+                                    android:background="@drawable/shape_order_time_bg"
+                                    android:layout_marginRight="10dp"
+                                    android:paddingLeft="8dp"
+                                    android:paddingRight="8dp"
+                                    android:layout_width="wrap_content"
+                                    android:textColor="#000"
+                                    android:layout_height="30dp"/>
+                            <TextView android:gravity="center"
+                                      android:text="提交订单"
+                                      android:textColor="#fff"
+                                      android:id="@+id/tv_commit"
+                                      android:background="@drawable/shape_menu_commit_bg"
+                                      android:layout_width="wrap_content"
+                                      android:layout_height="30dp"/>
+                        </LinearLayout>
                     </RelativeLayout>
 
                     <RelativeLayout
