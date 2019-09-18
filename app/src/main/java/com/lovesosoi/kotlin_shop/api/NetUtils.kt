@@ -237,10 +237,10 @@ class NetUtils {
         customer_name: String,
         cusomerid: String,
         time: String,
+        otime: String,
         all_price: String,
         all_item: String,
         order_info: String,
-        otime: String,
         listener: IApiListener
     ) {
         val parm = HashMap<String, String>()

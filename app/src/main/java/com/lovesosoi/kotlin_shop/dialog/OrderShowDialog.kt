@@ -63,8 +63,8 @@ class OrderShowDialog(context: Context, themeResId: Int) : Dialog(context, theme
     private fun initView() {
 
 
-        tv_name?.text = data?.customer_name
-        tv_time?.text = data?.time
+        tv_name?.text = "商户名:"+data?.customer_name
+        tv_time?.text = "送货日期:"+data?.otime?.replace("T"," ")
         var order_info = data!!.order_info
         order_info = order_info!!.substring(0, order_info!!.length - 1)
         ll_info?.removeAllViews()
