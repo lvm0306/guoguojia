@@ -41,6 +41,8 @@ interface ApiServers {
     fun addOrder(@QueryMap map:HashMap<String, String>): Observable<BaseStatus>
     @GET(BaseURL.ORDER_DELETE)
     fun deleteOrder(@QueryMap map:HashMap<String, String>): Observable<BaseStatus>
+    @GET(BaseURL.ORDER_UPDATE)
+    fun updateOrder(@QueryMap map:HashMap<String, String>): Observable<BaseStatus>
 //
 //    @GET("v2/movie/subject/{id}")
 //    fun getMovieDetailById(@Path("id") id: String,

@@ -265,4 +265,40 @@ class NetUtils {
                 }
             })
     }
+
+    /**
+     * 修改订单
+     */
+    fun upDateOrder(
+        customer_name: String,
+        cusomerid: String,
+        time: String,
+        otime: String,
+        all_price: String,
+        all_item: String,
+        order_info: String,
+        listener: IApiListener
+    ) {
+        val parm = HashMap<String, String>()
+        parm.put("customer_id", cusomerid)
+        parm.put("customer_name", customer_name)
+        parm.put("time", time)
+        parm.put("otime", otime)
+        parm.put("all_price", all_price)
+        parm.put("all_item", all_item)
+        parm.put("order_info", order_info)
+        BuildApi.buildApiServers()
+            ?.updateCustomer(parm)
+            ?.subscribeOn(Schedulers.newThread())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe(object : ApiResponse<BaseStatus>() {
+                override fun success(data: BaseStatus) {
+                    listener.success(data)
+                }
+
+                override fun failure(e: Throwable) {
+                    listener.error(e)
+                }
+            })
+    }
 }

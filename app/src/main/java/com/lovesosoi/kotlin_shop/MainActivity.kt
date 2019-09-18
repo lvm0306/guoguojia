@@ -164,10 +164,10 @@ class MainActivity : AppCompatActivity() {
 
                             if (data is CFruitBean.DataBean.FruitBean) {
 
-                                fruitAddOrderDialog=FruitAddOrderDialog(context,R.style.DialogTheme)
+                                fruitAddOrderDialog = FruitAddOrderDialog(context, R.style.DialogTheme)
                                 fruitAddOrderDialog?.show()
-                                fruitAddOrderDialog?.setDate(data.fruit_name!!,data.fruit_unit!!,data.fruit_price!!)
-                                fruitAddOrderDialog?.setOnAddCustomerListener(object :IOnAddFruitInOrder{
+                                fruitAddOrderDialog?.setDate(data.fruit_name!!, data.fruit_unit!!, data.fruit_price!!)
+                                fruitAddOrderDialog?.setOnAddCustomerListener(object : IOnAddFruitInOrder {
                                     override fun add(name: String, unit: String, unit_price: String, count: String) {
                                         var flag = false
                                         for ((index, value) in orderList.withIndex()) {
@@ -181,7 +181,12 @@ class MainActivity : AppCompatActivity() {
                                         }
                                         if (!flag) {
                                             orderList.add(
-                                                OrderBean(data.fruit_name!!, count.toDouble(), unit_price!!.toDouble(),unit)
+                                                OrderBean(
+                                                    data.fruit_name!!,
+                                                    count.toDouble(),
+                                                    unit_price!!.toDouble(),
+                                                    unit
+                                                )
                                             )
                                         }
                                         order_adapter.notifyDataSetChanged()
@@ -236,7 +241,7 @@ class MainActivity : AppCompatActivity() {
         tvSTime.text = "起始时间：" + time
         tvETime.text = "结束时间：" + time
         tvOrderTime.text = "送货时间：" + time
-        otime=time
+        otime = time
 
         orderShowDialog = OrderShowDialog(activity, R.style.DialogTheme)
         //rv 初始化
@@ -271,7 +276,11 @@ class MainActivity : AppCompatActivity() {
 
                     override fun delete(position: Int, data: Any) {
                         AlertDialog.Builder(context)
-                            .setTitle("确认删除" + order_history_list.get(position).time + " 日" + order_history_list.get(position).customer_name + "的订单么" + "?")
+                            .setTitle(
+                                "确认删除" + order_history_list.get(position).time + " 日" + order_history_list.get(
+                                    position
+                                ).customer_name + "的订单么" + "?"
+                            )
                             .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
                                 api.deleteOrder(order_history_list.get(position).order_id, object : IApiListener {
                                     override fun success(data: Any) {
@@ -296,12 +305,11 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun edit(position: Int, data: Any) {
-                        util!!.showToast("编辑")
                         orderShowDialog!!.dismiss()
 //                        val date =order_history_list.get(position)
-                        val i=Intent(context, EditActivity::class.java)
-                        i.putExtra("date",data as OrderList.DataBean.OrderBean)
-                        startActivity(i)
+                        val i = Intent(context, EditActivity::class.java)
+                        i.putExtra("date", data as OrderList.DataBean.OrderBean)
+                        startActivityForResult(i, 0)
                     }
 
                 })
@@ -392,7 +400,7 @@ class MainActivity : AppCompatActivity() {
 
         fruitAddDialog?.setOnAddFruitListener(object : OnAddFruit {
             override fun upDate(name: String, price: Double, unit: String, id: Int) {
-                api.upDateFruit(name, price, unit,id ,object : IApiListener {
+                api.upDateFruit(name, price, unit, id, object : IApiListener {
                     override fun success(data: Any) {
                         if (data is BaseStatus) {
                             util!!.showToast("修改成功")
@@ -429,7 +437,7 @@ class MainActivity : AppCompatActivity() {
         customerAddDialog?.setOnAddCustomerListener(object : OnAddCustomer {
             override fun update(name: String, id: Int) {
 
-                api.updateCustomer(name, id,object : IApiListener {
+                api.updateCustomer(name, id, object : IApiListener {
                     override fun success(data: Any) {
                         if (data is BaseStatus) {
                             if (data.data!!.flag == 1) {
@@ -547,25 +555,25 @@ class MainActivity : AppCompatActivity() {
             list.add(DataForSendToPrinterPos80.selectAlignment(0))//居左
             list.add(StringUtils.strTobytes("客户:" + data.customer_name + "\n"))
 //            list.add(StringUtils.strTobytes("单号:XD-2019-08-11-15-58\n"))
-            list.add(StringUtils.strTobytes("日期:" + data.time!!.replace("T"," ")+ "\n"))
+            list.add(StringUtils.strTobytes("日期:" + data.time!!.replace("T", " ") + "\n"))
             list.add(StringUtils.strTobytes(line))
-            var title="商品"
-            for (temp in 7 downTo 1){
-                title+=" "
+            var title = "商品"
+            for (temp in 7 downTo 1) {
+                title += " "
             }
-            title+="数量"
-            for (temp in 7 downTo 1){
-                title+=" "
+            title += "数量"
+            for (temp in 7 downTo 1) {
+                title += " "
             }
-            title+="单价(元)"
-            for (temp in 5 downTo 1){
-                title+=" "
+            title += "单价(元)"
+            for (temp in 5 downTo 1) {
+                title += " "
             }
-            title+="金额(元)"
-            for (temp in 5  downTo 1){
-                title+=" "
+            title += "金额(元)"
+            for (temp in 5 downTo 1) {
+                title += " "
             }
-            title+="\n"
+            title += "\n"
             list.add(StringUtils.strTobytes(title))
 
             for (line1 in data.order_info!!.split("^")) {
@@ -573,28 +581,28 @@ class MainActivity : AppCompatActivity() {
                 for ((index, value) in line1.split("|").withIndex()) {
                     var print = ""
                     if (index == 0) {
-                        print+=value
-                        for (temp in( 13- value.length*2) downTo 1){
-                            print+=" "
+                        print += value
+                        for (temp in (13 - value.length * 2) downTo 1) {
+                            print += " "
                         }
                     } else if (index == 1) {
-                        print+=value
-                        for (temp in( 11- value.length) downTo 1){
-                            print+=" "
+                        print += value
+                        for (temp in (11 - value.length) downTo 1) {
+                            print += " "
                         }
                     } else if (index == 2) {
-                        unit+=value
+                        unit += value
                     } else if (index == 3) {
-                        print+=unit+value
-                        for (temp in( 13- value.length*2-unit.length) downTo 1){
-                            print+=" "
+                        print += unit + value
+                        for (temp in (13 - value.length * 2 - unit.length) downTo 1) {
+                            print += " "
                         }
-                    }else if (index == 4) {
-                        print+=value
-                        for (temp in( 11- value.length) downTo 1){
-                            print+=" "
+                    } else if (index == 4) {
+                        print += value
+                        for (temp in (11 - value.length) downTo 1) {
+                            print += " "
                         }
-                        print +="\n"
+                        print += "\n"
                     }
                     list.add(StringUtils.strTobytes(print))
                 }
@@ -608,8 +616,8 @@ class MainActivity : AppCompatActivity() {
             list.add(StringUtils.strTobytes(line))
             list.add(StringUtils.strTobytes("合计\t\t\t" + data.all_item + "样\t" + data.all_price + "元\n"))
             list.add(DataForSendToPrinterPos80.printAndFeedForward(2))
-            list.add(StringUtils.strTobytes("打印日期:" + data.time!!.replace("T"," ") + "\n"))
-            list.add(StringUtils.strTobytes("TEL:13946045328" +  "\n"))
+            list.add(StringUtils.strTobytes("打印日期:" + data.time!!.replace("T", " ") + "\n"))
+            list.add(StringUtils.strTobytes("TEL:13946045328" + "\n"))
             list.add(DataForSendToPrinterPos80.printAndFeedForward(4))
             list.add(DataForSendToPrinterPos80.selectAlignment(1))//居中
             list.add(DataForSendToPrinterPos80.selectCharacterSize(17))
@@ -721,7 +729,12 @@ class MainActivity : AppCompatActivity() {
                             //单按 编辑
                             val fruit = fruitList.get(position)
                             fruitAddDialog?.show(fruit.fruit_id)
-                            fruitAddDialog?.setDate(fruit.fruit_name!!,fruit.fruit_price!!,fruit.fruit_unit!!,fruit.fruit_id)
+                            fruitAddDialog?.setDate(
+                                fruit.fruit_name!!,
+                                fruit.fruit_price!!,
+                                fruit.fruit_unit!!,
+                                fruit.fruit_id
+                            )
                         }
 
                         override fun onLongClick(position: Int, view: View, data: Any) {
@@ -826,7 +839,7 @@ class MainActivity : AppCompatActivity() {
                  */
                 val customerSp = findViewById<View>(R.id.sp_order_custom) as Spinner
                 orderCustomerAdapter =
-                    ArrayAdapter(context, R.layout.support_simple_spinner_dropdown_item, orderCustomerList)
+                        ArrayAdapter(context, R.layout.support_simple_spinner_dropdown_item, orderCustomerList)
                 orderCustomerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
                 customerSp.adapter = orderCustomerAdapter
                 val customerListener = mCustomClickListener()
@@ -849,7 +862,7 @@ class MainActivity : AppCompatActivity() {
                             //单按
                             val customer = customers.get(position)
                             customerAddDialog?.show(customer.customer_id)
-                            customerAddDialog?.setDate(customer.customer_name!!,customer.customer_id)
+                            customerAddDialog?.setDate(customer.customer_name!!, customer.customer_id)
                         }
 
                         override fun onLongClick(position: Int, view: View, data: Any) {
@@ -899,7 +912,10 @@ class MainActivity : AppCompatActivity() {
                 val time = simpleDateFormat.format(date)
                 var info = ""
                 for (i in orderList) {
-                    info += i.name + "|" + i.count+"|" +String.format("%.2f",i.price ) + "|" + i.unit + "|" + String.format(
+                    info += i.name + "|" + i.count + "|" + String.format(
+                        "%.2f",
+                        i.price
+                    ) + "|" + i.unit + "|" + String.format(
                         "%.2f",
                         i.price * i.count
                     ) + "^"
@@ -908,7 +924,7 @@ class MainActivity : AppCompatActivity() {
                     "Lovesosoi", "customerName=" + customername
                             + " customerid= " + customerid
                             + " time= " + time
-                            + " ordertime= " + otime+" 00:00:00"
+                            + " ordertime= " + otime + " 00:00:00"
                             + " all_price= " + all_price
                             + " all_item= " + goodsitem
                             + " order_info= " + info
@@ -961,7 +977,7 @@ class MainActivity : AppCompatActivity() {
             R.id.tv_order_serch -> {
                 getOrderList()
             }
-            R.id.tv_order_time ->{
+            R.id.tv_order_time -> {
                 val mDialogNPV = DialogNPV(context, "请选择结束的时间")
                 mDialogNPV.show()
                 mDialogNPV.setListener(object : IPickListener {
@@ -1118,6 +1134,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun startActivityForResult(intent: Intent?, requestCode: Int, options: Bundle?) {
+        super.startActivityForResult(intent, requestCode, options)
+        if (requestCode == 0) {
+            getOrderList()
+        }
+
+    }
+
 }
 
 //        var deviceList_found=ArrayList<String>()

@@ -14,6 +14,7 @@ import android.widget.TextView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.lovesosoi.kotlin_shop.adapter.EditOrderAdapter
+import com.lovesosoi.kotlin_shop.api.NetUtils
 import com.lovesosoi.kotlin_shop.bean.BaseStatus
 import com.lovesosoi.kotlin_shop.bean.EditOrderBean
 import com.lovesosoi.kotlin_shop.bean.OrderList
@@ -24,6 +25,8 @@ import com.lovesosoi.kotlin_shop.interfaces.*
 import com.lovesosoi.kotlin_shop.utils.Util
 import kotlinx.android.synthetic.main.activity_edit.*
 import kotlinx.android.synthetic.main.activity_main.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class EditActivity : AppCompatActivity() {
 
@@ -31,9 +34,10 @@ class EditActivity : AppCompatActivity() {
     var util: Utils? = null
     var date: OrderList.DataBean.OrderBean? = null
     var fruitList = mutableListOf<EditOrderBean>()
-    var otime:String?=null
-    var mAdapter:EditOrderAdapter ?= null
+    var otime: String? = null
+    var mAdapter: EditOrderAdapter? = null
     var fruitAddDialog: AddFruitInEditDialog? = null
+    lateinit var api: NetUtils
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit)
@@ -49,14 +53,14 @@ class EditActivity : AppCompatActivity() {
         //初始化数据
         tv_name.text = "商户名：" + date?.customer_name
         val d = date?.time!!.split("T")
-        otime=d[0]
-        tv_date.text = "送货日期" + d[0]
+        otime = d[0]
+        tv_date.text = "送货日期: " + d[0]
         //初始化列表
         for (line in date?.order_info!!.split("^")) {
-            if (line==""){
+            if (line == "") {
                 continue
             }
-            var temp = EditOrderBean("", "", "", "","")
+            var temp = EditOrderBean("", "", "", "", "")
             for ((index, value) in line.split("|").withIndex()) {
                 if (index == 0) {
                     temp.fruit_name = value //名字
@@ -73,9 +77,9 @@ class EditActivity : AppCompatActivity() {
             fruitList.add(temp)
         }
         mAdapter = EditOrderAdapter(context, fruitList)
-        mAdapter?.setOnItemClickListener(object :IOnPostionClick{
+        mAdapter?.setOnItemClickListener(object : IOnPostionClick {
             override fun click(position: Int) {
-                util!!.showToast(fruitList.get(position).fruit_name+"已删除")
+                util!!.showToast(fruitList.get(position).fruit_name + "已删除")
                 fruitList.removeAt(position)
                 mAdapter?.notifyDataSetChanged()
             }
@@ -86,14 +90,14 @@ class EditActivity : AppCompatActivity() {
         rv.layoutManager = LinearLayoutManager(this, OrientationHelper.VERTICAL, false)
 
         fruitAddDialog?.setOnAddFruitListener(object : OnAddFruitInEdit {
-            override fun add(name: String, price: Double,count:Double ,unit: String) {
-                util!!.e(name+"--"+price+"--"+count+"---"+unit)
-                val temp = EditOrderBean("", "", "", "","")
-                temp.fruit_name=name
-                temp.fruit_unit=price.toString()
-                temp.fruit_amount=count.toString()
-                temp.fruit_danwei=unit
-                temp.fruit_total=String.format("%.2f", count*price)
+            override fun add(name: String, price: Double, count: Double, unit: String) {
+                util!!.e(name + "--" + price + "--" + count + "---" + unit)
+                val temp = EditOrderBean("", "", "", "", "")
+                temp.fruit_name = name
+                temp.fruit_unit = price.toString()
+                temp.fruit_amount = count.toString()
+                temp.fruit_danwei = unit
+                temp.fruit_total = String.format("%.2f", count * price)
                 fruitList.add(temp)
                 mAdapter?.notifyDataSetChanged()
                 fruitAddDialog?.dismiss()
@@ -104,6 +108,7 @@ class EditActivity : AppCompatActivity() {
 
     private fun initDate() {
         context = this
+        api = NetUtils()
         util = Utils(context)
         date = intent.getSerializableExtra("date") as OrderList.DataBean.OrderBean
         Log.e("Lovesosoi", date.toString())
@@ -125,15 +130,54 @@ class EditActivity : AppCompatActivity() {
             }
             R.id.tv_sure -> {
                 //提交订单
+                val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm");// HH:mm:ss
+                val data = Date(System.currentTimeMillis())
+                val time = simpleDateFormat.format(date)
                 var info = ""
+                var all_conut = 0.0
+                var all_price = 0.0
                 for (i in fruitList) {
-                    info += i.fruit_name + "|" + i.fruit_total + "/" + i.fruit_unit + "|" + i.fruit_amount + i.fruit_unit + "|" + String.format(
-                        "%.2f", i.fruit_total.toDouble() * i.fruit_amount.toDouble()
+                    all_conut += i.fruit_amount.toDouble()
+                    all_price += i.fruit_unit.toDouble() * i.fruit_amount.toDouble()
+                    info += i.fruit_name + "|" + i.fruit_amount + "|" + String.format(
+                        "%.2f",
+                        i.fruit_unit
+                    ) + "|" + i.fruit_danwei + "|" + String.format(
+                        "%.2f",
+                        i.fruit_unit.toDouble() * i.fruit_amount.toDouble()
                     ) + "^"
                 }
                 Log.e("lovesosoi", "order---" + info)
+
+                api.upDateOrder(
+                    customer_name = date?.customer_name.toString(),
+                    cusomerid = date?.customer_id.toString(),
+                    time = time,
+                    otime = otime.toString(),
+                    all_price = all_price.toString(),
+                    all_item = all_conut.toString(),
+                    order_info = info,
+                    listener = object : IApiListener {
+                        override fun error(e: Throwable) {
+
+                        }
+
+                        override fun success(data: Any) {
+
+                            if (data is BaseStatus) {
+                                if (data.data!!.flag == 1) {
+                                    util!!.showToast("提交成功")
+                                    finish()
+
+                                }
+                            }
+                        }
+
+                    }
+                )
+
             }
-            R.id.tv_date ->{
+            R.id.tv_date -> {
                 //选择日期
                 val mDialogNPV = DialogNPV(context, "请选择结束的时间")
                 mDialogNPV.show()
@@ -152,7 +196,7 @@ class EditActivity : AppCompatActivity() {
                         } else {
                             temp += "-" + day
                         }
-                        tv_date.text = "送货时间：" + temp
+                        tv_date.text = "送货日期：" + temp
                         otime = temp
                     }
                 })
