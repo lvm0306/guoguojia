@@ -6,7 +6,8 @@ package com.colin.doumovie.api
  */
 class BaseURL {
     companion object {
-        val SERVER_URL = "http://149.28.155.142:8000/api/fruit/"
+        var BASE="47.95.220.180"
+        val SERVER_URL = "http://"+BASE+":8000/api/fruit/"
 
         const val FRUIT_LIST="fruit_all" //水果列表
         const val FRUIT_ADD="fruit_add" //增加水果

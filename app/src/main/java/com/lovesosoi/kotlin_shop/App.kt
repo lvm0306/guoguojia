@@ -1,14 +1,22 @@
 package com.lovesosoi.kotlin_shop
 
 import android.app.Application
+import android.content.Context
+import com.lovesosoi.kotlin_shop.utils.initDialog
 
 /**
  * application
  */
 class App : Application() {
 
+    var _context: Application? = null
+    fun getContext(): Context {
+        return _context!!
+    }
+
     override fun onCreate() {
         super.onCreate()
+        _context = this
     }
 
     /**

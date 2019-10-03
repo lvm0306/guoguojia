@@ -1,5 +1,6 @@
 package com.lovesosoi.kotlin_shop.api
 
+import android.content.Context
 import android.util.Log
 import com.colin.doumovie.api.BuildApi
 import com.lovesosoi.kotlin_shop.bean.BaseStatus
@@ -7,6 +8,9 @@ import com.lovesosoi.kotlin_shop.bean.CCustomer
 import com.lovesosoi.kotlin_shop.bean.CFruitBean
 import com.lovesosoi.kotlin_shop.bean.OrderList
 import com.lovesosoi.kotlin_shop.interfaces.IApiListener
+import com.lovesosoi.kotlin_shop.utils.dismissDialog
+import com.lovesosoi.kotlin_shop.utils.initDialog
+import com.lovesosoi.kotlin_shop.utils.showDialog
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.HashMap
@@ -16,10 +20,21 @@ import java.util.HashMap
  * 2019-7-19 Lovesosoi
  */
 class NetUtils {
+    var con:Context?=null
+    var boolean:Boolean?=null
+
+    constructor(con: Context?,boolean:Boolean?) {
+        if (boolean!!) {
+            this.con = con
+            initDialog(con!!)
+        }
+    }
+
     /**
      * 获取水果列表
      */
     fun getFruitList(listener: IApiListener) {
+        showDialog()
         BuildApi.buildApiServers()
             ?.getFruitList()
             ?.subscribeOn(Schedulers.newThread())
@@ -27,10 +42,12 @@ class NetUtils {
             ?.subscribe(object : ApiResponse<CFruitBean>() {
                 override fun success(data: CFruitBean) {
                     listener.success(data)
+                    dismissDialog()
                 }
 
                 override fun failure(e: Throwable) {
-                    listener.error(e)
+                        listener.error(e)
+                    dismissDialog()
                 }
             })
     }
@@ -39,6 +56,7 @@ class NetUtils {
      * 获取商户列表
      */
     fun getCustomerList(listener: IApiListener) {
+        showDialog()
         BuildApi.buildApiServers()
             ?.getCustomerList()
             ?.subscribeOn(Schedulers.newThread())
@@ -46,10 +64,12 @@ class NetUtils {
             ?.subscribe(object : ApiResponse<CCustomer>() {
                 override fun success(data: CCustomer) {
                     listener.success(data)
+                    dismissDialog()
                 }
 
                 override fun failure(e: Throwable) {
                     listener.error(e)
+                    dismissDialog()
                 }
             })
     }
@@ -58,6 +78,7 @@ class NetUtils {
      * 获取订单列表
      */
     fun getOrderList(listener: IApiListener,stime :String,etime :String,customer_name :String) {
+        showDialog()
         val parm = HashMap<String, String>()
         parm.put("customer_name", customer_name)
         parm.put("stime",stime)
@@ -69,10 +90,12 @@ class NetUtils {
             ?.subscribe(object : ApiResponse<OrderList>() {
                 override fun success(data: OrderList) {
                     listener.success(data)
+                    dismissDialog()
                 }
 
                 override fun failure(e: Throwable) {
                     listener.error(e)
+                    dismissDialog()
                 }
             })
     }
@@ -81,6 +104,7 @@ class NetUtils {
      * 增加水果
      */
     fun addFruit(name: String, price: Double, unit: String, listener: IApiListener) {
+        showDialog()
         val parm = HashMap<String, String>()
         parm.put("fruit_name", name)
         parm.put("fruit_price", price.toString())
@@ -92,10 +116,12 @@ class NetUtils {
             ?.subscribe(object : ApiResponse<BaseStatus>() {
                 override fun success(data: BaseStatus) {
                     listener.success(data)
+                    dismissDialog()
                 }
 
                 override fun failure(e: Throwable) {
                     listener.error(e)
+                    dismissDialog()
                 }
             })
     }
@@ -104,6 +130,7 @@ class NetUtils {
      * 修改水果
      */
     fun upDateFruit(name: String, price: Double, unit: String, id:Int,listener: IApiListener) {
+        showDialog()
         val parm = HashMap<String, String>()
         parm.put("fruit_name", name)
         parm.put("fruit_price", price.toString())
@@ -116,10 +143,12 @@ class NetUtils {
             ?.subscribe(object : ApiResponse<BaseStatus>() {
                 override fun success(data: BaseStatus) {
                     listener.success(data)
+                    dismissDialog()
                 }
 
                 override fun failure(e: Throwable) {
                     listener.error(e)
+                    dismissDialog()
                 }
             })
     }
@@ -128,6 +157,7 @@ class NetUtils {
      * 删除水果
      */
     fun deleteFruit(id: Int, listener: IApiListener) {
+        showDialog()
         val parm = HashMap<String, String>()
         parm.put("fruit_id", id.toString())
         BuildApi.buildApiServers()
@@ -137,10 +167,12 @@ class NetUtils {
             ?.subscribe(object : ApiResponse<BaseStatus>() {
                 override fun success(data: BaseStatus) {
                     listener.success(data)
+                    dismissDialog()
                 }
 
                 override fun failure(e: Throwable) {
                     listener.error(e)
+                    dismissDialog()
                 }
             })
     }
@@ -149,6 +181,7 @@ class NetUtils {
      * 增加商户
      */
     fun updateCustomer(name: String,id:Int, listener: IApiListener) {
+        showDialog()
         val parm = HashMap<String, String>()
         parm.put("customer_name", name)
         parm.put("customer_id", id.toString())
@@ -159,10 +192,12 @@ class NetUtils {
             ?.subscribe(object : ApiResponse<BaseStatus>() {
                 override fun success(data: BaseStatus) {
                     listener.success(data)
+                    dismissDialog()
                 }
 
                 override fun failure(e: Throwable) {
                     listener.error(e)
+                    dismissDialog()
                 }
             })
     }
@@ -171,6 +206,7 @@ class NetUtils {
      * 增加商户
      */
     fun addCustomer(name: String, listener: IApiListener) {
+        showDialog()
         val parm = HashMap<String, String>()
         parm.put("customer_name", name)
         BuildApi.buildApiServers()
@@ -180,10 +216,12 @@ class NetUtils {
             ?.subscribe(object : ApiResponse<BaseStatus>() {
                 override fun success(data: BaseStatus) {
                     listener.success(data)
+                    dismissDialog()
                 }
 
                 override fun failure(e: Throwable) {
                     listener.error(e)
+                    dismissDialog()
                 }
             })
     }
@@ -192,6 +230,7 @@ class NetUtils {
      * 删除商户
      */
     fun deleteCustomer(id: Int, listener: IApiListener) {
+        showDialog()
         val parm = HashMap<String, String>()
         parm.put("customer_id", id.toString())
         BuildApi.buildApiServers()
@@ -201,10 +240,12 @@ class NetUtils {
             ?.subscribe(object : ApiResponse<BaseStatus>() {
                 override fun success(data: BaseStatus) {
                     listener.success(data)
+                    dismissDialog()
                 }
 
                 override fun failure(e: Throwable) {
                     listener.error(e)
+                    dismissDialog()
                 }
             })
     }
@@ -243,6 +284,7 @@ class NetUtils {
         order_info: String,
         listener: IApiListener
     ) {
+        showDialog()
         val parm = HashMap<String, String>()
         parm.put("customer_id", cusomerid)
         parm.put("customer_name", customer_name)
@@ -258,10 +300,12 @@ class NetUtils {
             ?.subscribe(object : ApiResponse<BaseStatus>() {
                 override fun success(data: BaseStatus) {
                     listener.success(data)
+                    dismissDialog()
                 }
 
                 override fun failure(e: Throwable) {
                     listener.error(e)
+                    dismissDialog()
                 }
             })
     }
@@ -273,6 +317,7 @@ class NetUtils {
         customer_name: String,
         cusomerid: String,
         time: String,
+        order_id: String,
         otime: String,
         all_price: String,
         all_item: String,
@@ -282,13 +327,14 @@ class NetUtils {
         val parm = HashMap<String, String>()
         parm.put("customer_id", cusomerid)
         parm.put("customer_name", customer_name)
+        parm.put("order_id", order_id)
         parm.put("time", time)
         parm.put("otime", otime)
         parm.put("all_price", all_price)
         parm.put("all_item", all_item)
         parm.put("order_info", order_info)
         BuildApi.buildApiServers()
-            ?.updateCustomer(parm)
+            ?.updateOrder(parm)
             ?.subscribeOn(Schedulers.newThread())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(object : ApiResponse<BaseStatus>() {

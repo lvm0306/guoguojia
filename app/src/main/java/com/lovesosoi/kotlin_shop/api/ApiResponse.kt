@@ -2,6 +2,9 @@ package com.lovesosoi.kotlin_shop.api
 
 import android.content.Context
 import com.google.gson.Gson
+import com.lovesosoi.kotlin_shop.dialog.NetLoadingDialog
+import com.lovesosoi.kotlin_shop.utils.dismissDialog
+import com.lovesosoi.kotlin_shop.utils.showDialog
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import retrofit2.HttpException

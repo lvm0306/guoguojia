@@ -62,7 +62,10 @@ class EditOrderAdapter(var context: Context, var data: MutableList<EditOrderBean
                 var amout=0.0
                 if (s==null||s.length==0){
                     amout=0.0
-                }else{
+                }else if(s=="."){
+                    amout=0.0
+                }
+                else{
                     amout=p0.et_amount.text.toString().toDouble()
                 }
                 data.get(p1).fruit_amount = amout.toString()
@@ -70,7 +73,6 @@ class EditOrderAdapter(var context: Context, var data: MutableList<EditOrderBean
                     (amout * data.get(p1).fruit_unit.toDouble()).toString()
                 data.get(p1).fruit_total = new_total
                 p0.tv_total.text = new_total
-                Log.e("Lovesosoi", "edit-----" + p1.toString() + p0.et_amount.text.toString())
 
             }
         })
@@ -84,7 +86,6 @@ class EditOrderAdapter(var context: Context, var data: MutableList<EditOrderBean
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 data.get(p1).fruit_danwei = p0.et_danwei.text.toString()
-                Log.e("Lovesosoi", "edit-----" + p1.toString() + p0.et_danwei.text.toString())
 
             }
         })
@@ -100,6 +101,8 @@ class EditOrderAdapter(var context: Context, var data: MutableList<EditOrderBean
                 var unit=0.0
                 if (s==null||s.length==0){
                     unit=0.0
+                }else if (s=="."){
+                    unit=0.0
                 }else{
                     unit=p0.et_unit.text.toString().toDouble()
                 }
@@ -108,7 +111,6 @@ class EditOrderAdapter(var context: Context, var data: MutableList<EditOrderBean
                     (p0.et_amount.text.toString().toDouble() * unit).toString()
                 data.get(p1).fruit_total = new_total
                 p0.tv_total.text = new_total
-                Log.e("Lovesosoi", "edit-----" + p1.toString() + p0.et_unit.text.toString())
 
             }
         })

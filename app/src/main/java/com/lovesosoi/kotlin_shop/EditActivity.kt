@@ -108,7 +108,7 @@ class EditActivity : AppCompatActivity() {
 
     private fun initDate() {
         context = this
-        api = NetUtils()
+        api = NetUtils(context,false)
         util = Utils(context)
         date = intent.getSerializableExtra("date") as OrderList.DataBean.OrderBean
         Log.e("Lovesosoi", date.toString())
@@ -131,20 +131,17 @@ class EditActivity : AppCompatActivity() {
             R.id.tv_sure -> {
                 //提交订单
                 val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm");// HH:mm:ss
-                val data = Date(System.currentTimeMillis())
-                val time = simpleDateFormat.format(date)
+                val _date = Date(System.currentTimeMillis())
+                val time = simpleDateFormat.format(_date)
                 var info = ""
                 var all_conut = 0.0
                 var all_price = 0.0
                 for (i in fruitList) {
+                    Log.e("lovesosoi",i.toString());
                     all_conut += i.fruit_amount.toDouble()
                     all_price += i.fruit_unit.toDouble() * i.fruit_amount.toDouble()
-                    info += i.fruit_name + "|" + i.fruit_amount + "|" + String.format(
-                        "%.2f",
-                        i.fruit_unit
-                    ) + "|" + i.fruit_danwei + "|" + String.format(
-                        "%.2f",
-                        i.fruit_unit.toDouble() * i.fruit_amount.toDouble()
+                    info += i.fruit_name + "|" + i.fruit_amount + "|" + String.format("%.2f", i.fruit_unit.toDouble()
+                    ) + "|" + i.fruit_danwei + "|" + String.format("%.2f", i.fruit_unit.toDouble() * i.fruit_amount.toDouble()
                     ) + "^"
                 }
                 Log.e("lovesosoi", "order---" + info)
@@ -153,6 +150,7 @@ class EditActivity : AppCompatActivity() {
                     customer_name = date?.customer_name.toString(),
                     cusomerid = date?.customer_id.toString(),
                     time = time,
+                    order_id = date?.order_id.toString(),
                     otime = otime.toString(),
                     all_price = all_price.toString(),
                     all_item = all_conut.toString(),
@@ -167,6 +165,7 @@ class EditActivity : AppCompatActivity() {
                             if (data is BaseStatus) {
                                 if (data.data!!.flag == 1) {
                                     util!!.showToast("提交成功")
+                                    setResult(1)
                                     finish()
 
                                 }
@@ -184,7 +183,7 @@ class EditActivity : AppCompatActivity() {
                 mDialogNPV.setListener(object : IPickListener {
                     @SuppressLint("SetTextI18n")
                     override fun pick(year: Int, month: Int, day: Int) {
-                        util!!.showToast("选择下单时间--" + year + "-" + month + "-" + day)
+//                        util!!.showToast("选择下单时间--" + year + "-" + month + "-" + day)
                         var temp = ""
                         if (month < 10) {
                             temp += year.toString() + "-0" + month

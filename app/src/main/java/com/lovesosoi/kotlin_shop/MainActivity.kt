@@ -34,6 +34,7 @@ import com.lovesosoi.kotlin_shop.bean.*
 import com.lovesosoi.kotlin_shop.dialog.*
 import com.lovesosoi.kotlin_shop.interfaces.*
 import com.lovesosoi.kotlin_shop.utils.StringUtils
+import com.lovesosoi.kotlin_shop.utils.initDialog
 import kotlinx.android.synthetic.main.activity_main.*
 import net.posprinter.posprinterface.IMyBinder
 import net.posprinter.posprinterface.ProcessData
@@ -98,9 +99,10 @@ class MainActivity : AppCompatActivity() {
     var mName = ""//蓝牙  设备名字
     var CONNECT = false
     var binder: IMyBinder? = null
-    var stime: String = ""
-    var etime: String = ""
-    var otime: String = ""
+    var stime: String = ""//开始时间
+    var etime: String = ""//结束时间
+    var otime: String = ""//订单时间
+    var ntime: String = ""//现在时间
     lateinit var tvETime: TextView
     lateinit var tvSTime: TextView
     lateinit var tvOrderTime: TextView
@@ -126,16 +128,21 @@ class MainActivity : AppCompatActivity() {
         bindService(intent, conn, Context.BIND_AUTO_CREATE)
         initData()
         initView()
+
     }
 
+    override fun onResume() {
+        super.onResume()
+    }
     private fun initData() {
 
         context = this
         activity = this as Activity
-        api = NetUtils()
+        api = NetUtils(context,true)
         util = Utils(context)
 
-        val time = SimpleDateFormat("yyyy-MM-dd").format(Date(System.currentTimeMillis()))
+        var time = SimpleDateFormat("yyyy-MM-dd").format(Date(System.currentTimeMillis()))
+        ntime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date(System.currentTimeMillis()))
         stime = time
         etime = time
         orderCustomername = "全部"
@@ -553,9 +560,9 @@ class MainActivity : AppCompatActivity() {
             list.add(DataForSendToPrinterPos80.selectInternationalCharacterSets(15))
             list.add(DataForSendToPrinterPos80.selectCharacterSize(0))
             list.add(DataForSendToPrinterPos80.selectAlignment(0))//居左
-            list.add(StringUtils.strTobytes("客户:" + data.customer_name + "\n"))
+            list.add(StringUtils.strTobytes("客户 : " + data.customer_name + "\n"))
 //            list.add(StringUtils.strTobytes("单号:XD-2019-08-11-15-58\n"))
-            list.add(StringUtils.strTobytes("日期:" + data.time!!.replace("T", " ") + "\n"))
+            list.add(StringUtils.strTobytes("日期 : " + ntime + "\n"))
             list.add(StringUtils.strTobytes(line))
             var title = "商品"
             for (temp in 7 downTo 1) {
@@ -616,8 +623,8 @@ class MainActivity : AppCompatActivity() {
             list.add(StringUtils.strTobytes(line))
             list.add(StringUtils.strTobytes("合计\t\t\t" + data.all_item + "样\t" + data.all_price + "元\n"))
             list.add(DataForSendToPrinterPos80.printAndFeedForward(2))
-            list.add(StringUtils.strTobytes("打印日期:" + data.time!!.replace("T", " ") + "\n"))
-            list.add(StringUtils.strTobytes("TEL:13946045328" + "\n"))
+            list.add(StringUtils.strTobytes("下单日期 : " + data.time!!.split("T").get(0) + "\n"))
+            list.add(StringUtils.strTobytes("TEL : 13946045328" + "\n"))
             list.add(DataForSendToPrinterPos80.printAndFeedForward(4))
             list.add(DataForSendToPrinterPos80.selectAlignment(1))//居中
             list.add(DataForSendToPrinterPos80.selectCharacterSize(17))
@@ -788,7 +795,7 @@ class MainActivity : AppCompatActivity() {
                         mDialogNPV.setListener(object : IPickListener {
                             @SuppressLint("SetTextI18n")
                             override fun pick(year: Int, month: Int, day: Int) {
-                                util!!.showToast("选择的开始时间--" + year + "-" + month + "-" + day)
+//                                util!!.showToast("选择的开始时间--" + year + "-" + month + "-" + day)
                                 var temp = ""
                                 if (month < 10) {
                                     temp += year.toString() + "-0" + month
@@ -814,7 +821,7 @@ class MainActivity : AppCompatActivity() {
                         mDialogNPV.setListener(object : IPickListener {
                             @SuppressLint("SetTextI18n")
                             override fun pick(year: Int, month: Int, day: Int) {
-                                util!!.showToast("选择的结束时间--" + year + "-" + month + "-" + day)
+//                                util!!.showToast("选择的结束时间--" + year + "-" + month + "-" + day)
                                 var temp = ""
                                 if (month < 10) {
                                     temp += year.toString() + "-0" + month
@@ -1135,14 +1142,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun startActivityForResult(intent: Intent?, requestCode: Int, options: Bundle?) {
-        super.startActivityForResult(intent, requestCode, options)
-        if (requestCode == 0) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 0 && resultCode==1) {
             getOrderList()
         }
-
     }
-
 }
 
 //        var deviceList_found=ArrayList<String>()
