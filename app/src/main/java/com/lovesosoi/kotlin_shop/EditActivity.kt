@@ -49,6 +49,7 @@ class EditActivity : AppCompatActivity() {
     private fun initView() {
         val tv_name = findViewById<View>(R.id.tv_name) as TextView
         val tv_date = findViewById<View>(R.id.tv_date) as TextView
+        val tv_count_price = findViewById<View>(R.id.tv_count_price) as TextView
         fruitAddDialog = AddFruitInEditDialog(context, R.style.DialogTheme)
         //初始化数据
         tv_name.text = "商户名：" + date?.customer_name
@@ -56,6 +57,8 @@ class EditActivity : AppCompatActivity() {
         otime = d[0]
         tv_date.text = "送货日期: " + d[0]
         //初始化列表
+        var t_count=0.0
+        var t_price=0.0
         for (line in date?.order_info!!.split("^")) {
             if (line == "") {
                 continue
@@ -74,6 +77,9 @@ class EditActivity : AppCompatActivity() {
                     temp.fruit_total = value//总价
                 }
             }
+            t_count+=1
+            t_price+=temp.fruit_total.toDouble()
+
             fruitList.add(temp)
         }
         mAdapter = EditOrderAdapter(context, fruitList)
@@ -82,6 +88,7 @@ class EditActivity : AppCompatActivity() {
                 util!!.showToast(fruitList.get(position).fruit_name + "已删除")
                 fruitList.removeAt(position)
                 mAdapter?.notifyDataSetChanged()
+                reCalc()
             }
 
         })
@@ -106,6 +113,17 @@ class EditActivity : AppCompatActivity() {
         })
     }
 
+    /**
+     * 重新计算价格
+     */
+    private fun reCalc() {
+
+
+    }
+
+    /**
+     * 初始化数据
+     */
     private fun initDate() {
         context = this
         api = NetUtils(context,false)
@@ -114,6 +132,9 @@ class EditActivity : AppCompatActivity() {
         Log.e("Lovesosoi", date.toString())
     }
 
+    /**
+     * 点击事件
+     */
     @OnClick(
         R.id.tv_name,
         R.id.tv_add,
@@ -138,7 +159,7 @@ class EditActivity : AppCompatActivity() {
                 var all_price = 0.0
                 for (i in fruitList) {
                     Log.e("lovesosoi",i.toString());
-                    all_conut += i.fruit_amount.toDouble()
+                    all_conut +=1
                     all_price += i.fruit_unit.toDouble() * i.fruit_amount.toDouble()
                     info += i.fruit_name + "|" + i.fruit_amount + "|" + String.format("%.2f", i.fruit_unit.toDouble()
                     ) + "|" + i.fruit_danwei + "|" + String.format("%.2f", i.fruit_unit.toDouble() * i.fruit_amount.toDouble()

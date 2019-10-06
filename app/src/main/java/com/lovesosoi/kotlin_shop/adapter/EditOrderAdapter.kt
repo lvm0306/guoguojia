@@ -50,70 +50,70 @@ class EditOrderAdapter(var context: Context, var data: MutableList<EditOrderBean
                 }
             })
         }
-        p0.et_amount.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                var amout=0.0
-                if (s==null||s.length==0){
-                    amout=0.0
-                }else if(s=="."){
-                    amout=0.0
-                }
-                else{
-                    amout=p0.et_amount.text.toString().toDouble()
-                }
-                data.get(p1).fruit_amount = amout.toString()
-                val new_total =
-                    (amout * data.get(p1).fruit_unit.toDouble()).toString()
-                data.get(p1).fruit_total = new_total
-                p0.tv_total.text = new_total
-
-            }
-        })
-        p0.et_danwei.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                data.get(p1).fruit_danwei = p0.et_danwei.text.toString()
-
-            }
-        })
-        p0.et_unit.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                var unit=0.0
-                if (s==null||s.length==0){
-                    unit=0.0
-                }else if (s=="."){
-                    unit=0.0
-                }else{
-                    unit=p0.et_unit.text.toString().toDouble()
-                }
-                data.get(p1).fruit_unit = unit.toString()
-                val new_total =
-                    (p0.et_amount.text.toString().toDouble() * unit).toString()
-                data.get(p1).fruit_total = new_total
-                p0.tv_total.text = new_total
-
-            }
-        })
+//        p0.et_amount.addTextChangedListener(object : TextWatcher {
+//            override fun afterTextChanged(s: Editable?) {
+//
+//            }
+//
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+//            }
+//
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//                var amout=0.0
+//                if (s==null||s.length==0){
+//                    amout=0.0
+//                }else if(s=="."){
+//                    amout=0.0
+//                }
+//                else{
+//                    amout=p0.et_amount.text.toString().toDouble()
+//                }
+//                data.get(p1).fruit_amount = amout.toString()
+//                val new_total =
+//                    (amout * data.get(p1).fruit_unit.toDouble()).toString()
+//                data.get(p1).fruit_total = new_total
+//                p0.tv_total.text = new_total
+//
+//            }
+//        })
+//        p0.et_danwei.addTextChangedListener(object : TextWatcher {
+//            override fun afterTextChanged(s: Editable?) {
+//
+//            }
+//
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+//            }
+//
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//                data.get(p1).fruit_danwei = p0.et_danwei.text.toString()
+//
+//            }
+//        })
+//        p0.et_unit.addTextChangedListener(object : TextWatcher {
+//            override fun afterTextChanged(s: Editable?) {
+//
+//            }
+//
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+//            }
+//
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//                var unit=0.0
+//                if (s==null||s.length==0){
+//                    unit=0.0
+//                }else if (s=="."){
+//                    unit=0.0
+//                }else{
+//                    unit=p0.et_unit.text.toString().toDouble()
+//                }
+//                data.get(p1).fruit_unit = unit.toString()
+//                val new_total =
+//                    (p0.et_amount.text.toString().toDouble() * unit).toString()
+//                data.get(p1).fruit_total = new_total
+//                p0.tv_total.text = new_total
+//
+//            }
+//        })
     }
 
     fun setOnItemClickListener(click: IOnPostionClick) {
@@ -123,9 +123,9 @@ class EditOrderAdapter(var context: Context, var data: MutableList<EditOrderBean
     inner class EditOrderHolder(view: View) : RecyclerView.ViewHolder(view) {
         var tv_name: TextView = view.findViewById(R.id.tv_name)
         var tv_total: TextView = view.findViewById(R.id.tv_total)
-        var et_unit: EditText = view.findViewById(R.id.et_unit)
-        var et_amount: EditText = view.findViewById(R.id.et_amount)
-        var et_danwei: EditText = view.findViewById(R.id.et_danwei)
+        var et_unit: TextView = view.findViewById(R.id.et_unit)
+        var et_amount: TextView = view.findViewById(R.id.et_amount)
+        var et_danwei: TextView = view.findViewById(R.id.et_danwei)
         var tv_delete: TextView = view.findViewById(R.id.tv_delete)
     }
 }
