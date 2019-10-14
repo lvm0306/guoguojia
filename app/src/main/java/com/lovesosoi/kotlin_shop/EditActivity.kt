@@ -38,6 +38,7 @@ class EditActivity : AppCompatActivity() {
     var mAdapter: EditOrderAdapter? = null
     var fruitAddDialog: AddFruitInEditDialog? = null
     lateinit var api: NetUtils
+    var tv_count_price:TextView ?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit)
@@ -49,7 +50,7 @@ class EditActivity : AppCompatActivity() {
     private fun initView() {
         val tv_name = findViewById<View>(R.id.tv_name) as TextView
         val tv_date = findViewById<View>(R.id.tv_date) as TextView
-        val tv_count_price = findViewById<View>(R.id.tv_count_price) as TextView
+        tv_count_price = findViewById<View>(R.id.tv_count_price) as TextView
         fruitAddDialog = AddFruitInEditDialog(context, R.style.DialogTheme)
         //初始化数据
         tv_name.text = "商户名：" + date?.customer_name
@@ -82,6 +83,7 @@ class EditActivity : AppCompatActivity() {
 
             fruitList.add(temp)
         }
+        tv_count_price?.text="共计 $t_count 个货物，总计 $t_price 元"
         mAdapter = EditOrderAdapter(context, fruitList)
         mAdapter?.setOnItemClickListener(object : IOnPostionClick {
             override fun click(position: Int) {
@@ -107,6 +109,7 @@ class EditActivity : AppCompatActivity() {
                 temp.fruit_total = String.format("%.2f", count * price)
                 fruitList.add(temp)
                 mAdapter?.notifyDataSetChanged()
+                reCalc()
                 fruitAddDialog?.dismiss()
             }
 
@@ -117,8 +120,13 @@ class EditActivity : AppCompatActivity() {
      * 重新计算价格
      */
     private fun reCalc() {
-
-
+        var t_count=0.0
+        var t_price=0.0
+        for (i in fruitList){
+            t_count+=1
+            t_price+=i.fruit_total.toDouble()
+        }
+        tv_count_price?.text="共计 $t_count 个货物，总计 $t_price 元"
     }
 
     /**
