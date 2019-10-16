@@ -22,6 +22,7 @@
                   android:id="@+id/et_name"
                   android:layout_height="match_parent"
                   android:paddingLeft="10dp"
+                  android:singleLine="true"
                   android:hint="请输入商品名"
                   android:gravity="start|center_vertical"
                   android:textSize="16sp"
@@ -44,6 +45,7 @@
                   android:layout_height="match_parent"
                   android:paddingLeft="10dp"
                   android:hint="请输入商品价格"
+                  android:singleLine="true"
                   android:inputType="numberDecimal|number"
                   android:gravity="start|center_vertical"
                   android:textSize="16sp"
@@ -66,6 +68,7 @@
                   android:layout_height="match_parent"
                   android:paddingLeft="10dp"
                   android:hint="请输入商品数量"
+                  android:singleLine="true"
                   android:inputType="numberDecimal|number"
                   android:gravity="start|center_vertical"
                   android:textSize="16sp"
@@ -83,12 +86,14 @@
                   android:textSize="16sp"
                   android:layout_weight="1"/>
 
+
         <EditText android:layout_width="0dp"
                   android:background="#ffff"
                   android:id="@+id/et_unit"
                   android:layout_height="match_parent"
                   android:paddingLeft="10dp"
                   android:hint="请输入计量单位"
+                  android:singleLine="true"
                   android:gravity="start|center_vertical"
                   android:textSize="16sp"
                   android:layout_weight="1"/>

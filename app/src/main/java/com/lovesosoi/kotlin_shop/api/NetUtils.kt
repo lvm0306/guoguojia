@@ -103,12 +103,13 @@ class NetUtils {
     /**
      * 增加水果
      */
-    fun addFruit(name: String, price: Double, unit: String, listener: IApiListener) {
+    fun addFruit(name: String, price: Double, unit: String,cate:Int, listener: IApiListener) {
         showDialog()
         val parm = HashMap<String, String>()
         parm.put("fruit_name", name)
         parm.put("fruit_price", price.toString())
         parm.put("fruit_unit", unit)
+        parm.put("fruit_cate", cate.toString())
         BuildApi.buildApiServers()
             ?.addFruit(parm)
             ?.subscribeOn(Schedulers.newThread())
@@ -129,13 +130,14 @@ class NetUtils {
     /**
      * 修改水果
      */
-    fun upDateFruit(name: String, price: Double, unit: String, id:Int,listener: IApiListener) {
+    fun upDateFruit(name: String, price: Double, unit: String, id:Int,cate:Int,listener: IApiListener) {
         showDialog()
         val parm = HashMap<String, String>()
         parm.put("fruit_name", name)
         parm.put("fruit_price", price.toString())
         parm.put("fruit_unit", unit)
         parm.put("fruit_id", id.toString())
+        parm.put("fruit_cate", cate.toString())
         BuildApi.buildApiServers()
             ?.updateFruit(parm)
             ?.subscribeOn(Schedulers.newThread())

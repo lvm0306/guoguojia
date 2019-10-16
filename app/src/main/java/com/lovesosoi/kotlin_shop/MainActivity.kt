@@ -150,10 +150,65 @@ class MainActivity : AppCompatActivity() {
         api.getFruitList(object : IApiListener {
             override fun success(data: Any) {
                 if (data is CFruitBean) {
-                    fruitList = data.data?.fruit?.toMutableList()!!
+                    var fruitList1 = mutableListOf<CFruitBean.DataBean.FruitBean>()
+                    var fruitList2 = mutableListOf<CFruitBean.DataBean.FruitBean>()
+                    var fruitList3 = mutableListOf<CFruitBean.DataBean.FruitBean>()
+                    var fruitList4 = mutableListOf<CFruitBean.DataBean.FruitBean>()
+                    var fruitList5 = mutableListOf<CFruitBean.DataBean.FruitBean>()
+                    var fruitList6 = mutableListOf<CFruitBean.DataBean.FruitBean>()
+                    var fruitList7 = mutableListOf<CFruitBean.DataBean.FruitBean>()
+                    var fruitList8 = mutableListOf<CFruitBean.DataBean.FruitBean>()
+                    for (i in data.data!!.fruit!!.toMutableList()){
+                        if (i.fruit_cate=="1"){
+                            fruitList1.add(i)
+                        }else if (i.fruit_cate=="2"){
+                            fruitList2.add(i)
+                        }else if (i.fruit_cate=="3"){
+                            fruitList3.add(i)
+                        }else if (i.fruit_cate=="4"){
+                            fruitList4.add(i)
+                        }else if (i.fruit_cate=="5"){
+                            fruitList5.add(i)
+                        }else if (i.fruit_cate=="6"){
+                            fruitList6.add(i)
+                        }else if (i.fruit_cate=="7"){
+                            fruitList7.add(i)
+                        }else if (i.fruit_cate=="8"){
+                            fruitList8.add(i)
+                        }
+                    }
+                    fruitList.clear()
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"常用","0.0","0.0","100"))
+                    fruitList.addAll(fruitList1)
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"青菜","0.0","0.0","100"))
+                    fruitList.addAll(fruitList2)
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"豆类","0.0","0.0","100"))
+                    fruitList.addAll(fruitList3)
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"菌类","0.0","0.0","100"))
+                    fruitList.addAll(fruitList4)
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"其他","0.0","0.0","100"))
+                    fruitList.addAll(fruitList5)
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"肉类","0.0","0.0","100"))
+                    fruitList.addAll(fruitList6)
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"水果","0.0","0.0","100"))
+                    fruitList.addAll(fruitList7)
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"调料","0.0","0.0","100"))
+                    fruitList.addAll(fruitList8)
+//                    fruitList = data.data?.fruit?.toMutableList()!!
                     fruit_adapter = FruitAdapter(context, fruitList)
                     rv_item.adapter = fruit_adapter
-                    rv_item.layoutManager = GridLayoutManager(context, 4) as RecyclerView.LayoutManager?
+                    val gridmanager=GridLayoutManager(context, 4)
+                    val lookup=object :GridLayoutManager.SpanSizeLookup(){
+                        override fun getSpanSize(p0: Int): Int {
+                            if (fruitList.get(p0).fruit_cate=="100"){
+                                return 4
+                            }else{
+                                return 1
+                            }
+                        }
+                    }
+                    gridmanager.spanSizeLookup=lookup
+                    rv_item.layoutManager=gridmanager
 
                     fruit_adapter.setOnItemClickListener(object : OnItemClick {
                         override fun subLong(position: Int, view: View, data: Any) {
@@ -406,8 +461,9 @@ class MainActivity : AppCompatActivity() {
         customerAddDialog = AddCustomerDialog(activity, R.style.DialogTheme)
 
         fruitAddDialog?.setOnAddFruitListener(object : OnAddFruit {
-            override fun upDate(name: String, price: Double, unit: String, id: Int) {
-                api.upDateFruit(name, price, unit, id, object : IApiListener {
+            override fun upDate(name: String, price: Double, unit: String, id: Int,cate:String) {
+                val cate=cate.split(",").get(0)
+                api.upDateFruit(name, price, unit, id,cate.toInt(), object : IApiListener {
                     override fun success(data: Any) {
                         if (data is BaseStatus) {
                             util!!.showToast("修改成功")
@@ -423,8 +479,9 @@ class MainActivity : AppCompatActivity() {
                 })
             }
 
-            override fun add(name: String, price: Double, unit: String) {
-                api.addFruit(name, price, unit, object : IApiListener {
+            override fun add(name: String, price: Double, unit: String,cate:String) {
+                val cate=cate.split(",").get(0)
+                api.addFruit(name, price, unit, cate.toInt(),object : IApiListener {
                     override fun success(data: Any) {
                         if (data is BaseStatus) {
                             if (data.data!!.flag == 1) {
@@ -729,7 +786,19 @@ class MainActivity : AppCompatActivity() {
                 if (rv_change_fruit.adapter == null) {
                     fruit_control_adapter = FruitDisplayAdapter(context, fruitList)
                     rv_change_fruit.adapter = fruit_control_adapter
-                    rv_change_fruit.layoutManager = GridLayoutManager(this, 6)
+                    val girdlayoutmanager=GridLayoutManager(this, 6)
+
+                    val lookup=object :GridLayoutManager.SpanSizeLookup(){
+                        override fun getSpanSize(p0: Int): Int {
+                            if (fruitList.get(p0).fruit_cate=="100"){
+                                return 6
+                            }else{
+                                return 1
+                            }
+                        }
+                    }
+                    girdlayoutmanager.spanSizeLookup=lookup
+                    rv_change_fruit.layoutManager = girdlayoutmanager
                     fruit_control_adapter.setOnItemClickListener(object :
                         OnListItemLongClickListener {
                         override fun onClick(position: Int, view: View, data: Any) {
@@ -740,7 +809,8 @@ class MainActivity : AppCompatActivity() {
                                 fruit.fruit_name!!,
                                 fruit.fruit_price!!,
                                 fruit.fruit_unit!!,
-                                fruit.fruit_id
+                                fruit.fruit_id,
+                                fruit.fruit_cate!!.toInt()-1
                             )
                         }
 
@@ -1063,8 +1133,52 @@ class MainActivity : AppCompatActivity() {
         api.getFruitList(object : IApiListener {
             override fun success(data: Any) {
                 if (data is CFruitBean) {
+
+                    var fruitList1 = mutableListOf<CFruitBean.DataBean.FruitBean>()
+                    var fruitList2 = mutableListOf<CFruitBean.DataBean.FruitBean>()
+                    var fruitList3 = mutableListOf<CFruitBean.DataBean.FruitBean>()
+                    var fruitList4 = mutableListOf<CFruitBean.DataBean.FruitBean>()
+                    var fruitList5 = mutableListOf<CFruitBean.DataBean.FruitBean>()
+                    var fruitList6 = mutableListOf<CFruitBean.DataBean.FruitBean>()
+                    var fruitList7 = mutableListOf<CFruitBean.DataBean.FruitBean>()
+                    var fruitList8 = mutableListOf<CFruitBean.DataBean.FruitBean>()
+                    for (i in data.data!!.fruit!!.toMutableList()){
+                        if (i.fruit_cate=="1"){
+                            fruitList1.add(i)
+                        }else if (i.fruit_cate=="2"){
+                            fruitList2.add(i)
+                        }else if (i.fruit_cate=="3"){
+                            fruitList3.add(i)
+                        }else if (i.fruit_cate=="4"){
+                            fruitList4.add(i)
+                        }else if (i.fruit_cate=="5"){
+                            fruitList5.add(i)
+                        }else if (i.fruit_cate=="6"){
+                            fruitList6.add(i)
+                        }else if (i.fruit_cate=="7"){
+                            fruitList7.add(i)
+                        }else if (i.fruit_cate=="8"){
+                            fruitList8.add(i)
+                        }
+                    }
                     fruitList.clear()
-                    fruitList.addAll(data.data!!.fruit!!.toMutableList())
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"常用","0.0","0.0","100"))
+                    fruitList.addAll(fruitList1)
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"青菜","0.0","0.0","100"))
+                    fruitList.addAll(fruitList2)
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"豆类","0.0","0.0","100"))
+                    fruitList.addAll(fruitList3)
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"菌类","0.0","0.0","100"))
+                    fruitList.addAll(fruitList4)
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"其他","0.0","0.0","100"))
+                    fruitList.addAll(fruitList5)
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"肉类","0.0","0.0","100"))
+                    fruitList.addAll(fruitList6)
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"水果","0.0","0.0","100"))
+                    fruitList.addAll(fruitList7)
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"调料","0.0","0.0","100"))
+                    fruitList.addAll(fruitList8)
+
                     fruit_control_adapter.notifyDataSetChanged()
                     fruit_adapter.notifyDataSetChanged()
                     fruitAddDialog?.close()

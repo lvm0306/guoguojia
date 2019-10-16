@@ -1,11 +1,14 @@
 <resources>
     <string name="app_name">郭郭家</string>
     <string-array name="unit">
-        <item>选择计量单位</item>
-        <item>斤</item>
-        <item>袋</item>
-        <item>件</item>
-        <item>瓶</item>
+        <item>1,常用</item>
+        <item>2,青菜</item>
+        <item>3,豆类</item>
+        <item>4,菌类</item>
+        <item>5,其他</item>
+        <item>6,肉类</item>
+        <item>7,水果</item>
+        <item>8,调料</item>
     </string-array>
     <string-array name="customer">
         <item>选择商户</item>

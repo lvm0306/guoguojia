@@ -9,9 +9,13 @@ import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.content.ContextWrapper
+import android.view.KeyEvent
+import android.view.inputmethod.EditorInfo
 import android.widget.*
 import com.lovesosoi.kotlin_shop.R
 import com.lovesosoi.kotlin_shop.interfaces.OnAddFruit
+import kotlinx.android.synthetic.main.dialog_add_fruit.*
+import org.w3c.dom.Text
 
 /**
  * 增加水果dialog
@@ -25,7 +29,9 @@ class AddFruitDialog(context: Context, themeResId: Int) : Dialog(context, themeR
     var et_unit: EditText? = null
     var tvCancel: Button? = null
     var tvSure: Button? = null
+    var customerSp: Spinner? = null
     var mId: Int = 0
+    var cate=""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window?.setGravity(Gravity.CENTER);//设置dialog显示居中
@@ -47,11 +53,57 @@ class AddFruitDialog(context: Context, themeResId: Int) : Dialog(context, themeR
         et_unit = findViewById<EditText>(R.id.et_unit)
         tvCancel = findViewById<Button>(R.id.tv_cancel)
         tvSure = findViewById<Button>(R.id.tv_sure)
+        customerSp = findViewById<Spinner>(R.id.customer_spinner)
 
         stringArray = (context.resources.getStringArray(R.array.unit)).toList()
         val startAdapter = ArrayAdapter(context, R.layout.spinner_fruit, stringArray)
         startAdapter.setDropDownViewResource(R.layout.spinner_fruit)
 
+        val fruitspinneradapter =
+                ArrayAdapter(context, R.layout.item_fruit_spinner, stringArray)
+        fruitspinneradapter.setDropDownViewResource(R.layout.item_fruit_spinner)
+        val customerListener = myItemClickListener()
+        customerSp!!.adapter = fruitspinneradapter
+        customerSp!!.onItemSelectedListener = customerListener
+
+        et_unit!!.setOnEditorActionListener(object : TextView.OnEditorActionListener {
+            override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+                if (actionId == EditorInfo.IME_ACTION_GO) {
+                    val tName = etName?.text
+                    val tPrice = etPrice?.text
+                    val tUnit = et_unit?.text
+                    var price = 0.0
+                    var name = ""
+                    var unit = ""
+                    if (tName.toString() != "") {
+                        name = tName.toString()
+                    } else {
+                        Toast.makeText(scanForActivity(context), "请输入名字", Toast.LENGTH_SHORT).show()
+                        return false
+                    }
+                    if (tPrice.toString() != "") {
+                        price = tPrice.toString().toDouble()
+                    }
+
+                    if (tUnit.toString() == "") {
+                        Toast.makeText(scanForActivity(context), "请输入计量单位", Toast.LENGTH_SHORT).show()
+                        return false
+                    } else {
+                        unit = tUnit.toString()
+                    }
+                    Log.e("Lovesosoi", name + " " + price + " " + unit)
+                    if (mId == 0) {
+                        listener?.add(name, price, unit,cate)
+                    } else {
+                        listener?.upDate(name, price, unit, mId,cate)
+                    }
+                    return true
+                } else {
+                    return false
+                }
+            }
+
+        })
 
         tvSure?.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
@@ -78,10 +130,10 @@ class AddFruitDialog(context: Context, themeResId: Int) : Dialog(context, themeR
                     unit = tUnit.toString()
                 }
                 Log.e("Lovesosoi", name + " " + price + " " + unit)
-                if (mId==0) {
-                    listener?.add(name, price, unit)
-                }else{
-                    listener?.upDate(name, price, unit,mId)
+                if (mId == 0) {
+                    listener?.add(name, price, unit,cate)
+                } else {
+                    listener?.upDate(name, price, unit, mId,cate)
                 }
             }
         })
@@ -96,10 +148,11 @@ class AddFruitDialog(context: Context, themeResId: Int) : Dialog(context, themeR
         listener = l
     }
 
-    fun setDate(name: String, price: String, unit: String, id: Int) {
+    fun setDate(name: String, price: String, unit: String, id: Int,position:Int) {
         etName?.setText(name)
         etPrice?.setText(price)
         et_unit?.setText(unit)
+        customerSp?.setSelection(position)
         this.mId = id
     }
 
@@ -112,7 +165,7 @@ class AddFruitDialog(context: Context, themeResId: Int) : Dialog(context, themeR
         show()
     }
 
-    fun close(){
+    fun close() {
         mId = 0
         etName?.setText("")
         etPrice?.setText("")
@@ -131,17 +184,17 @@ class AddFruitDialog(context: Context, themeResId: Int) : Dialog(context, themeR
         return null
     }
 
-//    internal inner class myItemClickListener : AdapterView.OnItemSelectedListener {
-//        override fun onNothingSelected(parent: AdapterView<*>?) {
-//
-//        }
-//
-//        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-//            unit = stringArray!![position]
+    internal inner class myItemClickListener : AdapterView.OnItemSelectedListener {
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+
+        }
+
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            cate = stringArray!![position]
 //            if (position!=0) {
 //                Toast.makeText(context, "你的选择是：${stringArray!![position]}", Toast.LENGTH_SHORT).show()
 //            }
-//        }
-//    }
+        }
+    }
 
 }

@@ -21,6 +21,7 @@
                   android:background="#ffff"
                   android:id="@+id/et_name"
                   android:layout_height="match_parent"
+                  android:singleLine="true"
                   android:paddingLeft="10dp"
                   android:hint="请输入商品名"
                   android:gravity="start|center_vertical"
@@ -41,6 +42,7 @@
         <EditText android:layout_width="0dp"
                   android:background="#ffff"
                   android:id="@+id/et_price"
+                  android:singleLine="true"
                   android:layout_height="match_parent"
                   android:paddingLeft="10dp"
                   android:hint="请输入商品价格"
@@ -68,8 +70,35 @@
                   android:paddingLeft="10dp"
                   android:hint="请输入计量单位"
                   android:gravity="start|center_vertical"
+                  android:imeOptions="actionGo"
+                  android:singleLine="true"
                   android:textSize="16sp"
                   android:layout_weight="1"/>
+
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+        <TextView android:layout_width="0dp"
+                  android:layout_height="match_parent"
+                  android:text="类别："
+                  android:paddingRight="10dp"
+                  android:gravity="center"
+                  android:textSize="16sp"
+                  android:layout_weight="1"/>
+        <Spinner
+                android:id="@+id/customer_spinner"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="#000"
+                android:background="@drawable/shape_menu_title_bg"
+                android:spinnerMode="dropdown"
+                android:layout_marginBottom="5dp">
+
+        </Spinner>
 
     </LinearLayout>
     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#9999"/>
