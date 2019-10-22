@@ -18,8 +18,9 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:replace="android:appComponentFactory">
-        <activity android:name=".EditActivity"
-                  android:screenOrientation="landscape">
+        <activity
+                android:name=".EditActivity"
+                android:screenOrientation="landscape">
         </activity>
         <activity
                 android:name=".SplashActivity"
@@ -36,6 +37,10 @@
         </activity>
 
         <service android:name="net.posprinter.service.PosprinterService"/>
+
+        <activity android:name=".BillActivity"
+                  android:screenOrientation="landscape">
+        </activity>
     </application>
 
 </manifest>

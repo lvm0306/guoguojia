@@ -367,6 +367,18 @@
                             android:layout_marginLeft="20dp"
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"/>
+                    <TextView
+                            android:text="生成账单"
+                            android:id="@+id/tv_bill"
+                            android:background="@drawable/shape_menu_title_bg"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:layout_centerInParent="true"
+                            android:textColor="#000"
+                            android:textSize="16sp"
+                            android:layout_marginLeft="20dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"/>
 
                 </LinearLayout>
 

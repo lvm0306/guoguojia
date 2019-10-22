@@ -41,6 +41,7 @@ import net.posprinter.posprinterface.ProcessData
 import net.posprinter.posprinterface.UiExecute
 import net.posprinter.service.PosprinterService
 import net.posprinter.utils.DataForSendToPrinterPos80
+import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -768,7 +769,8 @@ class MainActivity : AppCompatActivity() {
         R.id.tv_add_fruit,
         R.id.tv_add_custom,
         R.id.tv_order_serch,
-        R.id.tv_order_time
+        R.id.tv_order_time,
+        R.id.tv_bill
     )
     fun onClick(view: View) {
         when (view.id) {
@@ -1076,6 +1078,17 @@ class MainActivity : AppCompatActivity() {
                         otime = temp
                     }
                 })
+            }
+            R.id.tv_bill->{
+                if (order_history_list.size!=0) {
+                    val i = Intent(context, BillActivity::class.java)
+                    var b = Bundle()
+                    b.putSerializable("date", order_history_list as Serializable)
+                    i.putExtra("bundle", b)
+                    startActivityForResult(i, 0)
+                }else{
+                    util!!.showToast("当前记录为空")
+                }
             }
         }
     }
