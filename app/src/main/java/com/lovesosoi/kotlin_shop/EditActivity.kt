@@ -54,7 +54,7 @@ class EditActivity : AppCompatActivity() {
         fruitAddDialog = AddFruitInEditDialog(context, R.style.DialogTheme)
         //初始化数据
         tv_name.text = "商户名：" + date?.customer_name
-        val d = date?.time!!.split("T")
+        val d = date?.otime!!.split("T")
         otime = d[0]
         tv_date.text = "送货日期: " + d[0]
         //初始化列表
@@ -83,15 +83,22 @@ class EditActivity : AppCompatActivity() {
 
             fruitList.add(temp)
         }
-        tv_count_price?.text="共计 $t_count 个货物，总计 $t_price 元"
+        tv_count_price?.text="共计 $t_count 个货物，总计 "+String.format("%.2f", t_price)+" 元"
         mAdapter = EditOrderAdapter(context, fruitList)
-        mAdapter?.setOnItemClickListener(object : IOnPostionClick {
-            override fun click(position: Int) {
+        mAdapter?.setOnItemClickListener(object : IOnOrderEditListener {
+            override fun save(position: Int, view: View, data: Any) {
+                val bean = fruitList.get(position)
+                fruitList.get(position).fruit_total=String.format("%.2f",bean.fruit_amount.toDouble()*bean.fruit_unit.toDouble())
+                mAdapter?.notifyDataSetChanged()
+                reCalc()
+            }
+
+            override fun delete(position: Int, view: View, data: Any) {
                 util!!.showToast(fruitList.get(position).fruit_name + "已删除")
                 fruitList.removeAt(position)
                 mAdapter?.notifyDataSetChanged()
                 reCalc()
-            }
+                }
 
         })
         val rv = findViewById<View>(R.id.rv_edit) as RecyclerView

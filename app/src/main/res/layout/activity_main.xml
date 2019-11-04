@@ -89,6 +89,18 @@
                         android:text="商户管理"
                         android:gravity="center"
                         android:layout_width="match_parent"/>
+                <View android:layout_width="match_parent"
+                      android:layout_height="1dp"
+                      android:background="@color/mainbg"/>
+                <TextView
+                        android:id="@+id/tv_menu5"
+                        android:textSize="16sp"
+                        android:background="@color/colorWhite"
+                        android:textColor="#FC9C95"
+                        android:layout_height="50dp"
+                        android:text="报表/库存"
+                        android:gravity="center"
+                        android:layout_width="match_parent"/>
             </LinearLayout>
             <!--点单-->
             <LinearLayout
@@ -484,6 +496,34 @@
                         tools:listitem="@layout/item_fruit_display"
                         tools:spanCount="3"
                         tools:layoutManager="GridLayoutManager"
+                        android:layout_height="match_parent"/>
+            </LinearLayout>
+            <!-- 报表、库存-->
+            <LinearLayout
+                    android:background="@color/mainbg"
+                    android:id="@+id/ll_report_stock"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                <RelativeLayout android:layout_width="match_parent"
+                                android:layout_height="40dp">
+                    <TextView
+                            android:text="报表与库存"
+                            android:background="@color/grey4a"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:layout_centerInParent="true"
+                            android:textSize="16sp"
+                            android:textColor="@color/whitefb"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"/>
+                </RelativeLayout>
+                <TextView
+                        android:id="@+id/tv_report"
+                        android:textSize="18sp"
+                        android:lineSpacingExtra="2dp"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"/>
             </LinearLayout>
         </LinearLayout>

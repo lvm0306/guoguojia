@@ -19,6 +19,7 @@ class BillActivity : AppCompatActivity() {
     lateinit var context: Context
     var util: Utils? = null
     var order_history_list: ArrayList<OrderList.DataBean.OrderBean>? = null
+    var customername=""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bill)
@@ -36,6 +37,7 @@ class BillActivity : AppCompatActivity() {
         var rv = findViewById<RecyclerView>(R.id.rv_bill)
         order_history_list =
                 intent.getBundleExtra("bundle").getSerializable("date") as ArrayList<OrderList.DataBean.OrderBean>
+        customername=intent.getStringExtra("name")
         val adapter: BillAdapter = BillAdapter(context, order_history_list!!)
         rv.adapter = adapter
         rv.layoutManager = LinearLayoutManager(context, OrientationHelper.VERTICAL, false)
@@ -46,7 +48,7 @@ class BillActivity : AppCompatActivity() {
 
         })
 
-        tv_name.text = "商户名：" + order_history_list!![0].customer_name
+        tv_name.text = "商户名：" + customername
         var totle = 0.0
         for (i in order_history_list!!) {
             totle += i.all_price!!.toDouble()

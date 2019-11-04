@@ -135,11 +135,12 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
     }
+
     private fun initData() {
 
         context = this
         activity = this as Activity
-        api = NetUtils(context,true)
+        api = NetUtils(context, true)
         util = Utils(context)
 
         var time = SimpleDateFormat("yyyy-MM-dd").format(Date(System.currentTimeMillis()))
@@ -159,57 +160,57 @@ class MainActivity : AppCompatActivity() {
                     var fruitList6 = mutableListOf<CFruitBean.DataBean.FruitBean>()
                     var fruitList7 = mutableListOf<CFruitBean.DataBean.FruitBean>()
                     var fruitList8 = mutableListOf<CFruitBean.DataBean.FruitBean>()
-                    for (i in data.data!!.fruit!!.toMutableList()){
-                        if (i.fruit_cate=="1"){
+                    for (i in data.data!!.fruit!!.toMutableList()) {
+                        if (i.fruit_cate == "1") {
                             fruitList1.add(i)
-                        }else if (i.fruit_cate=="2"){
+                        } else if (i.fruit_cate == "2") {
                             fruitList2.add(i)
-                        }else if (i.fruit_cate=="3"){
+                        } else if (i.fruit_cate == "3") {
                             fruitList3.add(i)
-                        }else if (i.fruit_cate=="4"){
+                        } else if (i.fruit_cate == "4") {
                             fruitList4.add(i)
-                        }else if (i.fruit_cate=="5"){
+                        } else if (i.fruit_cate == "5") {
                             fruitList5.add(i)
-                        }else if (i.fruit_cate=="6"){
+                        } else if (i.fruit_cate == "6") {
                             fruitList6.add(i)
-                        }else if (i.fruit_cate=="7"){
+                        } else if (i.fruit_cate == "7") {
                             fruitList7.add(i)
-                        }else if (i.fruit_cate=="8"){
+                        } else if (i.fruit_cate == "8") {
                             fruitList8.add(i)
                         }
                     }
                     fruitList.clear()
-                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"常用","0.0","0.0","100"))
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0, "常用", "0.0", "0.0", "100"))
                     fruitList.addAll(fruitList1)
-                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"青菜","0.0","0.0","100"))
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0, "青菜", "0.0", "0.0", "100"))
                     fruitList.addAll(fruitList2)
-                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"豆类","0.0","0.0","100"))
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0, "豆类", "0.0", "0.0", "100"))
                     fruitList.addAll(fruitList3)
-                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"菌类","0.0","0.0","100"))
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0, "菌类", "0.0", "0.0", "100"))
                     fruitList.addAll(fruitList4)
-                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"其他","0.0","0.0","100"))
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0, "其他", "0.0", "0.0", "100"))
                     fruitList.addAll(fruitList5)
-                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"肉类","0.0","0.0","100"))
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0, "肉类", "0.0", "0.0", "100"))
                     fruitList.addAll(fruitList6)
-                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"水果","0.0","0.0","100"))
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0, "水果", "0.0", "0.0", "100"))
                     fruitList.addAll(fruitList7)
-                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"调料","0.0","0.0","100"))
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0, "调料", "0.0", "0.0", "100"))
                     fruitList.addAll(fruitList8)
 //                    fruitList = data.data?.fruit?.toMutableList()!!
                     fruit_adapter = FruitAdapter(context, fruitList)
                     rv_item.adapter = fruit_adapter
-                    val gridmanager=GridLayoutManager(context, 4)
-                    val lookup=object :GridLayoutManager.SpanSizeLookup(){
+                    val gridmanager = GridLayoutManager(context, 4)
+                    val lookup = object : GridLayoutManager.SpanSizeLookup() {
                         override fun getSpanSize(p0: Int): Int {
-                            if (fruitList.get(p0).fruit_cate=="100"){
+                            if (fruitList.get(p0).fruit_cate == "100") {
                                 return 4
-                            }else{
+                            } else {
                                 return 1
                             }
                         }
                     }
-                    gridmanager.spanSizeLookup=lookup
-                    rv_item.layoutManager=gridmanager
+                    gridmanager.spanSizeLookup = lookup
+                    rv_item.layoutManager = gridmanager
 
                     fruit_adapter.setOnItemClickListener(object : OnItemClick {
                         override fun subLong(position: Int, view: View, data: Any) {
@@ -227,37 +228,49 @@ class MainActivity : AppCompatActivity() {
 
                             if (data is CFruitBean.DataBean.FruitBean) {
 
-                                fruitAddOrderDialog = FruitAddOrderDialog(context, R.style.DialogTheme)
-                                fruitAddOrderDialog?.show()
-                                fruitAddOrderDialog?.setDate(data.fruit_name!!, data.fruit_unit!!, data.fruit_price!!)
-                                fruitAddOrderDialog?.setOnAddCustomerListener(object : IOnAddFruitInOrder {
-                                    override fun add(name: String, unit: String, unit_price: String, count: String) {
-                                        var flag = false
-                                        for ((index, value) in orderList.withIndex()) {
-                                            flag = value.name == data.fruit_name
-                                            if (flag) {
-                                                orderList.get(index).count += count.toDouble()
-                                                orderList.get(index).price = unit_price.toDouble()
-                                                orderList.get(index).unit = unit
-                                                break
-                                            }
-                                        }
-                                        if (!flag) {
-                                            orderList.add(
-                                                OrderBean(
-                                                    data.fruit_name!!,
-                                                    count.toDouble(),
-                                                    unit_price!!.toDouble(),
-                                                    unit
-                                                )
-                                            )
-                                        }
-                                        order_adapter.notifyDataSetChanged()
-                                        refreshOrder()
-                                        fruitAddOrderDialog?.close()
-                                    }
-
-                                })
+                                if (data is CFruitBean.DataBean.FruitBean) {
+                                    orderList.add(
+                                        OrderBean(
+                                            data.fruit_name!!,
+                                            1.toDouble(),
+                                            data.fruit_price!!.toDouble(),
+                                            data.fruit_unit!!
+                                        )
+                                    )
+                                    order_adapter.notifyDataSetChanged()
+                                    refreshOrder()
+                                }
+//                                fruitAddOrderDialog = FruitAddOrderDialog(context, R.style.DialogTheme)
+//                                fruitAddOrderDialog?.show()
+//                                fruitAddOrderDialog?.setDate(data.fruit_name!!, data.fruit_unit!!, data.fruit_price!!)
+//                                fruitAddOrderDialog?.setOnAddCustomerListener(object : IOnAddFruitInOrder {
+//                                    override fun add(name: String, unit: String, unit_price: String, count: String) {
+//                                        var flag = false
+//                                        for ((index, value) in orderList.withIndex()) {
+//                                            flag = value.name == data.fruit_name
+//                                            if (flag) {
+//                                                orderList.get(index).count += count.toDouble()
+//                                                orderList.get(index).price = unit_price.toDouble()
+//                                                orderList.get(index).unit = unit
+//                                                break
+//                                            }
+//                                        }
+//                                        if (!flag) {
+//                                            orderList.add(
+//                                                OrderBean(
+//                                                    data.fruit_name!!,
+//                                                    count.toDouble(),
+//                                                    unit_price!!.toDouble(),
+//                                                    unit
+//                                                )
+//                                            )
+//                                        }
+//                                        order_adapter.notifyDataSetChanged()
+//                                        refreshOrder()
+//                                        fruitAddOrderDialog?.close()
+//                                    }
+//
+//                                })
 
                             }
                         }
@@ -337,33 +350,37 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
 
-                    override fun delete(position: Int, data: Any) {
-                        AlertDialog.Builder(context)
-                            .setTitle(
-                                "确认删除" + order_history_list.get(position).time + " 日" + order_history_list.get(
-                                    position
-                                ).customer_name + "的订单么" + "?"
-                            )
-                            .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
-                                api.deleteOrder(order_history_list.get(position).order_id, object : IApiListener {
-                                    override fun success(data: Any) {
-                                        util!!.showToast("删除成功")
+                    override fun delete(position: Int, bean: Any) {
+                        if (bean is OrderList.DataBean.OrderBean) {
+                            AlertDialog.Builder(context)
+                                .setTitle(
+                                    "确认删除 " + bean.customer_name + " 的 " + bean.otime!!.split("T").get(0) + " 日 " + " 的订单么" + "?"
+                                )
+                                .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
+                                    api.deleteOrder(bean.order_id, object : IApiListener {
+                                        override fun success(data: Any) {
+                                            util!!.showToast("删除成功")
+                                            for (i in order_history_list) {
+                                                if (i.order_id.equals(bean.order_id)) {
+                                                    order_history_list.remove(i)
+                                                    break
+                                                }
+                                            }
+                                            orderHistryAdapter.notifyDataSetChanged()
+                                            orderShowDialog!!.dismiss()
 
-                                        order_history_list.removeAt(position)
-                                        orderHistryAdapter.notifyDataSetChanged()
-                                        orderShowDialog!!.dismiss()
+                                        }
 
-                                    }
+                                        override fun error(e: Throwable) {
+                                            Log.e("lovesosoi", e.toString())
+                                        }
 
-                                    override fun error(e: Throwable) {
-                                        Log.e("lovesosoi", e.toString())
-                                    }
-
+                                    })
                                 })
-                            })
-                            .setNeutralButton("取消", null)
-                            .create()
-                            .show()
+                                .setNeutralButton("取消", null)
+                                .create()
+                                .show()
+                        }
 
                     }
 
@@ -462,9 +479,9 @@ class MainActivity : AppCompatActivity() {
         customerAddDialog = AddCustomerDialog(activity, R.style.DialogTheme)
 
         fruitAddDialog?.setOnAddFruitListener(object : OnAddFruit {
-            override fun upDate(name: String, price: Double, unit: String, id: Int,cate:String) {
-                val cate=cate.split(",").get(0)
-                api.upDateFruit(name, price, unit, id,cate.toInt(), object : IApiListener {
+            override fun upDate(name: String, price: Double, unit: String, id: Int, cate: String) {
+                val cate = cate.split(",").get(0)
+                api.upDateFruit(name, price, unit, id, cate.toInt(), object : IApiListener {
                     override fun success(data: Any) {
                         if (data is BaseStatus) {
                             util!!.showToast("修改成功")
@@ -480,9 +497,9 @@ class MainActivity : AppCompatActivity() {
                 })
             }
 
-            override fun add(name: String, price: Double, unit: String,cate:String) {
-                val cate=cate.split(",").get(0)
-                api.addFruit(name, price, unit, cate.toInt(),object : IApiListener {
+            override fun add(name: String, price: Double, unit: String, cate: String) {
+                val cate = cate.split(",").get(0)
+                api.addFruit(name, price, unit, cate.toInt(), object : IApiListener {
                     override fun success(data: Any) {
                         if (data is BaseStatus) {
                             if (data.data!!.flag == 1) {
@@ -603,13 +620,11 @@ class MainActivity : AppCompatActivity() {
 
             }
         }, ProcessData {
-            /**
-             *
-            list.add(DataForSendToPrinterPos80.selectAlignment(1));//居中
-            list.add(DataForSendToPrinterPos80.selectAlignment(0));//居左
-            list.add(DataForSendToPrinterPos80.selectAlignment(2));//居右
-            list.add(DataForSendToPrinterPos80.printAndFeedForward(2));//走纸
-             */
+            //            list.add(DataForSendToPrinterPos80.selectAlignment(1));//居中
+//            list.add(DataForSendToPrinterPos80.selectAlignment(0));//居左
+//            list.add(DataForSendToPrinterPos80.selectAlignment(2));//居右
+//            list.add(DataForSendToPrinterPos80.printAndFeedForward(2));//走纸
+
             Log.e("bttext", "bttext1")
             val line = "-----------------------------------------------" + "\n"
             val list = ArrayList<ByteArray>()
@@ -765,6 +780,7 @@ class MainActivity : AppCompatActivity() {
         R.id.tv_menu2,
         R.id.tv_menu3,
         R.id.tv_menu4,
+        R.id.tv_menu5,
         R.id.tv_commit,
         R.id.tv_add_fruit,
         R.id.tv_add_custom,
@@ -788,18 +804,18 @@ class MainActivity : AppCompatActivity() {
                 if (rv_change_fruit.adapter == null) {
                     fruit_control_adapter = FruitDisplayAdapter(context, fruitList)
                     rv_change_fruit.adapter = fruit_control_adapter
-                    val girdlayoutmanager=GridLayoutManager(this, 6)
+                    val girdlayoutmanager = GridLayoutManager(this, 6)
 
-                    val lookup=object :GridLayoutManager.SpanSizeLookup(){
+                    val lookup = object : GridLayoutManager.SpanSizeLookup() {
                         override fun getSpanSize(p0: Int): Int {
-                            if (fruitList.get(p0).fruit_cate=="100"){
+                            if (fruitList.get(p0).fruit_cate == "100") {
                                 return 6
-                            }else{
+                            } else {
                                 return 1
                             }
                         }
                     }
-                    girdlayoutmanager.spanSizeLookup=lookup
+                    girdlayoutmanager.spanSizeLookup = lookup
                     rv_change_fruit.layoutManager = girdlayoutmanager
                     fruit_control_adapter.setOnItemClickListener(object :
                         OnListItemLongClickListener {
@@ -812,7 +828,7 @@ class MainActivity : AppCompatActivity() {
                                 fruit.fruit_price!!,
                                 fruit.fruit_unit!!,
                                 fruit.fruit_id,
-                                fruit.fruit_cate!!.toInt()-1
+                                fruit.fruit_cate!!.toInt() - 1
                             )
                         }
 
@@ -976,6 +992,57 @@ class MainActivity : AppCompatActivity() {
                     })
                 }
             }
+            R.id.tv_menu5 -> {
+
+                closeTab()
+                ll_report_stock.visibility = View.VISIBLE
+                tv_menu5.setTextColor(Color.parseColor("#ffffff"))
+                tv_menu5.setBackgroundColor(Color.parseColor("#F95B4F"))
+                var _bd = getBeforeDay()
+                util!!.e("before_day" + _bd)
+                api.getOrderList(object : IApiListener {
+                    override fun error(e: Throwable) {
+
+
+                    }
+
+                    override fun success(data: Any) {
+                        if (data is OrderList) {
+                            util!!.e(data.toString())
+
+                            var list_report = mutableListOf<OrderList.DataBean.OrderBean>()
+                            var message = ""
+                            var _cmax = 0.0
+                            var _cmax_name = ""
+                            var _cmin_name = ""
+                            var _cmin = 0.0
+                            if (data != null && data.data!!.order!!.size > 0) {
+                                list_report.addAll(data.data?.order?.toMutableList()!!)
+                            }
+                            var _all_price = 0.0
+
+                            for (i in list_report) {
+                                message += i.customer_name + "：\t" + i.all_price + "元" + "\n"
+                                if (_cmax == 0.0 || _cmax < i.all_price!!.toDouble()) {
+                                    _cmax = i.all_price!!.toDouble()
+                                    _cmax_name=i.customer_name.toString()
+                                }
+                                if (_cmin == 0.0 || _cmin > i.all_price!!.toDouble()) {
+                                    _cmin = i.all_price!!.toDouble()
+                                    _cmin_name=i.customer_name.toString()
+
+                                }
+                                _all_price += i.all_price!!.toDouble()
+                            }
+                            message += "-----------------" + "\n"
+                            message += "昨天一共送出货物" + _all_price + "元" + "\n"
+                            message += "其中要货最多的是 $_cmax_name 共卖出 $_cmax 元" + "\n"
+                            message += "其中要货最少的是 $_cmin_name 共卖出 $_cmin 元" + "\n"
+                            tv_report.text = message
+                        }
+                    }
+                }, _bd + " 00:00:00", _bd + " 23:59:59", "全部")
+            }
             R.id.tv_commit -> {
                 //提交订单
                 if (customername == null) {
@@ -1079,18 +1146,46 @@ class MainActivity : AppCompatActivity() {
                     }
                 })
             }
-            R.id.tv_bill->{
-                if (order_history_list.size!=0) {
+            R.id.tv_bill -> {
+                if (order_history_list.size != 0) {
+
                     val i = Intent(context, BillActivity::class.java)
                     var b = Bundle()
                     b.putSerializable("date", order_history_list as Serializable)
+                    i.putExtra("name", orderCustomername)
                     i.putExtra("bundle", b)
                     startActivityForResult(i, 0)
-                }else{
+                } else {
                     util!!.showToast("当前记录为空")
                 }
             }
         }
+    }
+
+    private fun getBeforeDay(): String {
+
+        val _tdate = Calendar.getInstance()
+        //年
+        val year = _tdate.get(Calendar.YEAR)
+        //月
+        val month = _tdate.get(Calendar.MONTH) + 1
+        //日
+        val day = _tdate.get(Calendar.DAY_OF_MONTH) - 1
+        var _m = ""
+        var _d = ""
+        if (month < 10) {
+            _m = "0" + month.toString()
+        } else {
+            _m = month.toString()
+        }
+
+        if (day < 10) {
+            _d = "0" + day.toString()
+        } else {
+            _d = day.toString()
+        }
+
+        return year.toString() + "-" + _m + "-" + _d
     }
 
     override fun onDestroy() {
@@ -1155,41 +1250,41 @@ class MainActivity : AppCompatActivity() {
                     var fruitList6 = mutableListOf<CFruitBean.DataBean.FruitBean>()
                     var fruitList7 = mutableListOf<CFruitBean.DataBean.FruitBean>()
                     var fruitList8 = mutableListOf<CFruitBean.DataBean.FruitBean>()
-                    for (i in data.data!!.fruit!!.toMutableList()){
-                        if (i.fruit_cate=="1"){
+                    for (i in data.data!!.fruit!!.toMutableList()) {
+                        if (i.fruit_cate == "1") {
                             fruitList1.add(i)
-                        }else if (i.fruit_cate=="2"){
+                        } else if (i.fruit_cate == "2") {
                             fruitList2.add(i)
-                        }else if (i.fruit_cate=="3"){
+                        } else if (i.fruit_cate == "3") {
                             fruitList3.add(i)
-                        }else if (i.fruit_cate=="4"){
+                        } else if (i.fruit_cate == "4") {
                             fruitList4.add(i)
-                        }else if (i.fruit_cate=="5"){
+                        } else if (i.fruit_cate == "5") {
                             fruitList5.add(i)
-                        }else if (i.fruit_cate=="6"){
+                        } else if (i.fruit_cate == "6") {
                             fruitList6.add(i)
-                        }else if (i.fruit_cate=="7"){
+                        } else if (i.fruit_cate == "7") {
                             fruitList7.add(i)
-                        }else if (i.fruit_cate=="8"){
+                        } else if (i.fruit_cate == "8") {
                             fruitList8.add(i)
                         }
                     }
                     fruitList.clear()
-                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"常用","0.0","0.0","100"))
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0, "常用", "0.0", "0.0", "100"))
                     fruitList.addAll(fruitList1)
-                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"青菜","0.0","0.0","100"))
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0, "青菜", "0.0", "0.0", "100"))
                     fruitList.addAll(fruitList2)
-                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"豆类","0.0","0.0","100"))
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0, "豆类", "0.0", "0.0", "100"))
                     fruitList.addAll(fruitList3)
-                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"菌类","0.0","0.0","100"))
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0, "菌类", "0.0", "0.0", "100"))
                     fruitList.addAll(fruitList4)
-                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"其他","0.0","0.0","100"))
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0, "其他", "0.0", "0.0", "100"))
                     fruitList.addAll(fruitList5)
-                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"肉类","0.0","0.0","100"))
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0, "肉类", "0.0", "0.0", "100"))
                     fruitList.addAll(fruitList6)
-                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"水果","0.0","0.0","100"))
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0, "水果", "0.0", "0.0", "100"))
                     fruitList.addAll(fruitList7)
-                    fruitList.add(CFruitBean.DataBean.FruitBean(0,"调料","0.0","0.0","100"))
+                    fruitList.add(CFruitBean.DataBean.FruitBean(0, "调料", "0.0", "0.0", "100"))
                     fruitList.addAll(fruitList8)
 
                     fruit_control_adapter.notifyDataSetChanged()
@@ -1214,14 +1309,17 @@ class MainActivity : AppCompatActivity() {
         ll_order.visibility = View.GONE
         ll_commit_order.visibility = View.GONE
         ll_customer_control.visibility = View.GONE
+        ll_report_stock.visibility = View.GONE
         tv_menu1.setTextColor(Color.parseColor("#FC9C95"))
         tv_menu2.setTextColor(Color.parseColor("#FC9C95"))
         tv_menu3.setTextColor(Color.parseColor("#FC9C95"))
         tv_menu4.setTextColor(Color.parseColor("#FC9C95"))
+        tv_menu5.setTextColor(Color.parseColor("#FC9C95"))
         tv_menu1.setBackgroundColor(Color.parseColor("#ffffff"))
         tv_menu2.setBackgroundColor(Color.parseColor("#ffffff"))
         tv_menu3.setBackgroundColor(Color.parseColor("#ffffff"))
         tv_menu4.setBackgroundColor(Color.parseColor("#ffffff"))
+        tv_menu5.setBackgroundColor(Color.parseColor("#ffffff"))
     }
 
     /**
@@ -1271,7 +1369,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 0 && resultCode==1) {
+        if (requestCode == 0 && resultCode == 1) {
             getOrderList()
         }
     }
